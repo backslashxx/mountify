@@ -1,0 +1,6 @@
+id=mountify
+name=mount-ify
+version=v1.0.0
+versionCode=100
+author=xx
+description=Globally mounted modules via OverlayFS.

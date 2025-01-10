@@ -1,0 +1,3 @@
+Adreno_Gpu_Driver my_engineering
+weebu-addon my_custom
+DisplayFeatures my_vendor
