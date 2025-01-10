@@ -16,6 +16,11 @@ if [ ! -d $TARGET_DIR ]; then
 	exit 1
 fi
 
+if [ -f $TARGET_DIR/disable ] || [ -f $TARGET_DIR/remove ]; then
+	echo "exiting since $1 is not meant to be mounted"
+	exit 1
+fi
+
 FAKE_MOUNT_NAME="$2"
 SUSFS_BIN=/data/adb/ksu/bin/ksu_susfs
 [ ! -f $TARGET_DIR/skip_mount ] && touch $TARGET_DIR/skip_mount
