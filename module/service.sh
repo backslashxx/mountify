@@ -18,7 +18,9 @@ string="description=whiteouts: $wo_cnt"
 # grab module list
 modlist="modules:"
 for i in $(awk {'print $1'} $MODDIR/modules.txt); do
-	[ -d /data/adb/modules/$i ] && modlist="$modlist $i"
+	if [ -d /data/adb/modules/$i ] && [ ! -f /data/adb/modules/$i/disable ] && [ ! -f /data/adb/modules/$i/remove ]; then
+		modlist="$modlist $i"
+	fi
 done
 
 # create module list for status
