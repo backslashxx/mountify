@@ -1,0 +1,3 @@
+commented version of that global mounting script
+you can put this onto post-fs-data of modules that 
+you want globally mounted.
