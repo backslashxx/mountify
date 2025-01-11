@@ -48,8 +48,8 @@ if [ -d $MODDIR/whiteouts ]; then
 
 	for i in $(ls -d */*); do
 		mkdir -p "$MNT_FOLDER/$mnt_fname/$i"
-		mount --bind "$MODDIR/whiteouts/$i" "$MNT_FOLDER/$mnt_fname/$i"
-		mount -t overlay -o "lowerdir=$MNT_FOLDER/$mnt_fname/$i:/$i" overlay "/$i"
+		busybox mount --bind "$MODDIR/whiteouts/$i" "$MNT_FOLDER/$mnt_fname/$i"
+		busybox mount -t overlay -o "lowerdir=$MNT_FOLDER/$mnt_fname/$i:/$i" overlay "/$i"
 		${SUSFS_BIN} add_sus_mount "/$i"
 	done
 fi

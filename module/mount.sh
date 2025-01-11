@@ -41,8 +41,8 @@ ${SUSFS_BIN} add_sus_path "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 single_depth() {
 	for DIR in $( ls -d system/apex/ system/app/ system/bin/ system/etc/ system/fonts/ system/framework/ system/lib/ system/lib64/ system/priv-app/ system/usr/ 2>/dev/null ); do
 		mkdir -p "$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR"
-		mount --bind "$(pwd)/$DIR" "$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR"
-		mount -t overlay -o "lowerdir=$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR:/$DIR" overlay "/$DIR"
+		busybox mount --bind "$(pwd)/$DIR" "$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR"
+		busybox mount -t overlay -o "lowerdir=$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR:/$DIR" overlay "/$DIR"
 		${SUSFS_BIN} add_sus_mount "/$DIR"
 	done
 }
@@ -50,8 +50,8 @@ single_depth() {
 normal_depth() {
 	for DIR in $(ls -d */*/ ); do
 		mkdir -p "$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR"
-		mount --bind "$(pwd)/$DIR" "$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR"
-		mount -t overlay -o "lowerdir=$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR:/$DIR" overlay "/$DIR"
+		busybox mount --bind "$(pwd)/$DIR" "$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR"
+		busybox mount -t overlay -o "lowerdir=$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR:/$DIR" overlay "/$DIR"
 		${SUSFS_BIN} add_sus_mount "/$DIR"
 	done
 }
