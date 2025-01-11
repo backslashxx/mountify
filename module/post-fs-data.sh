@@ -16,10 +16,13 @@ whiteout_create() {
 # module mount section
 # modules.txt
 # <modid> <fake_folder_name>
-while read -r line; do 
-	set $line
-	sh "$MODDIR/mount.sh" "$1" "$2"
-done < "$MODDIR/modules.txt"
+IFS="
+"
+for line in $( sed '/#/d' "$MODDIR/modules.txt" ); do
+	module_id=$( echo $line | awk {'print $1'} )
+	folder_name=$( echo $line | awk {'print $2'} )
+	sh "$MODDIR/mount.sh" "$module_id" "$folder_name"
+done
 
 # whiteouts section
 # this will regenrate whiteouts when change is detected
@@ -28,9 +31,9 @@ oldhash=$(cat "$MODDIR/whiteouts.txt.crc" )
 
 if [ ! "$newhash" = "$oldhash" ]; then
 	rm -rf "$MODDIR/whiteouts"
-	while read -r line; do
+	for line in $( sed '/#/d' "$MODDIR/whiteouts.txt" ); do
 		whiteout_create "$line"
-	done < "$MODDIR/whiteouts.txt"
+	done
 	# regen crc
 	cat "$MODDIR/whiteouts.txt" | busybox crc32 > "$MODDIR/whiteouts.txt.crc"
 fi
