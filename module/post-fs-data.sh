@@ -6,10 +6,10 @@ MODDIR="/data/adb/modules/mountify"
 # functions
 # whiteout_create
 whiteout_create() {
-	mkdir -p "$MODDIR/whiteouts/${1%/*}"
-  	busybox mknod "$MODDIR/whiteouts/$1" c 0 0
-  	busybox setfattr -n trusted.overlay.whiteout -v y "$MODPATH/whiteouts/$1"
-  	chmod 644 "$MODDIR/whiteouts/$1"
+	mkdir -p "/debug_ramdisk/mountify/wo/${1%/*}"
+  	busybox mknod "/debug_ramdisk/mountify/wo/$1" c 0 0
+  	busybox setfattr -n trusted.overlay.whiteout -v y "/debug_ramdisk/mountify/wo/$1"
+  	chmod 644 "/debug_ramdisk/mountify/wo/$1"
 }
 
 # --
@@ -24,31 +24,21 @@ for line in $( sed '/#/d' "$MODDIR/modules.txt" ); do
 	sh "$MODDIR/mount.sh" "$module_id" "$folder_name"
 done
 
-# whiteouts section
-# this will regenrate whiteouts when change is detected
-newhash=$(cat "$MODDIR/whiteouts.txt" | busybox crc32)
-oldhash=$(cat "$MODDIR/whiteouts.txt.crc" )
+for line in $( sed '/#/d' "$MODDIR/whiteouts.txt" ); do
+	whiteout_create "$line"
+done
 
-if [ ! "$newhash" = "$oldhash" ]; then
-	rm -rf "$MODDIR/whiteouts"
-	for line in $( sed '/#/d' "$MODDIR/whiteouts.txt" ); do
-		whiteout_create "$line"
-	done
-	# regen crc
-	cat "$MODDIR/whiteouts.txt" | busybox crc32 > "$MODDIR/whiteouts.txt.crc"
-fi
-
-if [ -d $MODDIR/whiteouts ]; then
+if [ -d /debug_ramdisk/mountify/wo ]; then
 	mnt_fname="my_whiteouts"
 	[ -w /mnt ] && MNT_FOLDER=/mnt
 	[ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
 	mkdir $MNT_FOLDER/$mnt_fname
 	${SUSFS_BIN} add_sus_path $MNT_FOLDER/$mnt_fname
-	cd $MODDIR/whiteouts
+	cd /debug_ramdisk/mountify/wo
 
 	for i in $(ls -d */*); do
 		mkdir -p "$MNT_FOLDER/$mnt_fname/$i"
-		busybox mount --bind "$MODDIR/whiteouts/$i" "$MNT_FOLDER/$mnt_fname/$i"
+		busybox mount --bind "/debug_ramdisk/mountify/wo/$i" "$MNT_FOLDER/$mnt_fname/$i"
 		busybox mount -t overlay -o "lowerdir=$MNT_FOLDER/$mnt_fname/$i:/$i" overlay "/$i"
 		${SUSFS_BIN} add_sus_mount "/$i"
 	done
