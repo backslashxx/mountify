@@ -9,8 +9,8 @@ printf "\n\n"
 [ -w /mnt ] && MNT_FOLDER=/mnt
 [ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
 
-if [ -d $MODDIR/whiteouts ]; then
-	busybox tree $MODDIR/whiteouts
+if [ -d /debug_ramdisk/mountify/wo ]; then
+	busybox tree /debug_ramdisk/mountify/wo
 fi
 
 for i in $(awk {'print $2'} $MODDIR/modules.txt); do

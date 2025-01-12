@@ -9,8 +9,8 @@ done
 
 # count whiteouts
 wo_cnt=0
-if [ -d $MODDIR/whiteouts ]; then
-	wo_cnt=$( busybox tree $MODDIR/whiteouts | tail -n 1 | awk {'print $3'} )
+if [ -d /debug_ramdisk/mountify/wo ]; then
+	wo_cnt=$( busybox tree /debug_ramdisk/mountify/wo | tail -n 1 | awk {'print $3'} )
 fi
 string="description=whiteouts: $wo_cnt"
 
