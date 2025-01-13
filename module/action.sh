@@ -6,16 +6,11 @@ echo "[+] mount-ify"
 echo "[+] extended status"
 printf "\n\n"
 
-[ -w /mnt ] && MNT_FOLDER=/mnt
-[ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
-
 if [ -d /debug_ramdisk/mountify/wo ]; then
 	busybox tree /debug_ramdisk/mountify/wo
 fi
 
-for i in $(awk {'print $2'} $MODDIR/modules.txt); do
-	[ -d "$MNT_FOLDER/$i" ] && busybox tree $MNT_FOLDER/$i
-done
+grep overlay /proc/mounts
 
 # ksu and apatch auto closes
 # make it wait 20s so we can read
