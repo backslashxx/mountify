@@ -2,47 +2,67 @@
 # mount.sh
 # tmpfs edition
 PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
+SUSFS_BIN=/data/adb/ksu/bin/ksu_susfs
 
 # exit for missing args
-if [ -z $1 ]; then
+if [ -z "$1" ] || [ -z "$2" ]; then
 	echo "usage: "
-	echo "$(basename "$0" ) module_id"
+	echo "$(basename "$0" ) module_id fake_folder_name"
 	exit 1
 fi
 
-TARGET_DIR="/data/adb/modules/$1"
-if [ ! -d $TARGET_DIR ] || [ -f $TARGET_DIR/disable ] || [ -f $TARGET_DIR/remove ]; then
-	echo "module with name $1 does NOT exist or not meant to be mounted"
+MODULE_ID="$1"
+FAKE_MOUNT_NAME="$2"
+
+TARGET_DIR="/data/adb/modules/$MODULE_ID"
+if [ ! -d "$TARGET_DIR" ] || [ -f "$TARGET_DIR/disable" ] || [ -f "$TARGET_DIR/remove" ]; then
+	echo "module with name $MODULE_ID does NOT exist or not meant to be mounted"
 	exit 1
 fi
+
 # dont forget to skip_mount
-[ ! -f $TARGET_DIR/skip_mount ] && touch $TARGET_DIR/skip_mount
+[ ! -f "$TARGET_DIR/skip_mount" ] && touch "$TARGET_DIR/skip_mount"
 
 # create our folder, get in, copy everything, get in
 mkdir -p /debug_ramdisk/mountify
-cd /debug_ramdisk/mountify && cp -r /data/adb/modules/$1 $1 && cd /debug_ramdisk/mountify/$1
+cd /debug_ramdisk/mountify && cp -r "/data/adb/modules/$MODULE_ID" "$MODULE_ID" && cd "/debug_ramdisk/mountify/$MODULE_ID"
 
 # make sure to mirror selinux context
 # else we get "u:object_r:tmpfs:s0"
 IFS="
 "
 for file in $( find ./ | sed "s|./|/|") ; do 
-	busybox chcon --reference="/data/adb/modules/$1/$file" ".$file"  
+	busybox chcon --reference="/data/adb/modules/$MODULE_ID/$file" ".$file"  
 done
+
+# here we do the vendor mount mimic
+[ -w /mnt ] && MNT_FOLDER=/mnt
+[ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
+
+mkdir -p "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+
+if [ ! -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
+	echo "failed creating folder with fake_folder_name $FAKE_MOUNT_NAME"
+	exit 1
+fi
 
 # mounting functions
 normal_depth() {
 	for DIR in $(ls -d */*/); do
-		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:/$DIR" overlay "/$DIR"
-		${SUSFS_BIN} add_sus_mount "$DIR"
+		mkdir -p "$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR"
+		busybox mount --bind "$(pwd)/$DIR" "$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR"
+		busybox mount -t overlay -o "lowerdir=$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR:/$DIR" overlay "/$DIR"
+		${SUSFS_BIN} add_sus_mount "/$DIR"
 	done
 }
 
 # handle single depth on magic mount
 single_depth() {
 	for DIR in $( ls -d system/apex/ system/app/ system/bin/ system/etc/ system/fonts/ system/framework/ system/lib/ system/lib64/ system/priv-app/ system/usr/ 2>/dev/null ); do
-		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:/$DIR" overlay "/$DIR"
-		${SUSFS_BIN} add_sus_mount "$DIR"
+		mkdir -p "$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR"
+		busybox mount --bind "$(pwd)/$DIR" "$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR"
+		busybox mount -t overlay -o "lowerdir=$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR:/$DIR" overlay "/$DIR"
+		${SUSFS_BIN} add_sus_mount "/$DIR"
 	done
 }
 

@@ -11,7 +11,8 @@ IFS="
 "
 for line in $( sed '/#/d' "$MODDIR/modules.txt" ); do
 	module_id=$( echo $line | awk {'print $1'} )
-	sh "$MODDIR/mount.sh" "$module_id"
+	folder_name=$( echo $line | awk {'print $2'} )
+	sh "$MODDIR/mount.sh" "$module_id" "$folder_name"
 done
 
 # EOF
