@@ -20,8 +20,7 @@ IFS="
 "
 for line in $( sed '/#/d' "$MODDIR/modules.txt" ); do
 	module_id=$( echo $line | awk {'print $1'} )
-	folder_name=$( echo $line | awk {'print $2'} )
-	sh "$MODDIR/mount.sh" "$module_id" "$folder_name"
+	sh "$MODDIR/mount.sh" "$module_id"
 done
 
 for line in $( sed '/#/d' "$MODDIR/whiteouts.txt" ); do
@@ -29,17 +28,9 @@ for line in $( sed '/#/d' "$MODDIR/whiteouts.txt" ); do
 done
 
 if [ -d /debug_ramdisk/mountify/wo ]; then
-	mnt_fname="my_whiteouts"
-	[ -w /mnt ] && MNT_FOLDER=/mnt
-	[ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
-	mkdir $MNT_FOLDER/$mnt_fname
-	${SUSFS_BIN} add_sus_path $MNT_FOLDER/$mnt_fname
 	cd /debug_ramdisk/mountify/wo
-
-	for i in $(ls -d */*); do
-		mkdir -p "$MNT_FOLDER/$mnt_fname/$i"
-		busybox mount --bind "/debug_ramdisk/mountify/wo/$i" "$MNT_FOLDER/$mnt_fname/$i"
-		busybox mount -t overlay -o "lowerdir=$MNT_FOLDER/$mnt_fname/$i:/$i" overlay "/$i"
+	for i in $(ls -d */*/); do
+		busybox mount -t overlay -o "lowerdir=/debug_ramdisk/mountify/wo/$i:/$i" overlay "/$i"
 		${SUSFS_BIN} add_sus_mount "/$i"
 	done
 fi
