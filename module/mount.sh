@@ -1,6 +1,7 @@
 #!/bin/sh
 # mount.sh
-# global mounting script for ap/ksu modules via overlayfs
+# tmpfs edition
+PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
 
 # exit for missing args
 if [ -z $1 ]; then
@@ -10,32 +11,38 @@ if [ -z $1 ]; then
 fi
 
 TARGET_DIR="/data/adb/modules/$1"
-
-if [ ! -d $TARGET_DIR ]; then
-	echo "module with name $1 does NOT exist?"
+if [ ! -d $TARGET_DIR ] || [ -f $TARGET_DIR/disable ] || [ -f $TARGET_DIR/remove ]; then
+	echo "module with name $1 does NOT exist or not meant to be mounted"
 	exit 1
 fi
-
-if [ -f $TARGET_DIR/disable ] || [ -f $TARGET_DIR/remove ]; then
-	echo "exiting since $1 is not meant to be mounted"
-	exit 1
-fi
-
-SUSFS_BIN=/data/adb/ksu/bin/ksu_susfs
+# dont forget to skip_mount
 [ ! -f $TARGET_DIR/skip_mount ] && touch $TARGET_DIR/skip_mount
+
+# create our folder, get in, copy everything, get in
+mkdir -p /debug_ramdisk/mountify
+cd /debug_ramdisk/mountify && cp -r /data/adb/modules/$1 $1 && cd /debug_ramdisk/mountify/$1
+
+# make sure to mirror selinux context
+# else we get "u:object_r:tmpfs:s0"
+IFS="
+"
+for file in $( find ./ | sed "s|./|/|") ; do 
+	busybox chcon --reference="/data/adb/modules/$1/$file" ".$file"  
+done
+
+# mounting functions
+normal_depth() {
+	for DIR in $(ls -d */*/); do
+		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:/$DIR" overlay "/$DIR"
+		${SUSFS_BIN} add_sus_mount "$DIR"
+	done
+}
 
 # handle single depth on magic mount
 single_depth() {
 	for DIR in $( ls -d system/apex/ system/app/ system/bin/ system/etc/ system/fonts/ system/framework/ system/lib/ system/lib64/ system/priv-app/ system/usr/ 2>/dev/null ); do
 		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:/$DIR" overlay "/$DIR"
-		${SUSFS_BIN} add_sus_mount "/$DIR"
-	done
-}
-
-normal_depth() {
-	for DIR in $(ls -d */*/ ); do
-		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:/$DIR" overlay "/$DIR"
-		${SUSFS_BIN} add_sus_mount "/$DIR"
+		${SUSFS_BIN} add_sus_mount "$DIR"
 	done
 }
 
@@ -44,13 +51,10 @@ normal_depth() {
 # on magic, moddir/product it symlinked to moddir/system/product
 if [ "$KSU_MAGIC_MOUNT" = "true" ] || [ "$APATCH_BIND_MOUNT" = "true" ]; then
 	# handle single depth on magic mount
-	cd "$TARGET_DIR"
 	single_depth
 	# normal routine
-	cd "$TARGET_DIR/system"
-	normal_depth
+	cd system && normal_depth
 else
-	cd "$TARGET_DIR"
 	normal_depth
 fi
 
