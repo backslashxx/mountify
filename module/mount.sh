@@ -20,8 +20,14 @@ if [ ! -d "$TARGET_DIR" ] || [ -f "$TARGET_DIR/disable" ] || [ -f "$TARGET_DIR/r
 	exit 1
 fi
 
-# dont forget to skip_mount
-[ ! -f "$TARGET_DIR/skip_mount" ] && touch "$TARGET_DIR/skip_mount"
+# skip_mount is not needed on .nomount MKSU
+# we do the logic like this so that it catches all non-magic ksu
+# theres a chance that its an overlayfs ksu but still has .nomount file
+if [ "$KSU_MAGIC_MOUNT" = "true" ] && [ -f /data/adb/ksu/.nomount ]; then 
+	true
+else
+	[ ! -f "$TARGET_DIR/skip_mount" ] && touch "$TARGET_DIR/skip_mount"
+fi
 
 # create our folder, get in, copy everything, get in
 mkdir -p /debug_ramdisk/mountify
