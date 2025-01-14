@@ -3,6 +3,13 @@ PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
 SUSFS_BIN=/data/adb/ksu/bin/ksu_susfs
 MODDIR="/data/adb/modules/mountify"
 FAKE_MOUNT_NAME="my_super"
+mountify_whiteouts=0
+# read config
+. $MODDIR/config.sh
+# exit if disabled
+if [ $mountify_whiteouts = 0 ]; then
+	exit 0
+fi
 
 # here we do the vendor mount mimic
 [ -w /mnt ] && MNT_FOLDER=/mnt
