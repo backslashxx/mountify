@@ -23,10 +23,9 @@ for line in $( sed '/#/d' "$MODDIR/whiteouts.txt" ); do
 done
 
 if [ -d /debug_ramdisk/mountify/wo ]; then
+	busybox mount --bind "/debug_ramdisk/mountify/wo" "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 	cd /debug_ramdisk/mountify/wo
 	for DIR in $(ls -d */*/); do
-		mkdir -p "$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR"
-		busybox mount --bind "$(pwd)/$DIR" "$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR"
 		busybox mount -t overlay -o "lowerdir=$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR:/$DIR" overlay "/$DIR"
 		${SUSFS_BIN} add_sus_mount "/$DIR"
 	done
