@@ -3,6 +3,14 @@
 # tmpfs edition
 PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
 SUSFS_BIN=/data/adb/ksu/bin/ksu_susfs
+MODDIR="/data/adb/modules/mountify"
+mountify_mounts=0
+# read config
+. $MODDIR/config.sh
+# exit if disabled
+if [ $mountify_mounts = 0 ]; then
+	exit 0
+fi
 
 # exit for missing args
 if [ -z "$1" ] || [ -z "$2" ]; then
