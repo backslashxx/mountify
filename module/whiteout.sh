@@ -55,7 +55,7 @@ for file in $( find ./ | sed "s|./|/|") ; do
 done
 
 echo "mountify/whiteout: mounting whiteouts" >> /dev/kmsg
-for DIR in $(ls -d */*/); do
+for DIR in $(ls -d */); do
 	busybox mount -t overlay -o "lowerdir=$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR:/$DIR" overlay "/$DIR"
 	${SUSFS_BIN} add_sus_mount "/$DIR"
 done

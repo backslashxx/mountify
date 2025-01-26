@@ -1,5 +1,4 @@
 /vendor/bin/install-recovery.sh
 /system/bin/install-recovery.sh
-/product/media/audio/notifications/Adara.ogg
-/product/media/audio/notifications/Aldebaran.ogg
+/system/addon.d
 
