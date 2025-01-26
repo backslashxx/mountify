@@ -6,11 +6,9 @@ echo "[+] mount-ify"
 echo "[+] extended status"
 printf "\n\n"
 
-if [ -d /debug_ramdisk/mountify/wo ]; then
-	busybox tree /debug_ramdisk/mountify/wo
+if [ -d /debug_ramdisk/mountify ]; then
+	busybox tree /debug_ramdisk/mountify
 fi
-
-grep overlay /proc/mounts
 
 # ksu and apatch auto closes
 # make it wait 20s so we can read
