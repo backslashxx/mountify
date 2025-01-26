@@ -24,9 +24,11 @@ FAKE_MOUNT_NAME="$2"
 
 TARGET_DIR="/data/adb/modules/$MODULE_ID"
 if [ ! -d "$TARGET_DIR" ] || [ -f "$TARGET_DIR/disable" ] || [ -f "$TARGET_DIR/remove" ]; then
-	echo "module with name $MODULE_ID does NOT exist or not meant to be mounted"
+	echo "mountify/mount: module with name $MODULE_ID does NOT exist or not meant to be mounted" >> /dev/kmsg
 	exit 1
 fi
+
+echo "mountify/mount: processing $MODULE_ID" >> /dev/kmsg
 
 # skip_mount is not needed on .nomount MKSU
 # we do the logic like this so that it catches all non-magic ksu
@@ -53,13 +55,24 @@ done
 [ -w /mnt ] && MNT_FOLDER=/mnt
 [ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
 
-mkdir -p "$MNT_FOLDER/$FAKE_MOUNT_NAME"
-
-if [ ! -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
-	echo "failed creating folder with fake_folder_name $FAKE_MOUNT_NAME"
+# make sure its not there
+if [ -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
+	# anti fuckup
+	echo "mountify/mount: skipping $MODULE_ID with fake folder name $FAKE_MOUNT_NAME as it already exists!" >> /dev/kmsg
 	exit 1
 fi
 
+# create it
+mkdir -p "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+
+# then make sure its there
+if [ ! -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
+	# weird if it happens
+	echo "mountify/mount: failed creating folder with fake_folder_name $FAKE_MOUNT_NAME" >> /dev/kmsg
+	exit 1
+fi
+
+# now bind mount it
 busybox mount --bind "$(pwd)/$DIR" "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 
 # mounting functions

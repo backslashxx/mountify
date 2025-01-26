@@ -3,6 +3,9 @@ PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
 SUSFS_BIN=/data/adb/ksu/bin/ksu_susfs
 MODDIR="/data/adb/modules/mountify"
 
+# grab start time
+echo "mountify/post-fs-data: start!" >> /dev/kmsg
+
 # module mount section
 # modules.txt
 # <modid> <fake_folder_name>
@@ -18,5 +21,7 @@ done
 # whiteouts.txt
 # <file_to_whiteout>
 sh "$MODDIR/whiteout.sh" 
+
+echo "mountify/post-fs-data: finished!" >> /dev/kmsg
 
 # EOF

@@ -2,7 +2,7 @@
 PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
 SUSFS_BIN=/data/adb/ksu/bin/ksu_susfs
 MODDIR="/data/adb/modules/mountify"
-FAKE_MOUNT_NAME="my_super"
+FAKE_MOUNT_NAME="whiteouts"
 mountify_whiteouts=0
 # read config
 . $MODDIR/config.sh
@@ -14,7 +14,21 @@ fi
 # here we do the vendor mount mimic
 [ -w /mnt ] && MNT_FOLDER=/mnt
 [ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
+
+# make sure its not there
+if [ -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
+	echo "mountify/whiteout: fake folder with name $FAKE_MOUNT_NAME already exists!" >> /dev/kmsg
+	exit 1
+fi
+
+# create it
 mkdir -p "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+
+# then make sure its there
+if [ ! -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
+	echo "mountify/whiteout: failed creating folder with fake_folder_name $FAKE_MOUNT_NAME" >> /dev/kmsg
+	exit 1
+fi
 
 # functions
 # whiteout_create
@@ -30,6 +44,7 @@ for line in $( sed '/#/d' "$MODDIR/whiteouts.txt" ); do
 done
 
 if [ -d /debug_ramdisk/mountify/wo ]; then
+	echo "mountify/whiteout: processing whiteouts" >> /dev/kmsg
 	busybox mount --bind "/debug_ramdisk/mountify/wo" "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 	cd /debug_ramdisk/mountify/wo
 	for DIR in $(ls -d */*/); do
