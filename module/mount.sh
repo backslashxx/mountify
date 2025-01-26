@@ -39,18 +39,6 @@ else
 	[ ! -f "$TARGET_DIR/skip_mount" ] && touch "$TARGET_DIR/skip_mount"
 fi
 
-# create our folder, get in, copy everything, get in
-mkdir -p /debug_ramdisk/mountify
-cd /debug_ramdisk/mountify && cp -r "/data/adb/modules/$MODULE_ID" "$MODULE_ID" && cd "/debug_ramdisk/mountify/$MODULE_ID"
-
-# make sure to mirror selinux context
-# else we get "u:object_r:tmpfs:s0"
-IFS="
-"
-for file in $( find ./ | sed "s|./|/|") ; do 
-	busybox chcon --reference="/data/adb/modules/$MODULE_ID/$file" ".$file"  
-done
-
 # here we do the vendor mount mimic
 [ -w /mnt ] && MNT_FOLDER=/mnt
 [ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
@@ -63,7 +51,7 @@ if [ -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
 fi
 
 # create it
-mkdir -p "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+cd "$MNT_FOLDER" && cp -r "/data/adb/modules/$MODULE_ID" "$FAKE_MOUNT_NAME"
 
 # then make sure its there
 if [ ! -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
@@ -72,8 +60,16 @@ if [ ! -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
 	exit 1
 fi
 
-# now bind mount it
-busybox mount --bind "$(pwd)/$DIR" "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+# go inside
+cd "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+
+# make sure to mirror selinux context
+# else we get "u:object_r:tmpfs:s0"
+IFS="
+"
+for file in $( find ./ | sed "s|./|/|") ; do 
+	busybox chcon --reference="/data/adb/modules/$MODULE_ID/$file" ".$file"  
+done
 
 # mounting functions
 normal_depth() {

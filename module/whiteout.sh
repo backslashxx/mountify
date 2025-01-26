@@ -33,20 +33,19 @@ fi
 # functions
 # whiteout_create
 whiteout_create() {
-	mkdir -p "/debug_ramdisk/mountify/wo/${1%/*}"
-  	busybox mknod "/debug_ramdisk/mountify/wo/$1" c 0 0
-  	busybox setfattr -n trusted.overlay.whiteout -v y "/debug_ramdisk/mountify/wo/$1"
-  	chmod 644 "/debug_ramdisk/mountify/wo/$1"
+	mkdir -p "$MNT_FOLDER/$FAKE_MOUNT_NAME/${1%/*}"
+  	busybox mknod "$MNT_FOLDER/$FAKE_MOUNT_NAME/$1" c 0 0
+  	busybox setfattr -n trusted.overlay.whiteout -v y "$MNT_FOLDER/$FAKE_MOUNT_NAME/$1"
+  	chmod 644 "$MNT_FOLDER/$FAKE_MOUNT_NAME/$1"
 }
 
 for line in $( sed '/#/d' "$MODDIR/whiteouts.txt" ); do
 	whiteout_create "$line"
 done
 
-if [ -d /debug_ramdisk/mountify/wo ]; then
+if [ -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
 	echo "mountify/whiteout: processing whiteouts" >> /dev/kmsg
-	busybox mount --bind "/debug_ramdisk/mountify/wo" "$MNT_FOLDER/$FAKE_MOUNT_NAME"
-	cd /debug_ramdisk/mountify/wo
+	cd "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 	for DIR in $(ls -d */*/); do
 		busybox mount -t overlay -o "lowerdir=$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR:/$DIR" overlay "/$DIR"
 		${SUSFS_BIN} add_sus_mount "/$DIR"
