@@ -23,7 +23,7 @@ MODULE_ID="$1"
 FAKE_MOUNT_NAME="$2"
 
 TARGET_DIR="/data/adb/modules/$MODULE_ID"
-if [ ! -d "$TARGET_DIR" ] || [ -f "$TARGET_DIR/disable" ] || [ -f "$TARGET_DIR/remove" ]; then
+if [ ! -d "$TARGET_DIR" ] || [ -f "$TARGET_DIR/disable" ] || [ -f "$TARGET_DIR/remove" ] || [ "$MODULE_ID" = "bindhosts" ]; then
 	echo "mountify/mount: module with name $MODULE_ID does NOT exist or not meant to be mounted" >> /dev/kmsg
 	exit 1
 fi
