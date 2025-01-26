@@ -35,12 +35,16 @@ fi
 whiteout_create() {
 	mkdir -p "$MNT_FOLDER/$FAKE_MOUNT_NAME/${1%/*}"
   	busybox mknod "$MNT_FOLDER/$FAKE_MOUNT_NAME/$1" c 0 0
+  	busybox chcon --reference="$1" "$MNT_FOLDER/$FAKE_MOUNT_NAME/$1"  
   	busybox setfattr -n trusted.overlay.whiteout -v y "$MNT_FOLDER/$FAKE_MOUNT_NAME/$1"
   	chmod 644 "$MNT_FOLDER/$FAKE_MOUNT_NAME/$1"
 }
 
 for line in $( sed '/#/d' "$MODDIR/whiteouts.txt" ); do
-	whiteout_create "$line"
+	# make sure to only whiteout if file exists
+	if [ -e "$line" ]; then
+		whiteout_create "$line"
+	fi
 done
 
 if [ -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
