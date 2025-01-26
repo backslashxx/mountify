@@ -43,12 +43,13 @@ whiteout_create() {
 for line in $( sed '/#/d' "$MODDIR/whiteouts.txt" ); do
 	# make sure to only whiteout if file exists
 	if [ -e "$line" ]; then
+		echo "mountify/whiteout: whiting-out $line " >> /dev/kmsg
 		whiteout_create "$line"
 	fi
 done
 
 if [ -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
-	echo "mountify/whiteout: processing whiteouts" >> /dev/kmsg
+	echo "mountify/whiteout: mounting whiteouts" >> /dev/kmsg
 	cd "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 	for DIR in $(ls -d */*/); do
 		busybox mount -t overlay -o "lowerdir=$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR:/$DIR" overlay "/$DIR"
