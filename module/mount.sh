@@ -74,7 +74,7 @@ done
 # mounting functions
 normal_depth() {
 	for DIR in $(ls -d */*/); do
-		busybox mount -t overlay -o "lowerdir=$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR:/$DIR" overlay "/$DIR"
+		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:/$DIR" overlay "/$DIR"
 		${SUSFS_BIN} add_sus_mount "/$DIR"
 	done
 }
@@ -82,7 +82,7 @@ normal_depth() {
 # handle single depth on magic mount
 single_depth() {
 	for DIR in $( ls -d system/apex/ system/app/ system/bin/ system/etc/ system/fonts/ system/framework/ system/lib/ system/lib64/ system/priv-app/ system/usr/ 2>/dev/null ); do
-		busybox mount -t overlay -o "lowerdir=$MNT_FOLDER/$FAKE_MOUNT_NAME/$DIR:/$DIR" overlay "/$DIR"
+		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:/$DIR" overlay "/$DIR"
 		${SUSFS_BIN} add_sus_mount "/$DIR"
 	done
 }
@@ -95,7 +95,11 @@ if [ "$KSU_MAGIC_MOUNT" = "true" ] || [ "$APATCH_BIND_MOUNT" = "true" ] || \
 	# handle single depth on magic mount
 	single_depth
 	# normal routine
-	cd system && normal_depth
+	if [ -L /product ] || [ -L /system_ext ]; then
+		normal_depth
+	else
+		cd system && normal_depth
+	fi
 else
 	normal_depth
 fi
