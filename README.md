@@ -18,6 +18,12 @@
 2. copy those whiteouts to `/mnt/vendor/whiteout`
 3. overlay `/mnt/vendor/whiteout/system/bin` to `/system/bin`
 
+## Why It’s Done This Way
+- Magic mount drastically increases mount count, making detection possible (zimperium)
+- OverlayFS mounting with ext4 image upperdir is detectable due to it creating device nodes on /proc/fs, while yes ext4 /data as overlay source is possible, who uses that nowadays?
+- F2FS /data as overlay source fails with native casefolding (ovl_dentry_weird), so only sdcardfs users can use /data as overlay source.
+- Frankly I dont see a way to this module mounting situation, this shit is more of a shitty band-aid 
+
 ## Usage
 - edit config.sh, `mountify_mounts=1` then modify modules.txt to list modules you want mounted.
 
@@ -39,6 +45,4 @@ module_id fake_folder_name
 
 ## Links
 [Download](https://github.com/backslashxx/mountify/releases)
-
-
 
