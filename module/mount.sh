@@ -14,8 +14,8 @@ fi
 
 # exit for missing args
 if [ -z "$1" ] || [ -z "$2" ]; then
-	echo "usage: "
-	echo "$(basename "$0" ) module_id fake_folder_name"
+	# echo "$(basename "$0" ) module_id fake_folder_name"
+	echo "mountify/mount: missing arguments, fuck off" >> /dev/kmsg
 	exit 1
 fi
 
@@ -28,7 +28,7 @@ if [ ! -d "$TARGET_DIR" ] || [ -f "$TARGET_DIR/disable" ] || [ -f "$TARGET_DIR/r
 	exit 1
 fi
 
-echo "mountify/mount: processing $MODULE_ID" >> /dev/kmsg
+echo "mountify/mount: processing $MODULE_ID with $FAKE_MOUNT_NAME as fake name" >> /dev/kmsg
 
 # skip_mount is not needed on .nomount MKSU
 # we do the logic like this so that it catches all non-magic ksu
@@ -46,6 +46,8 @@ fi
 # make sure its not there
 if [ -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
 	# anti fuckup
+	# this is important as someone might actually use legit folder names
+	# and same shit exists on MNT_FOLDER, prevent this issue.
 	echo "mountify/mount: skipping $MODULE_ID with fake folder name $FAKE_MOUNT_NAME as it already exists!" >> /dev/kmsg
 	exit 1
 fi
@@ -56,7 +58,7 @@ cd "$MNT_FOLDER" && cp -r "/data/adb/modules/$MODULE_ID" "$FAKE_MOUNT_NAME"
 # then make sure its there
 if [ ! -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
 	# weird if it happens
-	echo "mountify/mount: failed creating folder with fake_folder_name $FAKE_MOUNT_NAME" >> /dev/kmsg
+	echo "mountify/mount: failed creating folder with fake_folder_name $FAKE_MOUNT_NAME !" >> /dev/kmsg
 	exit 1
 fi
 
@@ -94,7 +96,7 @@ if [ "$KSU_MAGIC_MOUNT" = "true" ] || [ "$APATCH_BIND_MOUNT" = "true" ] || \
 	{ [ -f /data/adb/magisk/magisk ] && [ -z "$KSU" ] && [ -z "$APATCH" ]; }; then
 	# handle single depth on magic mount
 	single_depth
-	# normal routine
+	# handle this stance when /product is a symlink to /system/product
 	if [ -L /product ] || [ -L /system_ext ]; then
 		normal_depth
 	else
