@@ -73,6 +73,11 @@ for file in $( find ./ | sed "s|./|/|") ; do
 	busybox chcon --reference="/data/adb/modules/$MODULE_ID/$file" ".$file"  
 done
 
+targets="odm
+product
+system_ext
+vendor"
+
 # mounting functions
 normal_depth() {
 	for DIR in $(ls -d */*/); do
@@ -80,6 +85,15 @@ normal_depth() {
 		${SUSFS_BIN} add_sus_mount "/$DIR"
 	done
 }
+
+# controlled depth
+controlled_depth() {
+	for DIR in $(ls -d $1/*/); do
+		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:/$DIR" overlay "/$DIR"
+		${SUSFS_BIN} add_sus_mount "/$DIR"
+	done
+}
+
 
 # handle single depth on magic mount
 single_depth() {
@@ -92,16 +106,19 @@ single_depth() {
 # https://github.com/5ec1cff/KernelSU/commit/92d793d0e0e80ed0e87af9e39879d2b70c37c748
 # on overlayfs, moddir/system/product is symlinked to moddir/product
 # on magic, moddir/product it symlinked to moddir/system/product
-if [ "$KSU_MAGIC_MOUNT" = "true" ] || [ "$APATCH_BIND_MOUNT" = "true" ] || \
-	{ [ -f /data/adb/magisk/magisk ] && [ -z "$KSU" ] && [ -z "$APATCH" ]; }; then
+if [ "$KSU_MAGIC_MOUNT" = "true" ] || [ "$APATCH_BIND_MOUNT" = "true" ] || { [ -f /data/adb/magisk/magisk ] && [ -z "$KSU" ] && [ -z "$APATCH" ]; }; then
 	# handle single depth on magic mount
 	single_depth
 	# handle this stance when /product is a symlink to /system/product
-	if [ -L /product ] || [ -L /system_ext ]; then
-		normal_depth
-	else
-		cd system && normal_depth
-	fi
+	for folder in $targets ; do 
+		# reset cwd due to loop
+		cd "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+		if [ -L "/$folder" ] && [ ! -L "/system/$folder" ]; then
+			controlled_depth "system/$folder"
+		else
+			cd system && controlled_depth "$folder"
+		fi
+	done
 else
 	normal_depth
 fi
