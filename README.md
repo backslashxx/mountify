@@ -38,7 +38,8 @@ module_id fake_folder_name
 ```
 
 ## Limitations
-- Whiteouts tend to fail on most setups. I still do NOT know why. \<insert we just dont know gif>
+- Native whiteout method tends to fail on most setups. I still do NOT know why.
+- Workaround for whiteouts [here](https://github.com/backslashxx/mountify/issues/1#issue-2811563673)
 
 ## Support / Warranty
 - None, none at all. I am handing you a sharp knife, it is not on me if you stab yourself with it.
