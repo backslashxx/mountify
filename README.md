@@ -14,9 +14,8 @@
 2. mirrors SELinux context of every file from `/data/adb/modules/module_id` to `/mnt/vendor/fake_folder_name`
 3. overlay `/mnt/vendor/fake_folder_name/system/bin` to `/system/bin`
 ### whiteouts
-1. generate whiteouts on `/debug_ramdisk/mountify/wo`
-2. copy those whiteouts to `/mnt/vendor/whiteout`
-3. overlay `/mnt/vendor/whiteout/system/bin` to `/system/bin`
+1. generate whiteouts module (id: mountify_whiteouts)
+2. you just mount it like via module mount above
 
 ## Why It’s Done This Way
 - Magic mount drastically increases mount count, making detection possible (zimperium)
@@ -31,15 +30,18 @@
 module_id fake_folder_name
 ```
 
-- edit config.sh, `mountify_whiteouts=1` then modify whiteouts.txt for files you want whited out.
+- run `whiteout_gen.sh target.txt` where target.txt contains list of paths you want whited out. it has to follow magisk module hierarchy so everything has to start with "/system/"
 
 ```
-/system/bin/find
+/system/vendor/bin/install-recovery.sh
+/system/bin/install-recovery.sh
+/system/system_ext/app/MatLog
 ```
+- for whiting out addon.d, edit config.sh, set `mountify_whiteout_addond=1` and `FAKE_ADDOND_MOUNT_NAME="fake_addond"`
 
 ## Limitations
-- Native whiteout method tends to fail on most setups. I still do NOT know why.
-- Workaround for whiteouts [here](https://github.com/backslashxx/mountify/issues/1#issue-2811563673)
+- Whiteouts might still be hit and miss.
+- /system/addon.d whiteout has to be handled specifically. `WARNING: This can have repercussions when whited out!`
 
 ## Support / Warranty
 - None, none at all. I am handing you a sharp knife, it is not on me if you stab yourself with it.
