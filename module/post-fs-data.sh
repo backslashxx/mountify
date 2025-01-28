@@ -31,7 +31,8 @@ done
 # everything else can be handled like a module but not this, due 
 # to it being single depth. we can treat this as special case.
 whiteout_addond() {
-	if [ ! -e /system/addon.d ] || [ ! "$mountify_whiteout_addond" = 1 ] || [ -z "$FAKE_ADDOND_MOUNT_NAME" ]; then
+	if [ ! -e /system/addon.d ] || [ ! "$mountify_whiteout_addond" = 1 ] || 
+		[ -z "$FAKE_ADDOND_MOUNT_NAME" ] || [ -d "$MNT_FOLDER/$FAKE_ADDOND_MOUNT_NAME" ] ; then
 		return
 	fi
 	echo "mountify/post-fs-data: whiteout_addond routine start! " >> /dev/kmsg
