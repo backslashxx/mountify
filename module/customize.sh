@@ -1,6 +1,10 @@
 #!/bin/sh
-PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
 # customize.sh
+# this script is part of mountify
+# No warranty.
+# No rights reserved.
+# This is free software; you can redistribute it and/or modify it under the terms of The Unlicense.
+PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
 
 # some bullshit just to use clear
 if [ "$MMRL" = "true" ] || { [ "$KSU" = "true" ] && [ "$KSU_VER_CODE" -ge 11998 ]; } || 
