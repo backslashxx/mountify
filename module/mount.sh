@@ -73,6 +73,18 @@ for file in $( find ./ | sed "s|./|/|") ; do
 	busybox chcon --reference="/data/adb/modules/$MODULE_ID/$file" ".$file"  
 done
 
+# catch opaque dirs, requires getfattr
+if command -v getfattr > /dev/null 2>&1; then
+        for dir in $( find /data/adb/modules/$MODULE_ID -type d ) ; do
+                if getfattr -d $dir | grep -q "trusted.overlay.opaque" ; then
+                	echo "mountify_debug: opaque dir $dir found!" >> /dev/kmsg
+                	opaque_dir=$(echo $dir | sed "s|"/data/adb/modules/$MODULE_ID"|.|")
+                	setfattr -n trusted.overlay.opaque -v y $opaque_dir
+			echo "mountify_debug: replaced $opaque_dir!" >> /dev/kmsg
+                fi
+        done
+fi
+
 targets="odm
 product
 system_ext
