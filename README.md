@@ -14,8 +14,9 @@
 2. mirrors SELinux context of every file from `/data/adb/modules/module_id` to `/mnt/vendor/fake_folder_name`
 3. overlay `/mnt/vendor/fake_folder_name/system/bin` to `/system/bin`
 ### whiteouts
-1. generate whiteouts module (id: mountify_whiteouts)
+1. whiteout_gen.sh will generate a module (id: mountify_whiteouts)
 2. you just mount it like via module mount above
+- alternatively you can do [this](https://kernelsu.org/guide/module.html#kernelsu-modules:~:text=You%20can%20also%20declare%20a%20variable%20named%20REMOVE) and mount it like a module
 
 ## Why It’s Done This Way
 - Magic mount drastically increases mount count, making detection possible (zimperium)
