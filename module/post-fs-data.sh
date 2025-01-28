@@ -7,6 +7,7 @@
 PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
 SUSFS_BIN=/data/adb/ksu/bin/ksu_susfs
 MODDIR="/data/adb/modules/mountify"
+. $MODDIR/config.sh
 
 # grab start time
 echo "mountify/post-fs-data: start!" >> /dev/kmsg
@@ -21,6 +22,33 @@ for line in $( sed '/#/d' "$MODDIR/modules.txt" ); do
 	folder_name=$( echo $line | awk {'print $2'} )
 	sh "$MODDIR/mount.sh" "$module_id" "$folder_name"
 done
+
+
+[ -w /mnt ] && MNT_FOLDER=/mnt
+[ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
+
+# whiteout /system/addon.d
+# everything else can be handled like a module but not this due to it 
+# being single depth. we can treat this as special case.
+whiteout_addond() {
+	if [ ! -e /system/addon.d ] || [ ! "$mountify_whiteout_addond" = 1 ] || [ -z "$FAKE_ADDOND_MOUNT_NAME" ]; then
+		return
+	fi
+	echo "mountify/post-fs-data: whiteout_addond routine start! " >> /dev/kmsg
+	# whiteout routine
+	mkdir -p "$MNT_FOLDER/$FAKE_ADDOND_MOUNT_NAME/system"
+	busybox chcon --reference="/system" "$MNT_FOLDER/$FAKE_ADDOND_MOUNT_NAME/system" 
+	busybox mknod "$MNT_FOLDER/$FAKE_ADDOND_MOUNT_NAME/system/addon.d" c 0 0
+	busybox chcon --reference="/system/addon.d" "$MNT_FOLDER/$FAKE_ADDOND_MOUNT_NAME/system/addon.d" 
+	busybox setfattr -n trusted.overlay.whiteout -v y "$MNT_FOLDER/$FAKE_ADDOND_MOUNT_NAME/system/addon.d"
+	chmod 644 "$MNT_FOLDER/$FAKE_ADDOND_MOUNT_NAME/system/addon.d"
+	
+	# mount
+	busybox mount -t overlay -o "lowerdir=$MNT_FOLDER/$FAKE_ADDOND_MOUNT_NAME/system:/system" overlay "/system"
+	[ ! -e /system/addon.d ] && echo "mountify/post-fs-data: whiteout_addond success!" >> /dev/kmsg
+}
+
+whiteout_addond
 
 echo "mountify/post-fs-data: finished!" >> /dev/kmsg
 
