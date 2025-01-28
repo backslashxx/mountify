@@ -1,4 +1,4 @@
-/vendor/bin/install-recovery.sh
+/system/vendor/bin/install-recovery.sh
 /system/bin/install-recovery.sh
-/system/addon.d
+/system/system_ext/app/MatLog
 

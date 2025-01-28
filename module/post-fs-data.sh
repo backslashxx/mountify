@@ -22,11 +22,6 @@ for line in $( sed '/#/d' "$MODDIR/modules.txt" ); do
 	sh "$MODDIR/mount.sh" "$module_id" "$folder_name"
 done
 
-# whiteouts section
-# whiteouts.txt
-# <file_to_whiteout>
-sh "$MODDIR/whiteout.sh" 
-
 echo "mountify/post-fs-data: finished!" >> /dev/kmsg
 
 # EOF
