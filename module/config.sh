@@ -9,4 +9,9 @@
 # just set to 0 to disable
 mountify_mounts=1
 
+# addon.d whiteout
+# this is a special case
+mountify_whiteout_addond=0
+FAKE_ADDOND_MOUNT_NAME="my_addons"
+
 # EOF
