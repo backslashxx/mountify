@@ -59,7 +59,7 @@ else
 	abort "[!] CONFIG_TMPFS_XATTR is required for this module!"
 fi
 
-configs="modules.txt whiteouts.txt config.sh"
+configs="modules.txt whiteouts.txt"
 for file in $configs; do
 	if [ -f "/data/adb/modules/mountify/$file" ]; then
 		echo "[+] migrating $file"
