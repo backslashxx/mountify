@@ -25,6 +25,18 @@ else
 	sleep 2
 fi
 
+# feel free to comment this condition out to bypass
+# but this is not a recommended configuration
+if { [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ]; } || { [ "$APATCH" = true ] && [ ! "$APATCH_BIND_MOUNT" = true ]; }; then
+	abort "[!] Unsupported configuration!"
+fi
+
+# theres reports that it bootloops on certain devices
+# split it from top condition for readability
+if getprop ro.product.name | grep -q 'vermeer' ; then
+	abort "[!] Unsupported configuration!"
+fi
+
 echo "[+] mountify"
 echo "[+] SysReq test"
 
