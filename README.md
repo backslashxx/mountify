@@ -25,7 +25,7 @@
 - Frankly I dont see a way to this module mounting situation, this shit is more of a shitty band-aid 
 
 ## Usage
-- edit config.sh, `mountify_mounts=1` then modify modules.txt to list modules you want mounted.
+- modify modules.txt to list modules you want mounted.
 
 ```
 module_id fake_folder_name
@@ -38,7 +38,7 @@ module_id fake_folder_name
 /system/bin/install-recovery.sh
 /system/system_ext/app/MatLog
 ```
-- for whiting out addon.d, edit config.sh, set `mountify_whiteout_addond=1` and `FAKE_ADDOND_MOUNT_NAME="fake_addond"`
+- for whiting out addon.d, edit post-fs-data.sh, set `mountify_whiteout_addond=1` and `FAKE_ADDOND_MOUNT_NAME="fake_addond"`
 
 ## Limitations
 - Whiteouts might still be hit and miss.
