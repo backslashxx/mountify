@@ -42,7 +42,7 @@ controlled_depth() {
 
 # handle single depth on magic mount
 single_depth() {
-	for DIR in $( ls -d system/* | grep -vE "odm|product|system_ext|vendor" 2>/dev/null ); do
+	for DIR in $( ls -d system/* | grep -vE "(odm|product|system_ext|vendor)$" 2>/dev/null ); do
 		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:/$DIR" overlay "/$DIR"
 		${SUSFS_BIN} add_sus_mount "/$DIR"
 	done
