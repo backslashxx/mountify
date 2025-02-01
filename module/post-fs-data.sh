@@ -56,6 +56,13 @@ else
 	getfattr() { /system/bin/toybox getfattr "$@"; }
 fi
 
+# https://github.com/5ec1cff/KernelSU/commit/92d793d0e0e80ed0e87af9e39879d2b70c37c748
+# on overlayfs, moddir/system/product is symlinked to moddir/product
+# on magic, moddir/product it symlinked to moddir/system/product
+if [ "$KSU_MAGIC_MOUNT" = "true" ] || [ "$APATCH_BIND_MOUNT" = "true" ] || { [ -f /data/adb/magisk/magisk ] && [ -z "$KSU" ] && [ -z "$APATCH" ]; }; then
+	MAGIC_MOUNT=true
+fi
+
 mountify() {
 	# return for missing args
 	if [ -z "$1" ] || [ -z "$2" ]; then
@@ -122,10 +129,7 @@ mountify() {
 		fi
 	done
 
-	# https://github.com/5ec1cff/KernelSU/commit/92d793d0e0e80ed0e87af9e39879d2b70c37c748
-	# on overlayfs, moddir/system/product is symlinked to moddir/product
-	# on magic, moddir/product it symlinked to moddir/system/product
-	if [ "$KSU_MAGIC_MOUNT" = "true" ] || [ "$APATCH_BIND_MOUNT" = "true" ] || { [ -f /data/adb/magisk/magisk ] && [ -z "$KSU" ] && [ -z "$APATCH" ]; } || [ "$MODULE_ID" = "mountify_whiteouts" ]; then
+	 if [ "$MAGIC_MOUNT" = true ] || [ "$MODULE_ID" = "mountify_whiteouts" ]; then
 		# handle single depth on magic mount
 		single_depth
 		# handle this stance when /product is a symlink to /system/product
