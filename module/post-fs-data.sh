@@ -68,7 +68,7 @@ mountify() {
 	FAKE_MOUNT_NAME="$2"
 
 	TARGET_DIR="/data/adb/modules/$MODULE_ID"
-	if [ ! -d "$TARGET_DIR" ] || [ -f "$TARGET_DIR/disable" ] || [ -f "$TARGET_DIR/remove" ] || [ "$MODULE_ID" = "bindhosts" ]; then
+	if [ ! -d "$TARGET_DIR/system" ] || [ -f "$TARGET_DIR/disable" ] || [ -f "$TARGET_DIR/remove" ] || [ "$MODULE_ID" = "bindhosts" ]; then
 		echo "mountify/post-fs-data: module with name $MODULE_ID does NOT exist or not meant to be mounted" >> /dev/kmsg
 		return
 	fi

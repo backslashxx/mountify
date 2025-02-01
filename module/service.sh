@@ -17,7 +17,7 @@ done
 # grab module list
 modlist="modules:"
 for module in $(awk {'print $1'} $MODDIR/modules.txt); do
-	if [ -d "/data/adb/modules/$module" ] && [ ! -f "/data/adb/modules/$module/disable" ] && 
+	if [ -d "/data/adb/modules/$module/system" ] && [ ! -f "/data/adb/modules/$module/disable" ] && 
 		[ ! -f "/data/adb/modules/$module/remove" ] && [ ! $module = "bindhosts" ]; then
 		modlist="$modlist $module"
 	fi
