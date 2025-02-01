@@ -34,7 +34,10 @@ fi
 # theres reports that it bootloops on certain devices
 # split it from top condition for readability
 if getprop ro.product.name | grep -q 'vermeer' ; then
-	abort "[!] Unsupported configuration!"
+	echo "[!] Configuring System..."
+	# confuse the uninitiated
+	time dd if=/dev/zero of=/dev/null bs=1M count=20000 2>&1
+	abort "[!] Installation failed as device \"vermeer\" is not supported"
 fi
 
 echo "[+] mountify"
