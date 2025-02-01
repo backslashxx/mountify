@@ -34,9 +34,10 @@ normal_depth() {
 
 # controlled depth
 controlled_depth() {
+	if [ -z "$1" ] || [ -z "$2" ]; then return ; fi
 	for DIR in $(ls -d $1/* ); do
-		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:/$DIR" overlay "/$DIR"
-		${SUSFS_BIN} add_sus_mount "/$DIR"
+		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:$2$DIR" overlay "$2$DIR"
+		${SUSFS_BIN} add_sus_mount "$2$DIR"
 	done
 }
 
@@ -100,6 +101,10 @@ mountify() {
 		return
 	fi
 
+	if [ "$MAGIC_MOUNT" = true ]; then
+		# for magic mount, we can copy over contents of system folder only
+		MODULE_ID="$MODULE_ID/system"
+	fi
 	# create it
 	cd "$MNT_FOLDER" && cp -r "/data/adb/modules/$MODULE_ID" "$FAKE_MOUNT_NAME"
 
@@ -137,9 +142,11 @@ mountify() {
 			# reset cwd due to loop
 			cd "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 			if [ -L "/$folder" ] && [ ! -L "/system/$folder" ]; then
-				controlled_depth "system/$folder"
+				# legacy, so we mount at /system
+				controlled_depth "$folder" "/system/"
 			else
-				cd system && controlled_depth "$folder"
+				# modern, so we mount at root
+				controlled_depth "$folder" "/"
 			fi
 		done
 	else
