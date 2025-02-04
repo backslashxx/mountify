@@ -52,7 +52,9 @@ else
 fi
 
 # test for tmpfs xattr
-testfile="/debug_ramdisk/tmpfs_xattr_testfile"
+[ -w /mnt ] && MNT_FOLDER=/mnt
+[ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
+testfile="$MNT_FOLDER/tmpfs_xattr_testfile"
 rm $testfile > /dev/null 2>&1 
 busybox mknod "$testfile" c 0 0 > /dev/null 2>&1 
 if busybox setfattr -n trusted.overlay.whiteout -v y "$testfile" > /dev/null 2>&1 ; then 
