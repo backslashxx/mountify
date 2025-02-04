@@ -1,4 +1,8 @@
 /system/vendor/bin/install-recovery.sh
 /system/bin/install-recovery.sh
 /system/system_ext/app/MatLog
+/system/system_ext/priv-app/AudioFX
+/system/product/app/PowerOffAlarm
+/system/product/app/Twelve
+/system/etc/nikgapps_logs_archive
 
