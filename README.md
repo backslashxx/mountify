@@ -38,11 +38,9 @@ module_id fake_folder_name
 /system/bin/install-recovery.sh
 /system/system_ext/app/MatLog
 ```
-- for whiting out addon.d, edit post-fs-data.sh, set `mountify_whiteout_addond=1` and `FAKE_ADDOND_MOUNT_NAME="fake_addond"`
 
 ## Limitations
 - Whiteouts might still be hit and miss.
-- /system/addon.d whiteout has to be handled specifically. `WARNING: This can have repercussions when whited out!`
 
 ## Support / Warranty
 - None, none at all. I am handing you a sharp knife, it is not on me if you stab yourself with it.
