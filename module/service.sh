@@ -6,6 +6,14 @@
 # This is free software; you can redistribute it and/or modify it under the terms of The Unlicense.
 PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
 MODDIR="/data/adb/modules/mountify"
+mountify_stop_start=0
+# read config
+. $MODDIR/config.sh
+
+# stop; start
+if [ $mountify_stop_start = 1 ]; then
+	stop; start
+fi
 
 # wait for boot
 until [ "$(getprop sys.boot_completed)" = "1" ]; do
