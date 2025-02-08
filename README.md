@@ -25,7 +25,7 @@
 - Frankly I dont see a way to this module mounting situation, this shit is more of a shitty band-aid 
 
 ## Usage
-- modify modules.txt to list modules you want mounted.
+- edit config.sh, `mountify_mounts=1` then modify modules.txt to list modules you want mounted.
 
 ```
 module_id fake_folder_name
