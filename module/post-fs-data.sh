@@ -106,12 +106,13 @@ mountify() {
 		return
 	fi
 
+	BASE_DIR=$MODULE_ID
 	if [ "$MAGIC_MOUNT" = true ]; then
 		# for magic mount, we can copy over contents of system folder only
-		MODULE_ID="$MODULE_ID/system"
+		BASE_DIR="$MODULE_ID/system"
 	fi
 	# create it
-	cd "$MNT_FOLDER" && cp -r "/data/adb/modules/$MODULE_ID" "$FAKE_MOUNT_NAME"
+	cd "$MNT_FOLDER" && cp -r "/data/adb/modules/$BASE_DIR" "$FAKE_MOUNT_NAME"
 
 	# then make sure its there
 	if [ ! -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
@@ -126,14 +127,14 @@ mountify() {
 	# make sure to mirror selinux context
 	# else we get "u:object_r:tmpfs:s0"
 	for file in $( find ./ | sed "s|./|/|") ; do 
-		busybox chcon --reference="/data/adb/modules/$MODULE_ID/$file" ".$file"  
+		busybox chcon --reference="/data/adb/modules/$BASE_DIR/$file" ".$file"  
 	done
 
 	# catch opaque dirs, requires getfattr
-	for dir in $( find /data/adb/modules/$MODULE_ID -type d ) ; do
+	for dir in $( find /data/adb/modules/$BASE_DIR -type d ) ; do
 		if getfattr -d "$dir" | grep -q "trusted.overlay.opaque" ; then
 			echo "mountify_debug: opaque dir $dir found!" >> /dev/kmsg
-			opaque_dir=$(echo "$dir" | sed "s|"/data/adb/modules/$MODULE_ID"|.|")
+			opaque_dir=$(echo "$dir" | sed "s|"/data/adb/modules/$BASE_DIR"|.|")
 			busybox setfattr -n trusted.overlay.opaque -v y "$opaque_dir"
 			echo "mountify_debug: replaced $opaque_dir!" >> /dev/kmsg
 		fi
