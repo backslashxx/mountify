@@ -18,7 +18,7 @@ grep overlay /proc/mounts
 
 # ksu and apatch auto closes
 # make it wait 20s so we can read
-if [ -z "$MMRL" ] && { [ "$KSU" = "true" ] || [ "$APATCH" = "true" ]; }; then
+if [ -z "$MMRL" ] && [ -z "$KSU_NEXT" ]  && { [ "$KSU" = "true" ] || [ "$APATCH" = "true" ]; }; then
 	sleep 20
 fi
 
