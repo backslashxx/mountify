@@ -18,6 +18,14 @@ fi
 # grab start time
 echo "mountify/post-fs-data: start!" >> /dev/kmsg
 
+# find and create logging folder
+[ -w /tmp ] && LOG_FOLDER=/tmp/mountify
+[ -w /sbin ] && LOG_FOLDER=/sbin/mountify
+[ -w /debug_ramdisk ] && LOG_FOLDER=/debug_ramdisk/mountify
+mkdir -p "$LOG_FOLDER"
+# log before 
+cat /proc/mounts > "$LOG_FOLDER/before"
+
 # module mount section
 IFS="
 "
@@ -158,6 +166,9 @@ mountify() {
 	else
 		normal_depth
 	fi
+	
+	# if it reached here, module probably mounted, log it
+	echo "$MODULE_ID" >> "$LOG_FOLDER/modules"
 }
 
 # modules.txt
@@ -169,6 +180,8 @@ for line in $( sed '/#/d' "$MODDIR/modules.txt" ); do
 	mountify "$module_id" "$folder_name"
 done
 
+# log after
+cat /proc/mounts > "$LOG_FOLDER/after"
 echo "mountify/post-fs-data: finished!" >> /dev/kmsg
 
 # EOF
