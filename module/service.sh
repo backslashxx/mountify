@@ -20,24 +20,16 @@ until [ "$(getprop sys.boot_completed)" = "1" ]; do
     sleep 1
 done
 
-[ ! -f $MODDIR/modules.txt ] && touch $MODDIR/modules.txt
+# find logging folder
+[ -w /tmp ] && LOG_FOLDER=/tmp/mountify
+[ -w /sbin ] && LOG_FOLDER=/sbin/mountify
+[ -w /debug_ramdisk ] && LOG_FOLDER=/debug_ramdisk/mountify
 
-# grab module list
-modlist="modules:"
-for module in $(awk {'print $1'} $MODDIR/modules.txt); do
-	if [ -d "/data/adb/modules/$module/system" ] && [ ! -f "/data/adb/modules/$module/disable" ] && 
-		[ ! -f "/data/adb/modules/$module/remove" ] && [ ! $module = "bindhosts" ]; then
-		modlist="$modlist $module"
-	fi
-done
-
-# create module list for status
-if [ "$(echo $modlist | wc -w)" -gt 1 ]; then
-	string="description=$modlist"
-else
-	string="description=no modules mounted"
+# update description accrdingly
+string="description=no modules mounted"
+if [ -f $LOG_FOLDER/modules ]; then
+	string="description=modules: $( for module in $(cat "$LOG_FOLDER/modules" ) ; do printf "$module " ; done ) "
 fi
-
 sed -i "s/^description=.*/$string/g" $MODDIR/module.prop
 
 # EOF
