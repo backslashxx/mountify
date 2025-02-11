@@ -6,9 +6,17 @@
 # This is free software; you can redistribute it and/or modify it under the terms of The Unlicense.
 
 # mountify config
-# module mounting
-# just set to 0 to disable
-mountify_mounts=1
+# module mounting config
+# 0 to disable
+# 1 for manual mode (this will mount modules found on modules.txt)
+# 2 for auto mode (this will mount all modules with a system folder)
+mountify_mounts=2
+
+# fake mount time
+# since all module files will now be unified to a single folder
+# you can use shit like my_bigball, mi_ext, preload_common, special_preload
+# you just make this shit up
+FAKE_MOUNT_NAME="mountify"
 
 # toggle to use susfs
 # this is not really required as of 250211
