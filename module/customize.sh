@@ -64,7 +64,23 @@ else
 	abort "[!] CONFIG_TMPFS_XATTR is required for this module!"
 fi
 
-configs="modules.txt whiteouts.txt config.sh"
+# grab version code
+module_prop="/data/adb/modules/mountify/module.prop"
+if [ -f $module_prop ]; then
+	mountify_versionCode=$(grep versionCode $module_prop | sed 's/versionCode=//g' )
+else
+	mountify_versionCode=0
+fi
+
+# replace if 128 and older
+# https://github.com/backslashxx/mountify/commit/92fc25912da9a67097a8d802c2e7cb55cda2e658
+if [ $mountify_versionCode -gt 128 ]; then
+	configs="modules.txt whiteouts.txt config.sh"
+else
+	echo "[!] config.sh will be replaced!"
+	configs="modules.txt whiteouts.txt"
+fi
+
 for file in $configs; do
 	if [ -f "/data/adb/modules/mountify/$file" ]; then
 		echo "[+] migrating $file"
