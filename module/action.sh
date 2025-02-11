@@ -7,14 +7,20 @@
 PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
 MODDIR="/data/adb/modules/mountify"
 
-echo "[+] mount-ify"
+echo "[+] mountify"
 echo "[+] extended status"
 printf "\n\n"
 
-# basic bs for now
-# make it better maybe tomorrow
+# hunt logging floder
+[ -w /tmp ] && LOG_FOLDER=/tmp/mountify
+[ -w /sbin ] && LOG_FOLDER=/sbin/mountify
+[ -w /debug_ramdisk ] && LOG_FOLDER=/debug_ramdisk/mountify
 
-grep overlay /proc/mounts
+if [ -f "$LOG_FOLDER/before" ] && [ -f "$LOG_FOLDER/after" ]; then
+	diff "$LOG_FOLDER/before" "$LOG_FOLDER/after" | grep "overlay /"
+else
+	echo "[!] no logs found!"
+fi
 
 # ksu and apatch auto closes
 # make it wait 20s so we can read

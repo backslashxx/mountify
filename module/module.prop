@@ -1,6 +1,6 @@
 id=mountify
 name=mountify
-version=v1.2.8
-versionCode=128
+version=v1.2.9
+versionCode=129
 author=xx
 description=Globally mounted modules and whiteouts via OverlayFS.
