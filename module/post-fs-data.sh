@@ -15,7 +15,7 @@ FAKE_MOUNT_NAME="mountify"
 # read config
 . $MODDIR/config.sh
 # exit if disabled
-if [ $mountify_mounts -neq 2 || [ $mountify_mounts -neq 1 ]; then
+if [ $mountify_mounts = 0 ]; then
 	exit 0
 fi
 
@@ -160,13 +160,14 @@ if [ ! -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
 	exit 1
 fi
 
-if [ $mountify_mounts = 1 ]; then
+# if manual mode and modules.txt has contents
+if [ $mountify_mounts = 1 ] && grep -qv "#" "$MODDIR/modules.txt" >/dev/null 2>&1 ; then
 	# manual mode
 	for line in $( sed '/#/d' "$MODDIR/modules.txt" ); do
 		module_id=$( echo $line | awk {'print $1'} )
 		mountify_copy "$module_id"
 	done
-elif [ $mountify_mounts = 2 ]; then
+else
 	# auto mode
 	for module in /data/adb/modules/*/system; do 
 		module_id="$(echo $module | cut -d / -f 5 )"
