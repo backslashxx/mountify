@@ -25,12 +25,6 @@ else
 	sleep 2
 fi
 
-# feel free to comment this condition out to bypass
-# but this is not a recommended configuration
-if { [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ]; } || { [ "$APATCH" = true ] && [ ! "$APATCH_BIND_MOUNT" = true ]; }; then
-	abort "[!] Unsupported configuration!"
-fi
-
 # theres reports that it bootloops on certain devices
 # split it from top condition for readability
 if getprop ro.product.name | grep -q 'vermeer' ; then
@@ -40,8 +34,11 @@ if getprop ro.product.name | grep -q 'vermeer' ; then
 	abort "[!] Installation failed as device \"vermeer\" is not supported"
 fi
 
+# routine start
+
 echo "[+] mountify"
 echo "[+] SysReq test"
+printf "\n\n"
 
 # test for overlayfs
 if grep -q "overlay" /proc/filesystems > /dev/null 2>&1; then \
@@ -63,6 +60,9 @@ if busybox setfattr -n trusted.overlay.whiteout -v y "$testfile" > /dev/null 2>&
 else
 	abort "[!] CONFIG_TMPFS_XATTR is required for this module!"
 fi
+rm $testfile > /dev/null 2>&1 
+
+printf "\n\n"
 
 # grab version code
 module_prop="/data/adb/modules/mountify/module.prop"
@@ -87,5 +87,13 @@ for file in $configs; do
 		cat "/data/adb/modules/mountify/$file" > "$MODPATH/$file"
 	fi
 done
+
+# warn on OverlayFS managers
+# while this is supported (half-assed), this is not a recommended configuration
+if { [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ]; } || { [ "$APATCH" = true ] && [ ! "$APATCH_BIND_MOUNT" = true ]; }; then
+	printf "\n\n"
+	echo "[!] WARNING: Root manager is NOT on magic mount."
+	echo "[!] This setup can cause issues and is NOT recommended."
+fi
 
 # EOF
