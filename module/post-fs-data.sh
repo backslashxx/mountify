@@ -92,7 +92,7 @@ mountify_copy() {
 	MODULE_ID="$1"
 
 	TARGET_DIR="/data/adb/modules/$MODULE_ID"
-	if [ ! -d "$TARGET_DIR/system" ] || [ -f "$TARGET_DIR/disable" ] || [ -f "$TARGET_DIR/remove" ] || [ "$MODULE_ID" = "bindhosts" ]; then
+	if [ ! -d "$TARGET_DIR/system" ] || [ -f "$TARGET_DIR/disable" ] || [ -f "$TARGET_DIR/remove" ] || [ -f "$TARGET_DIR/skip_mountify" ] || [ "$MODULE_ID" = "bindhosts" ]; then
 		echo "mountify/post-fs-data: module with name $MODULE_ID does NOT exist or not meant to be mounted" >> /dev/kmsg
 		return
 	fi
