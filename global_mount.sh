@@ -70,6 +70,9 @@ fi
 # this way manager won't mount it
 # as we handle the mounting ourselves
 [ ! -f $MODDIR/skip_mount ] && touch $MODDIR/skip_mount
+# mountify 131 added this
+# this way mountify wont remount this module
+[ ! -f $MODDIR/skip_mountify ] && touch $MODDIR/skip_mountify
 
 # determine if we are on magic mount, THIS DOES MATTER
 # on overlayfs, moddir/system/product is symlinked to moddir/product
