@@ -9,13 +9,13 @@ PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
 SUSFS_BIN=/data/adb/ksu/bin/ksu_susfs
 MODDIR="/data/adb/modules/mountify"
 # config
-mountify_mounts=1
+mountify_mounts=2
 mountify_use_susfs=0
 FAKE_MOUNT_NAME="mountify"
 # read config
 . $MODDIR/config.sh
 # exit if disabled
-if [ $mountify_mounts = 0 ]; then
+if [ $mountify_mounts -neq 2 || [ $mountify_mounts -neq 1 ]; then
 	exit 0
 fi
 
@@ -160,18 +160,19 @@ if [ ! -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
 	exit 1
 fi
 
-# TODO: automate this with a blacklist
-# some modules even if it has a /system folder should not be mounted
-# for module in /data/adb/modules/*/system; 
-#	do mountify_copy "$(echo $module | cut -d / -f 5 )"
-# done
-#
-# for now it is still manual
-# modules.txt
-for line in $( sed '/#/d' "$MODDIR/modules.txt" ); do
-	module_id=$( echo $line | awk {'print $1'} )
-	mountify_copy "$module_id"
-done
+if [ $mountify_mounts = 1 ]; then
+	# manual mode
+	for line in $( sed '/#/d' "$MODDIR/modules.txt" ); do
+		module_id=$( echo $line | awk {'print $1'} )
+		mountify_copy "$module_id"
+	done
+elif [ $mountify_mounts = 2 ]; then
+	# auto mode
+	for module in /data/adb/modules/*/system; do 
+		module_id="$(echo $module | cut -d / -f 5 )"
+		mountify_copy "$module_id"
+	done
+fi
 
 # mount 
 cd "$MNT_FOLDER/$FAKE_MOUNT_NAME"
