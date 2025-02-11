@@ -22,9 +22,9 @@ done
 
 # handle operating mode
 case $mountify_mounts in
-	1) mode="manual 🔧" ;;
-	2) mode="auto 💤" ;;
-	*) mode="disabled" ;; # ??
+	1) mode="manual 🤓" ;;
+	2) mode="auto 🤖" ;;
+	*) mode="disabled 💀" ;; # ??
 esac
 
 # find logging folder
