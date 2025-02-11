@@ -11,6 +11,7 @@ MODDIR="/data/adb/modules/mountify"
 # config
 mountify_mounts=1
 mountify_use_susfs=0
+FAKE_MOUNT_NAME="mountify"
 # read config
 . $MODDIR/config.sh
 # exit if disabled
@@ -80,16 +81,15 @@ if [ "$KSU_MAGIC_MOUNT" = "true" ] || [ "$APATCH_BIND_MOUNT" = "true" ] || { [ -
 	MAGIC_MOUNT=true
 fi
 
-mountify() {
+mountify_copy() {
 	# return for missing args
-	if [ -z "$1" ] || [ -z "$2" ]; then
+	if [ -z "$1" ]; then
 		# echo "$(basename "$0" ) module_id fake_folder_name"
 		echo "mountify/post-fs-data: missing arguments, fuck off" >> /dev/kmsg
 		return
 	fi
 
 	MODULE_ID="$1"
-	FAKE_MOUNT_NAME="$2"
 
 	TARGET_DIR="/data/adb/modules/$MODULE_ID"
 	if [ ! -d "$TARGET_DIR/system" ] || [ -f "$TARGET_DIR/disable" ] || [ -f "$TARGET_DIR/remove" ] || [ "$MODULE_ID" = "bindhosts" ]; then
@@ -97,7 +97,7 @@ mountify() {
 		return
 	fi
 
-	echo "mountify/post-fs-data: processing $MODULE_ID with $FAKE_MOUNT_NAME as fake name" >> /dev/kmsg
+	echo "mountify/post-fs-data: processing $MODULE_ID" >> /dev/kmsg
 
 	# skip_mount is not needed on .nomount MKSU
 	# we do the logic like this so that it catches all non-magic ksu
@@ -108,29 +108,14 @@ mountify() {
 		[ ! -f "$TARGET_DIR/skip_mount" ] && touch "$TARGET_DIR/skip_mount"
 	fi
 
-	# make sure its not there
-	if [ -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
-		# anti fuckup
-		# this is important as someone might actually use legit folder names
-		# and same shit exists on MNT_FOLDER, prevent this issue.
-		echo "mountify/post-fs-data: skipping $MODULE_ID with fake folder name $FAKE_MOUNT_NAME as it already exists!" >> /dev/kmsg
-		return
-	fi
-
 	BASE_DIR=$MODULE_ID
 	if [ "$MAGIC_MOUNT" = true ]; then
 		# for magic mount, we can copy over contents of system folder only
 		BASE_DIR="$MODULE_ID/system"
 	fi
-	# create it
-	cd "$MNT_FOLDER" && cp -r "/data/adb/modules/$BASE_DIR" "$FAKE_MOUNT_NAME"
-
-	# then make sure its there
-	if [ ! -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
-		# weird if it happens
-		echo "mountify/post-fs-data: failed creating folder with fake_folder_name $FAKE_MOUNT_NAME !" >> /dev/kmsg
-		return
-	fi
+	
+	# copy over our files
+	cd "$MNT_FOLDER" && cp -rf /data/adb/modules/"$BASE_DIR"/* "$FAKE_MOUNT_NAME"
 
 	# go inside
 	cd "$MNT_FOLDER/$FAKE_MOUNT_NAME"
@@ -151,37 +136,63 @@ mountify() {
 		fi
 	done
 
-	 if [ "$MAGIC_MOUNT" = true ] || [ "$MODULE_ID" = "mountify_whiteouts" ]; then
-		# handle single depth on magic mount
-		single_depth
-		# handle this stance when /product is a symlink to /system/product
-		for folder in $targets ; do 
-			# reset cwd due to loop
-			cd "$MNT_FOLDER/$FAKE_MOUNT_NAME"
-			if [ -L "/$folder" ] && [ ! -L "/system/$folder" ]; then
-				# legacy, so we mount at /system
-				controlled_depth "$folder" "/system/"
-			else
-				# modern, so we mount at root
-				controlled_depth "$folder" "/"
-			fi
-		done
-	else
-		normal_depth
-	fi
-	
-	# if it reached here, module probably mounted, log it
+	# if it reached here, module probably copied, log it
 	echo "$MODULE_ID" >> "$LOG_FOLDER/modules"
 }
 
+# make sure its not there
+if [ -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
+	# anti fuckup
+	# this is important as someone might actually use legit folder names
+	# and same shit exists on MNT_FOLDER, prevent this issue.
+	echo "mountify/post-fs-data: exiting since fake folder name $FAKE_MOUNT_NAME already exists!" >> /dev/kmsg
+	exit 1
+fi
+
+# create it
+mkdir -p "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+touch "$MNT_FOLDER/$FAKE_MOUNT_NAME/placeholder"
+
+# then make sure its there
+if [ ! -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
+	# weird if it happens
+	echo "mountify/post-fs-data: failed creating folder with fake_folder_name $FAKE_MOUNT_NAME !" >> /dev/kmsg
+	exit 1
+fi
+
+# TODO: automate this with a blacklist
+# some modules even if it has a /system folder should not be mounted
+# for module in /data/adb/modules/*/system; 
+#	do mountify_copy "$(echo $module | cut -d / -f 5 )"
+# done
+#
+# for now it is still manual
 # modules.txt
-# <modid> <fake_folder_name>
 for line in $( sed '/#/d' "$MODDIR/modules.txt" ); do
-	if [ "$mountify_mounts" = 0 ]; then return; fi
 	module_id=$( echo $line | awk {'print $1'} )
-	folder_name=$( echo $line | awk {'print $2'} )
-	mountify "$module_id" "$folder_name"
+	mountify_copy "$module_id"
 done
+
+# mount 
+cd "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+if [ "$MAGIC_MOUNT" = true ] || [ "$MODULE_ID" = "mountify_whiteouts" ]; then
+	# handle single depth on magic mount
+	single_depth
+	# handle this stance when /product is a symlink to /system/product
+	for folder in $targets ; do 
+		# reset cwd due to loop
+		cd "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+		if [ -L "/$folder" ] && [ ! -L "/system/$folder" ]; then
+			# legacy, so we mount at /system
+			controlled_depth "$folder" "/system/"
+		else
+			# modern, so we mount at root
+			controlled_depth "$folder" "/"
+		fi
+	done
+else
+	normal_depth
+fi
 
 # log after
 cat /proc/mounts > "$LOG_FOLDER/after"
