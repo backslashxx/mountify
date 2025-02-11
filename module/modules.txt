@@ -1,7 +1,6 @@
-Adreno_Gpu_Driver my_engineering
-weebu-addon my_bigball
-DisplayFeatures my_carrier
-ViPER4Android-RE-Fork my_heytap
-fake_service my_company
-mountify_whiteouts my_custom
+Adreno_Gpu_Driver
+weebu-addon
+DisplayFeatures
+fake_service
+mountify_whiteouts
 
