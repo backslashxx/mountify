@@ -26,7 +26,11 @@
 - Frankly I dont see a way to this module mounting situation, this shit is more of a shitty band-aid 
 
 ## Usage
-- edit config.sh `mountify_mounts=1` then modify modules.txt to list modules you want mounted
+### Module mount
+by default, mountify will mount all modules with a system folder. `mountify_mounts=2` If this is not an intended behavior, edit config.sh
+
+
+- `mountify_mounts=1` then modify modules.txt to list modules you want mounted
 
 ```
 module_id
@@ -39,6 +43,7 @@ mountify_whiteouts
 - `mountify_use_susfs=1` to enable susfs usage (optional)
 - `mountify_stop_start=1` to restart android at service (optional)
 
+### Whiteout
 - run `whiteout_gen.sh target.txt` where target.txt contains list of paths you want whited out. It has to follow magisk module hierarchy so everything has to start with "/system/". Here are some examples:
 
 ```
@@ -59,4 +64,5 @@ mountify_whiteouts
 
 ## Links
 [Download](https://github.com/backslashxx/mountify/releases)
+
 
