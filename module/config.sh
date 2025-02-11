@@ -10,6 +10,13 @@
 # just set to 0 to disable
 mountify_mounts=1
 
+# toggle to use susfs
+# this is not really required as of 250211
+# it seems recent susfs will just omit mounts done within ksu domain (100000+ mount id)
+# and no detector detects mountify mounting method yet, so no need to enforce/require
+# just set to 1 to enable
+mountify_use_susfs=0
+
 # stop; start at service
 # certain modules might need this
 # just set to 1 to enable
