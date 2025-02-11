@@ -20,6 +20,13 @@ until [ "$(getprop sys.boot_completed)" = "1" ]; do
     sleep 1
 done
 
+# handle operating mode
+case $mountify_mounts in
+	1) mode="manual 🔧" ;;
+	2) mode="auto 💤" ;;
+	*) mode="disabled" ;; # ??
+esac
+
 # find logging folder
 [ -w /tmp ] && LOG_FOLDER=/tmp/mountify
 [ -w /sbin ] && LOG_FOLDER=/sbin/mountify
@@ -28,7 +35,7 @@ done
 # update description accrdingly
 string="description=no modules mounted"
 if [ -f $LOG_FOLDER/modules ]; then
-	string="description=modules: $( for module in $(cat "$LOG_FOLDER/modules" ) ; do printf "$module " ; done ) "
+	string="description=mode: $mode | modules: $( for module in $(cat "$LOG_FOLDER/modules" ) ; do printf "$module " ; done ) "
 fi
 sed -i "s/^description=.*/$string/g" $MODDIR/module.prop
 
