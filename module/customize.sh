@@ -38,8 +38,6 @@ fi
 
 echo "[+] mountify"
 echo "[+] SysReq test"
-printf "\n\n"
-
 # test for overlayfs
 if grep -q "overlay" /proc/filesystems > /dev/null 2>&1; then \
 	echo "[+] CONFIG_OVERLAY_FS"
@@ -62,8 +60,6 @@ else
 fi
 rm $testfile > /dev/null 2>&1 
 
-printf "\n\n"
-
 # grab version code
 module_prop="/data/adb/modules/mountify/module.prop"
 if [ -f $module_prop ]; then
@@ -75,7 +71,7 @@ fi
 # replace if 129 and older
 # https://github.com/backslashxx/mountify/commit/caa2cfa1058e1f428e47047d057fa73fed3351ca
 if [ $mountify_versionCode -gt 129 ]; then
-	configs="modules.txt whiteouts.txt config.sh"
+	configs="modules.txt whiteouts.txt config.sh skipped_modules"
 else
 	echo "[!] config.sh will be replaced!"
 	configs="modules.txt whiteouts.txt"
