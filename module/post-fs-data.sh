@@ -105,6 +105,7 @@ mountify_copy() {
 	if [ "$KSU_MAGIC_MOUNT" = "true" ] && [ -f /data/adb/ksu/.nomount ]; then 
 		# delete skip_mount if nomount
 		[ -f "$TARGET_DIR/skip_mount" ] && rm "$TARGET_DIR/skip_mount"
+		[ -f "$MODDIR/skipped_modules" ] && rm "$MODDIR/skipped_modules"
 	else
 		if [ ! -f "$TARGET_DIR/skip_mount" ]; then
 			touch "$TARGET_DIR/skip_mount"
