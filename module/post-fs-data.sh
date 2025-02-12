@@ -103,7 +103,7 @@ mountify_copy() {
 	# we do the logic like this so that it catches all non-magic ksu
 	# theres a chance that its an overlayfs ksu but still has .nomount file
 	if [ "$KSU_MAGIC_MOUNT" = "true" ] && [ -f /data/adb/ksu/.nomount ]; then 
-		true
+		[ -f "$TARGET_DIR/skip_mount" ] && rm "$TARGET_DIR/skip_mount"
 	else
 		[ ! -f "$TARGET_DIR/skip_mount" ] && touch "$TARGET_DIR/skip_mount"
 	fi
