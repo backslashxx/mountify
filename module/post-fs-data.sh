@@ -103,9 +103,15 @@ mountify_copy() {
 	# we do the logic like this so that it catches all non-magic ksu
 	# theres a chance that its an overlayfs ksu but still has .nomount file
 	if [ "$KSU_MAGIC_MOUNT" = "true" ] && [ -f /data/adb/ksu/.nomount ]; then 
+		# delete skip_mount if nomount
 		[ -f "$TARGET_DIR/skip_mount" ] && rm "$TARGET_DIR/skip_mount"
 	else
-		[ ! -f "$TARGET_DIR/skip_mount" ] && touch "$TARGET_DIR/skip_mount"
+		if [ ! -f "$TARGET_DIR/skip_mount" ]; then
+			touch "$TARGET_DIR/skip_mount"
+			# log modules that got skip_mounted
+			# we can likely clean those at uninstall
+			echo "$MODULE_ID" >> $MODDIR/skipped_modules
+		fi
 	fi
 
 	BASE_DIR=$MODULE_ID
