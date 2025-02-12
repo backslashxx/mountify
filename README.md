@@ -4,7 +4,7 @@
 
 - mostly meant for [MKSU .nomount](https://github.com/5ec1cff/KernelSU/commit/76bfccd11f4c8953b35e1342a2461f45b7d21c22)
 - tries to mimic an OEM mount, like /mnt/vendor/my_bigball
-- susfs is can be used to hide mounts
+- susfs can be used to hide mounts
 - requires **CONFIG_OVERLAY_FS=y** and **CONFIG_TMPFS_XATTR=y** 
 - for module devs, you can also use [this standalone script](https://github.com/backslashxx/mountify/tree/standalone-script)
 
@@ -23,11 +23,11 @@
 - Magic mount drastically increases mount count, making detection possible (zimperium)
 - OverlayFS mounting with ext4 image upperdir is detectable due to it creating device nodes on /proc/fs, while yes ext4 /data as overlay source is possible, who uses that nowadays?
 - F2FS /data as overlay source fails with native casefolding (ovl_dentry_weird), so only sdcardfs users can use /data as overlay source.
-- Frankly I dont see a way to this module mounting situation, this shit is more of a shitty band-aid 
+- Frankly, I dont see a way to this module mounting situation, this shit is more of a shitty band-aid 
 
 ## Usage
 ### Module mount
-by default, mountify will mount all modules with a system folder. `mountify_mounts=2` If this is not an intended behavior, edit config.sh
+by default, mountify mounts all modules with a system folder. To mount specific modules only, edit config.sh
 
 
 - `mountify_mounts=1` then modify modules.txt to list modules you want mounted
