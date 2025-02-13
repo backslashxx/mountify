@@ -4,3 +4,4 @@ version=v1.3.3
 versionCode=133
 author=xx
 description=Globally mounted modules and whiteouts via OverlayFS.
+updateJson=https://raw.githubusercontent.com/backslashxx/mountify/master/update.json
