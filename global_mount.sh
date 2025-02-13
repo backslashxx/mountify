@@ -36,7 +36,7 @@ vendor"
 
 # normal depth
 normal_depth() {
-	for DIR in $(ls -d */* ); do
+	for DIR in $(ls -d */*/ | sed 's/.$//' ); do
 		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:/$DIR" overlay "/$DIR"
 		[ $mountify_use_susfs = 1 ] && ${SUSFS_BIN} add_sus_mount "/$DIR"
 	done
@@ -45,7 +45,7 @@ normal_depth() {
 # controlled depth
 controlled_depth() {
 	if [ -z "$1" ] || [ -z "$2" ]; then return ; fi
-	for DIR in $(ls -d $1/* ); do
+	for DIR in $(ls -d $1/*/ | sed 's/.$//' ); do
 		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:$2$DIR" overlay "$2$DIR"
 		[ $mountify_use_susfs = 1 ] && ${SUSFS_BIN} add_sus_mount "$2$DIR"
 	done
@@ -53,7 +53,7 @@ controlled_depth() {
 
 # handle single depth on magic mount
 single_depth() {
-	for DIR in $( ls -d * | grep -vE "(odm|product|system_ext|vendor)$" 2>/dev/null ); do
+	for DIR in $( ls -d */ | sed 's/.$//' | grep -vE "(odm|product|system_ext|vendor)$" 2>/dev/null ); do
 		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:/system/$DIR" overlay "/system/$DIR"
 		[ $mountify_use_susfs = 1 ] && ${SUSFS_BIN} add_sus_mount "/system/$DIR"
 	done
