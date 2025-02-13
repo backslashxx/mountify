@@ -56,6 +56,7 @@ if busybox setfattr -n trusted.overlay.whiteout -v y "$testfile" > /dev/null 2>&
 	echo "[+] CONFIG_TMPFS_XATTR"
 	echo "[+] tmpfs extended attribute test passed"
 else
+	rm $testfile > /dev/null 2>&1 
 	abort "[!] CONFIG_TMPFS_XATTR is required for this module!"
 fi
 rm $testfile > /dev/null 2>&1 
