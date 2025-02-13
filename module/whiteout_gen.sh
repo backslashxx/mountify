@@ -5,6 +5,7 @@
 # No warranty.
 # No rights reserved.
 # This is free software; you can redistribute it and/or modify it under the terms of The Unlicense.
+PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
 MODDIR="/data/adb/modules/mountify"
 MODULE_UPDATES_DIR="/data/adb/modules_update/mountify_whiteouts"
 MODULE_DIR="/data/adb/modules/mountify_whiteouts"

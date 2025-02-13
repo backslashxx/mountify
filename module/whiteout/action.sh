@@ -4,6 +4,7 @@
 # No warranty.
 # No rights reserved.
 # This is free software; you can redistribute it and/or modify it under the terms of The Unlicense.
+PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
 MODDIR="${0%/*}"
 
 echo "[+] mountify"
