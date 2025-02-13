@@ -108,11 +108,10 @@ mountify_copy() {
 
 	echo "mountify/post-fs-data: processing $MODULE_ID" >> /dev/kmsg
 
-	# skip_mount is not needed on .nomount MKSU
-	# we do the logic like this so that it catches all non-magic ksu
-	# theres a chance that its an overlayfs ksu but still has .nomount file
-	if [ "$KSU_MAGIC_MOUNT" = "true" ] && [ -f /data/adb/ksu/.nomount ]; then 
-		# delete skip_mount if nomount
+	# skip_mount is not needed on .nomount MKSU - 5ec1cff/KernelSU/commit/76bfccd
+	# skip_mount is also not needed for litemode APatch - bmax121/APatch/commit/7760519
+	if { [ "$KSU_MAGIC_MOUNT" = "true" ] && [ -f /data/adb/ksu/.nomount ]; } || { [ "$APATCH_BIND_MOUNT" = "true" ] && [ -f /data/adb/.litemode_enable ]; }; then 
+		# we can delete skip_mount if nomount / litemode
 		[ -f "$TARGET_DIR/skip_mount" ] && rm "$TARGET_DIR/skip_mount"
 		[ -f "$MODDIR/skipped_modules" ] && rm "$MODDIR/skipped_modules"
 	else
