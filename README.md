@@ -13,7 +13,8 @@
 1. `touch /data/adb/modules/module_id/skip_mount`
 2. copies contents of `/data/adb/modules/module_id` to `/mnt/vendor/fake_folder_name`
 3. mirrors SELinux context of every file from `/data/adb/modules/module_id` to `/mnt/vendor/fake_folder_name`
-4. overlay `/mnt/vendor/fake_folder_name/system/bin` to `/system/bin`
+4. loops 2 and 3 for all modules
+5. overlays `/mnt/vendor/fake_folder_name/system/bin` to `/system/bin` and other folders
 ### whiteouts
 1. whiteout_gen.sh will generate a module (mountify_whiteouts)
 2. you just mount it like via module mount above
@@ -59,6 +60,8 @@ mountify_whiteouts
 /system/bin/servicemanager
 /system/odm/etc/NOTICE.xml.gz
 ```
+## Limitations
+- fails with [De-Bloater](https://github.com/sunilpaulmathew/De-Bloater), as it [uses dummy text, NOT proper whiteouts](https://github.com/sunilpaulmathew/De-Bloater/blob/cadd523f0ad8208eab31e7db51f855b89ed56ffe/app/src/main/java/com/sunilpaulmathew/debloater/utils/Utils.java#L112)
 
 ## Support / Warranty
 - None, none at all. I am handing you a sharp knife, it is not on me if you stab yourself with it.
