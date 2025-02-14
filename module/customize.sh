@@ -26,18 +26,15 @@ else
 fi
 
 # theres reports that it bootloops on certain devices
-# split it from top condition for readability
 if getprop ro.product.name | grep -q 'vermeer' ; then
-	echo "[!] Configuring System..."
-	# confuse the uninitiated
-	time dd if=/dev/zero of=/dev/null bs=1M count=20000 2>&1
-	abort "[!] Installation failed as device \"vermeer\" is not supported"
+	abort "[!] Installation aborted as device \"vermeer\" is not supported"
 fi
 
 # routine start
 
 echo "[+] mountify"
 echo "[+] SysReq test"
+
 # test for overlayfs
 if grep -q "overlay" /proc/filesystems > /dev/null 2>&1; then \
 	echo "[+] CONFIG_OVERLAY_FS"
@@ -55,11 +52,11 @@ busybox mknod "$testfile" c 0 0 > /dev/null 2>&1
 if busybox setfattr -n trusted.overlay.whiteout -v y "$testfile" > /dev/null 2>&1 ; then 
 	echo "[+] CONFIG_TMPFS_XATTR"
 	echo "[+] tmpfs extended attribute test passed"
+	rm $testfile > /dev/null 2>&1 
 else
 	rm $testfile > /dev/null 2>&1 
 	abort "[!] CONFIG_TMPFS_XATTR is required for this module!"
 fi
-rm $testfile > /dev/null 2>&1 
 
 # grab version code
 module_prop="/data/adb/modules/mountify/module.prop"
@@ -74,7 +71,7 @@ fi
 if [ $mountify_versionCode -gt 129 ]; then
 	configs="modules.txt whiteouts.txt config.sh skipped_modules"
 else
-	echo "[!] config.sh will be replaced!"
+	echo "[!] using fresh config.sh"
 	configs="modules.txt whiteouts.txt"
 fi
 
@@ -84,6 +81,9 @@ for file in $configs; do
 		cat "/data/adb/modules/mountify/$file" > "$MODPATH/$file"
 	fi
 done
+
+# give exec to whiteout_gen.sh
+chmod +x "$MODPATH/whiteout_gen.sh"
 
 # warn on OverlayFS managers
 # while this is supported (half-assed), this is not a recommended configuration
