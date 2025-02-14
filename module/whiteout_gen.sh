@@ -11,10 +11,16 @@ MODULE_UPDATES_DIR="/data/adb/modules_update/mountify_whiteouts"
 MODULE_DIR="/data/adb/modules/mountify_whiteouts"
 
 if [ -z $1 ] || [ ! -f $1 ]; then
-	echo "[!] missing arguments or inaccessible textfile"
-	exit 1
+	echo "[!] list missing or not specified!"
+	echo "[!] using whiteouts.txt"
+	TEXTFILE="$MODDIR/whiteouts.txt"
+	if [ ! -f $TEXTFILE ]; then
+		echo "[!] whiteouts.txt not found!"
+		exit 1
+	fi
+else
+	TEXTFILE="$(realpath $1)"
 fi
-TEXTFILE="$(realpath $1)"
 
 # mark module for update
 mkdir -p $MODULE_DIR ; touch $MODULE_DIR/update
