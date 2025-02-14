@@ -57,6 +57,7 @@ mountify_whiteouts
 /system/etc/nikgapps_logs_archive
 /system/etc/nikgapps_logs
 /system/bin/servicemanager
+/system/odm/etc/NOTICE.xml.gz
 ```
 
 ## Support / Warranty
