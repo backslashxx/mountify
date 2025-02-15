@@ -1,7 +1,8 @@
 #!/bin/sh
-# standalone global mounting script
-# you can put or execute this on post-fs-data.sh of a module.
-# testing for overlayfs and tmpfs_xattr is now up to the user of this script.
+# global_mount.sh
+# mountify standalone script
+# you can put or execute this on post-fs-data.sh or service.sh of a module.
+# testing for overlayfs and tmpfs_xattr is on test-sysreq.sh
 # No warranty.
 # No rights reserved.
 # This is free software; you can redistribute it and/or modify it under the terms of The Unlicense.
