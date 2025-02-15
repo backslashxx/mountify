@@ -45,7 +45,7 @@ vendor"
 controlled_depth() {
 	if [ -z "$1" ] || [ -z "$2" ]; then return ; fi
 	for DIR in $(ls -d $1/*/ | sed 's/.$//' ); do
-		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:$2$DIR" overlay "$2$DIR"
+		busybox mount -t erofs -o "lowerdir=$(pwd)/$DIR:$2$DIR" /dev/block/dm-0 "$2$DIR"
 		[ $mountify_use_susfs = 1 ] && ${SUSFS_BIN} add_sus_mount "$2$DIR"
 	done
 }
@@ -53,7 +53,7 @@ controlled_depth() {
 # handle single depth (/system/bin, /system/etc, et. al)
 single_depth() {
 	for DIR in $( ls -d */ | sed 's/.$//'  | grep -vE "^(odm|product|system_ext|vendor)$" 2>/dev/null ); do
-		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:/system/$DIR" overlay "/system/$DIR"
+		busybox mount -t erofs -o "lowerdir=$(pwd)/$DIR:/system/$DIR" /dev/block/dm-0 "/system/$DIR"
 		[ $mountify_use_susfs = 1 ] && ${SUSFS_BIN} add_sus_mount "/system/$DIR"
 	done
 }
