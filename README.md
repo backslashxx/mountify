@@ -45,7 +45,7 @@ mountify_whiteouts
 - `mountify_stop_start=1` to restart android at service (optional)
 
 ### Whiteout
-- run `whiteout_gen.sh target.txt` where target.txt contains list of paths you want whited out. It has to follow magisk module hierarchy so everything has to start with "/system/". Here are some examples:
+- run `whiteout_gen.sh whiteouts.txt` where whiteouts.txt contains list of paths you want whited out. It has to follow magisk module hierarchy so everything has to start with "/system/". Here are some examples:
 
 ```
 /system/vendor/bin/install-recovery.sh
