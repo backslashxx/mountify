@@ -12,9 +12,8 @@ echo "[+] extended status"
 printf "\n\n"
 
 # hunt logging floder
-[ -w /tmp ] && LOG_FOLDER=/tmp/mountify
-[ -w /sbin ] && LOG_FOLDER=/sbin/mountify
-[ -w /debug_ramdisk ] && LOG_FOLDER=/debug_ramdisk/mountify
+[ -w /mnt ] && LOG_FOLDER=/mnt/mountify_logs
+[ -w /mnt/vendor ] && LOG_FOLDER=/mnt/vendor/mountify_logs
 
 if [ -f "$LOG_FOLDER/before" ] && [ -f "$LOG_FOLDER/after" ]; then
 	diff "$LOG_FOLDER/before" "$LOG_FOLDER/after" | grep "overlay /"
