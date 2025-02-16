@@ -23,9 +23,8 @@ fi
 echo "mountify/post-fs-data: start!" >> /dev/kmsg
 
 # find and create logging folder
-[ -w /tmp ] && LOG_FOLDER=/tmp/mountify
-[ -w /sbin ] && LOG_FOLDER=/sbin/mountify
-[ -w /debug_ramdisk ] && LOG_FOLDER=/debug_ramdisk/mountify
+[ -w /mnt ] && LOG_FOLDER=/mnt/mountify_logs
+[ -w /mnt/vendor ] && LOG_FOLDER=/mnt/vendor/mountify_logs
 mkdir -p "$LOG_FOLDER"
 # log before 
 cat /proc/mounts > "$LOG_FOLDER/before"

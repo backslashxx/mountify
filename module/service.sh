@@ -43,9 +43,8 @@ if [ "$APATCH_BIND_MOUNT" = "true" ] && [ -f /data/adb/.litemode_enable ]; then
 fi
 
 # find logging folder
-[ -w /tmp ] && LOG_FOLDER=/tmp/mountify
-[ -w /sbin ] && LOG_FOLDER=/sbin/mountify
-[ -w /debug_ramdisk ] && LOG_FOLDER=/debug_ramdisk/mountify
+[ -w /mnt ] && LOG_FOLDER=/mnt/mountify_logs
+[ -w /mnt/vendor ] && LOG_FOLDER=/mnt/vendor/mountify_logs
 
 # update description accrdingly
 string="description=mode: $mode | no modules mounted"
