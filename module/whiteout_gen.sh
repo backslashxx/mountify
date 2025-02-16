@@ -10,6 +10,8 @@ MODDIR="/data/adb/modules/mountify"
 MODULE_UPDATES_DIR="/data/adb/modules_update/mountify_whiteouts"
 MODULE_DIR="/data/adb/modules/mountify_whiteouts"
 
+echo "[+] mountify's whiteout generator"
+
 if [ -z $1 ] || [ ! -f $1 ]; then
 	echo "[!] list missing or not specified!"
 	echo "[!] using whiteouts.txt"
@@ -42,6 +44,24 @@ whiteout_create() {
 for line in $( sed '/#/d' "$TEXTFILE" ); do
 	echo "$line" | grep -q "^/system/" && whiteout_create "$line" > /dev/null 2>&1
 	ls "$MODULE_UPDATES_DIR$line" 2>/dev/null
+done
+
+# special dirs
+# handle this properly so this script can be used standalone
+# so yeah, symlinks.
+IFS="
+"
+targets="odm
+product
+system_ext
+vendor"
+
+# this assumes magic mount
+for dir in $targets; do 
+	if [ -d /$dir ] && [ ! -L /$dir ] && [ -d "$MODULE_UPDATES_DIR/system/$dir" ]; then
+		echo "[+] creating symlink for /$dir"
+		ln -sf "./system/$dir" "$MODULE_UPDATES_DIR/$dir"
+	fi
 done
 
 # import resources for whiteout module
