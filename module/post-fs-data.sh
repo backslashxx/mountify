@@ -40,15 +40,8 @@ vendor"
 [ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
 
 # functions
-# normal depth
-normal_depth() {
-	for DIR in $( ls -d */*/ | sed 's/.$//' ); do
-		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:/$DIR" overlay "/$DIR"
-		[ $mountify_use_susfs = 1 ] && ${SUSFS_BIN} add_sus_mount "/$DIR"
-	done
-}
 
-# controlled depth
+# controlled depth ($targets fuckery)
 controlled_depth() {
 	if [ -z "$1" ] || [ -z "$2" ]; then return ; fi
 	for DIR in $(ls -d $1/*/ | sed 's/.$//' ); do
@@ -57,7 +50,7 @@ controlled_depth() {
 	done
 }
 
-# handle single depth on magic mount
+# handle single depth (/system/bin, /system/etc, et. al)
 single_depth() {
 	for DIR in $( ls -d */ | sed 's/.$//'  | grep -vE "^(odm|product|system_ext|vendor)$" 2>/dev/null ); do
 		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:/system/$DIR" overlay "/system/$DIR"
@@ -71,13 +64,6 @@ if /system/bin/getfattr -d /system/bin > /dev/null 2>&1; then
 	getfattr() { /system/bin/getfattr "$@"; }
 else
 	getfattr() { /system/bin/toybox getfattr "$@"; }
-fi
-
-# https://github.com/5ec1cff/KernelSU/commit/92d793d0e0e80ed0e87af9e39879d2b70c37c748
-# on overlayfs, moddir/system/product is symlinked to moddir/product
-# on magic, moddir/product it symlinked to moddir/system/product
-if [ "$KSU_MAGIC_MOUNT" = "true" ] || [ "$APATCH_BIND_MOUNT" = "true" ] || { [ -f /data/adb/magisk/magisk ] && [ -z "$KSU" ] && [ -z "$APATCH" ]; }; then
-	MAGIC_MOUNT=true
 fi
 
 mountify_copy() {
@@ -122,14 +108,11 @@ mountify_copy() {
 		fi
 	fi
 
-	BASE_DIR=$MODULE_ID
-	if [ "$MAGIC_MOUNT" = true ]; then
-		# for magic mount, we can copy over contents of system folder only
-		BASE_DIR="$MODULE_ID/system"
-	fi
+	# we can copy over contents of system folder only
+	BASE_DIR="$MODULE_ID/system"
 	
-	# copy over our files
-	cd "$MNT_FOLDER" && cp -rf /data/adb/modules/"$BASE_DIR"/* "$FAKE_MOUNT_NAME"
+	# copy over our files: follow symlinks, recursive, force.
+	cd "$MNT_FOLDER" && cp -Lrf /data/adb/modules/"$BASE_DIR"/* "$FAKE_MOUNT_NAME"
 
 	# go inside
 	cd "$MNT_FOLDER/$FAKE_MOUNT_NAME"
@@ -191,24 +174,19 @@ fi
 
 # mount 
 cd "$MNT_FOLDER/$FAKE_MOUNT_NAME"
-if [ "$MAGIC_MOUNT" = true ] || [ "$MODULE_ID" = "mountify_whiteouts" ]; then
-	# handle single depth on magic mount
-	single_depth
-	# handle this stance when /product is a symlink to /system/product
-	for folder in $targets ; do 
-		# reset cwd due to loop
-		cd "$MNT_FOLDER/$FAKE_MOUNT_NAME"
-		if [ -L "/$folder" ] && [ ! -L "/system/$folder" ]; then
-			# legacy, so we mount at /system
-			controlled_depth "$folder" "/system/"
-		else
-			# modern, so we mount at root
-			controlled_depth "$folder" "/"
-		fi
-	done
-else
-	normal_depth
-fi
+single_depth
+# handle this stance when /product is a symlink to /system/product
+for folder in $targets ; do 
+	# reset cwd due to loop
+	cd "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+	if [ -L "/$folder" ] && [ ! -L "/system/$folder" ]; then
+		# legacy, so we mount at /system
+		controlled_depth "$folder" "/system/"
+	else
+		# modern, so we mount at root
+		controlled_depth "$folder" "/"
+	fi
+done
 
 # log after
 cat /proc/mounts > "$LOG_FOLDER/after"
