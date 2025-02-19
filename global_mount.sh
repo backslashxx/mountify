@@ -35,15 +35,7 @@ vendor"
 
 # functions
 
-# normal depth
-normal_depth() {
-	for DIR in $(ls -d */*/ | sed 's/.$//' ); do
-		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:/$DIR" overlay "/$DIR"
-		[ $mountify_use_susfs = 1 ] && ${SUSFS_BIN} add_sus_mount "/$DIR"
-	done
-}
-
-# controlled depth
+# controlled depth ($targets fuckery)
 controlled_depth() {
 	if [ -z "$1" ] || [ -z "$2" ]; then return ; fi
 	for DIR in $(ls -d $1/*/ | sed 's/.$//' ); do
@@ -52,7 +44,7 @@ controlled_depth() {
 	done
 }
 
-# handle single depth on magic mount
+# handle single depth (/system/bin, /system/etc, et. al)
 single_depth() {
 	for DIR in $( ls -d */ | sed 's/.$//' | grep -vE "(odm|product|system_ext|vendor)$" 2>/dev/null ); do
 		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:/system/$DIR" overlay "/system/$DIR"
@@ -77,13 +69,6 @@ fi
 # this way mountify wont remount this module
 [ ! -f $MODDIR/skip_mountify ] && touch $MODDIR/skip_mountify
 
-# determine if we are on magic mount, THIS DOES MATTER
-# on overlayfs, moddir/system/product is symlinked to moddir/product
-# on magic, moddir/product it symlinked to moddir/system/product
-if [ "$KSU_MAGIC_MOUNT" = "true" ] || [ "$APATCH_BIND_MOUNT" = "true" ] || { [ -f /data/adb/magisk/magisk ] && [ -z "$KSU" ] && [ -z "$APATCH" ]; }; then
-	MAGIC_MOUNT=true
-fi
-
 # this is a fast lookup for a writable dir
 # these tends to be always available
 [ -w /mnt ] && MNT_FOLDER=/mnt
@@ -94,17 +79,15 @@ if [ -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
 	exit 1
 fi
 
-# we determine base dir so we know which to copy
-BASE_DIR=$MODDIR
-if [ "$MAGIC_MOUNT" = true ]; then
-	# for magic mount, we can copy over contents of system folder only
-	BASE_DIR="$MODDIR/system"
-fi
+
+BASE_DIR="$MODDIR/system"
+
 # copy it
-cd "$MNT_FOLDER" && cp -r "$BASE_DIR" "$FAKE_MOUNT_NAME"
+cd "$MNT_FOLDER" && cp -Lrf "$BASE_DIR" "$FAKE_MOUNT_NAME"
 
 # then we make sure its there
 if [ ! -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
+	echo "standalone lol exit"
 	exit 1
 fi
 
@@ -112,38 +95,36 @@ fi
 cd "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 
 # here we mirror selinux context, if we dont, we get "u:object_r:tmpfs:s0"
-for file in $( find ./ | sed "s|./|/|") ; do 
-	busybox chcon --reference="$BASE_DIR/$file" ".$file"  
+for file in $( find -L $BASE_DIR | sed "s|$BASE_DIR||g" ) ; do 
+	# echo "mountify_debug chcorn $BASE_DIR$file to $MNT_FOLDER/$FAKE_MOUNT_NAME$file" >> /dev/kmsg
+	busybox chcon --reference="$BASE_DIR$file" "$MNT_FOLDER/$FAKE_MOUNT_NAME$file"
 done
 
-# here we handle opaque directories, this requires getfattr
-for dir in $( find $BASE_DIR -type d ) ; do
+# catch opaque dirs, requires getfattr
+for dir in $( find -L $BASE_DIR -type d ) ; do
 	if getfattr -d "$dir" | grep -q "trusted.overlay.opaque" ; then
-		# opaque dir found!
-		opaque_dir=$(echo "$dir" | sed "s|"$BASE_DIR"|.|")
+		# echo "mountify_debug: opaque dir $dir found!" >> /dev/kmsg
+		opaque_dir=$(echo "$dir" | sed "s|$BASE_DIR|.|")
 		busybox setfattr -n trusted.overlay.opaque -v y "$opaque_dir"
-		# opaque dir attribute set!
+		# echo "mountify_debug: replaced $opaque_dir!" >> /dev/kmsg
 	fi
 done
 
 # now here we mount
-if [ "$MAGIC_MOUNT" = true ]; then
-	# handle single depth on magic mount
-	single_depth
-	# handle this stance when /product is a symlink to /system/product
-	for folder in $targets ; do 
-		# reset cwd due to loop
-		cd "$MNT_FOLDER/$FAKE_MOUNT_NAME"
-		if [ -L "/$folder" ] && [ ! -L "/system/$folder" ]; then
-			# legacy, so we mount at /system
-			controlled_depth "$folder" "/system/"
-		else
-			# modern, so we mount at root
-			controlled_depth "$folder" "/"
-		fi
-	done
-else
-	normal_depth
-fi
+# handle single depth
+single_depth
+# handle this stance when /product is a symlink to /system/product
+for folder in $targets ; do 
+	# reset cwd due to loop
+	cd "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+	if [ -L "/$folder" ] && [ ! -L "/system/$folder" ]; then
+		# legacy, so we mount at /system
+		controlled_depth "$folder" "/system/"
+	else
+		# modern, so we mount at root
+		controlled_depth "$folder" "/"
+	fi
+done
+
 
 # EOF
