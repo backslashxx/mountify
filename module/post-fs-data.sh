@@ -32,7 +32,8 @@ cat /proc/mounts > "$LOG_FOLDER/before"
 # module mount section
 IFS="
 "
-targets="odm
+targets="apex
+odm
 product
 system_ext
 vendor"
@@ -52,7 +53,7 @@ controlled_depth() {
 
 # handle single depth (/system/bin, /system/etc, et. al)
 single_depth() {
-	for DIR in $( ls -d */ | sed 's/.$//'  | grep -vE "^(odm|product|system_ext|vendor)$" 2>/dev/null ); do
+	for DIR in $( ls -d */ | sed 's/.$//'  | grep -vE "^(apex|odm|product|system_ext|vendor)$" 2>/dev/null ); do
 		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:/system/$DIR" overlay "/system/$DIR"
 		[ $mountify_use_susfs = 1 ] && ${SUSFS_BIN} add_sus_mount "/system/$DIR"
 	done
