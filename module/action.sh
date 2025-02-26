@@ -6,6 +6,7 @@
 # This is free software; you can redistribute it and/or modify it under the terms of The Unlicense.
 PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
 MODDIR="/data/adb/modules/mountify"
+. $MODDIR/config.sh
 
 echo "[+] mountify"
 echo "[+] extended status"
@@ -15,8 +16,13 @@ printf "\n\n"
 [ -w /mnt ] && LOG_FOLDER=/mnt/mountify_logs
 [ -w /mnt/vendor ] && LOG_FOLDER=/mnt/vendor/mountify_logs
 
+# check if fake alias exists, if fail use overlay
+if ! grep "nodev" /proc/filesystems | grep -q "$FS_TYPE_ALIAS" > /dev/null 2>&1; then
+	FS_TYPE_ALIAS="overlay"
+fi
+
 if [ -f "$LOG_FOLDER/before" ] && [ -f "$LOG_FOLDER/after" ]; then
-	diff "$LOG_FOLDER/before" "$LOG_FOLDER/after" | grep "overlay /"
+	diff "$LOG_FOLDER/before" "$LOG_FOLDER/after" | grep " $FS_TYPE_ALIAS "
 else
 	echo "[!] no logs found!"
 fi
