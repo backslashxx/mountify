@@ -6,6 +6,7 @@
 # This is free software; you can redistribute it and/or modify it under the terms of The Unlicense.
 
 # mountify config
+
 # module mounting config
 # 0 to disable
 # 1 for manual mode (this will mount modules found on modules.txt)
@@ -29,5 +30,15 @@ mountify_use_susfs=0
 # certain modules might need this
 # just set to 1 to enable
 mountify_stop_start=0
+
+# for settings below, if unsure, do NOT touch.
+
+# fake overlayfs params
+# this is only useful if you patched your overlayfs to register some made up alias
+FS_TYPE_ALIAS="overlay"
+
+# this one below is its device name
+# you can put whatever bullshit you want here like '/dev/block/dm-0' whatever
+MOUNT_DEVICE_NAME="overlay"
 
 # EOF
