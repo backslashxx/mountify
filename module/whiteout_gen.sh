@@ -42,7 +42,13 @@ whiteout_create() {
 }
 
 for line in $( sed '/#/d' "$TEXTFILE" ); do
-	echo "$line" | grep -q "^/system/" && whiteout_create "$line" > /dev/null 2>&1
+	if echo "$line" | grep -Eq "^/(product|vendor|odm|system_ext)/" && ! echo "$line" | grep -q "^/system/"; then
+		line="/system$line"
+	elif ! echo "$line" | grep -q "^/system/"; then
+		echo "[!] Invalid input $line. Skipping..."
+		continue
+	fi
+	whiteout_create "$line" > /dev/null 2>&1
 	ls "$MODULE_UPDATES_DIR$line" 2>/dev/null
 done
 
