@@ -65,8 +65,19 @@ vendor"
 # this assumes magic mount
 for dir in $targets; do 
 	if [ -d /$dir ] && [ ! -L /$dir ] && [ -d "$MODULE_UPDATES_DIR/system/$dir" ]; then
-		echo "[+] creating symlink for /$dir"
-		ln -sf "./system/$dir" "$MODULE_UPDATES_DIR/$dir"
+		if [ -L "$MODULE_UPDATES_DIR/$dir" ]; then
+			# Check if the symlink points to the correct location
+			if [ $(readlink -f $MODULE_UPDATES_DIR/$dir) != $(realpath $MODULE_UPDATES_DIR/system/$dir) ]; then
+				echo "[!] Incorrect symlink for /$dir, fixing..."
+				rm -f $MODULE_UPDATES_DIR/$dir
+				ln -sf ./system/$dir $MODULE_UPDATES_DIR/$dir
+			else
+				echo "[+] Symlink for /$dir is correct, skipping..."
+			fi
+		else
+			echo "[+] Creating symlink for /$dir"
+			ln -sf ./system/$dir $MODULE_UPDATES_DIR/$dir
+		fi
 	fi
 done
 
