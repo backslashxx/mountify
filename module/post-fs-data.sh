@@ -30,6 +30,8 @@ BOOTCOUNT=$(( BOOTCOUNT + 1))
 if [ $BOOTCOUNT -gt 1 ]; then
 	touch $MODDIR/disable
 	rm "$MODDIR/count.sh"
+	string="description=anti-bootloop triggered. module disabled. enable to activate."
+	sed -i "s/^description=.*/$string/g" $MODDIR/module.prop
 	stop; reboot 
 else
 	echo "BOOTCOUNT=1" > "$MODDIR/count.sh"
