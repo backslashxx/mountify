@@ -27,6 +27,9 @@ until [ "$(getprop sys.boot_completed)" = "1" ]; do
     sleep 1
 done
 
+# reset bootcount (anti-bootloop routine)
+echo "BOOTCOUNT=0" > "$MODDIR/count.sh"
+
 # handle operating mode
 case $mountify_mounts in
 	1) mode="manual 🤓" ;;

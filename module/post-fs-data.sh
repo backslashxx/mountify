@@ -21,6 +21,20 @@ if [ $mountify_mounts = 0 ]; then
 	exit 0
 fi
 
+# add simple anti bootloop logic
+BOOTCOUNT=0
+[ -f "$MODDIR/count.sh" ] && . "$MODDIR/count.sh"
+
+BOOTCOUNT=$(( BOOTCOUNT + 1))
+
+if [ $BOOTCOUNT -gt 1 ]; then
+	touch $MODDIR/disable
+	rm "$MODDIR/count.sh"
+	stop; reboot 
+else
+	echo "BOOTCOUNT=1" > "$MODDIR/count.sh"
+fi
+
 # grab start time
 echo "mountify/post-fs-data: start!" >> /dev/kmsg
 
