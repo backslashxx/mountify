@@ -60,8 +60,9 @@ mountify_whiteouts
 /system/bin/servicemanager
 /system/odm/etc/NOTICE.xml.gz
 ```
-## Limitations
+## Limitations / Recommendations
 - fails with [De-Bloater](https://github.com/sunilpaulmathew/De-Bloater), as it [uses dummy text, NOT proper whiteouts](https://github.com/sunilpaulmathew/De-Bloater/blob/cadd523f0ad8208eab31e7db51f855b89ed56ffe/app/src/main/java/com/sunilpaulmathew/debloater/utils/Utils.java#L112)
+- I recommend [System App Nuker](https://github.com/ChiseWaguri/systemapp_nuker/releases) instead. It uses proper whiteouts.
 
 ## Support / Warranty
 - None, none at all. I am handing you a sharp knife, it is not on me if you stab yourself with it.
