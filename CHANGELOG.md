@@ -2,15 +2,15 @@
 Globally mounted modules and whiteouts via OverlayFS.
 
 ## Changelog
+## 140
+- scripts: add simple anti bootloop routine
+- scripts/whiteout_gen: prevent duplicate symlinks
+- scripts/whiteout_gen: automatically prepend /system
+
 ## 139
 - scripts/post-fs-data: support fake overlay aliases
 - scripts/config: add fake_ovl params
 - scripts/action: deduce fs_type properly
-
-## 138
-- scripts/post-fs-data: optimize chcon / setfattr routine
-- scripts/post-fs-data: fix up support for offical KernelSU
-- scripts/whiteout_gen: generate symlinks as needed
 
 ### Full Changelog
 - [Commit history](https://github.com/backslashxx/mountify/commits/master/)
