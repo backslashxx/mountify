@@ -3,5 +3,5 @@ name=mountify
 version=v1.4.0
 versionCode=140
 author=xx
-description=Globally mounted modules and whiteouts via OverlayFS.
+description=Globally mounted modules via OverlayFS.
 updateJson=https://raw.githubusercontent.com/backslashxx/mountify/master/update.json
