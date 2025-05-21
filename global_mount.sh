@@ -23,16 +23,20 @@ FAKE_MOUNT_NAME="my_bullshit"
 busybox ln -sf "$MODDIR" "$basefolder/$FAKE_MOUNT_NAME"
 
 # now we use the symlink as upperdir
-cd "$basefolder/$FAKE_MOUNT_NAME"
-for DIR in vendor/* product/* system_ext/* odm/* ; do
-	busybox mount -t overlay -o "lowerdir=$basefolder/$FAKE_MOUNT_NAME/$DIR:/$DIR" overlay /$DIR
-done
+if [ -d "$basefolder/$FAKE_MOUNT_NAME" ]; then
+	cd "$basefolder/$FAKE_MOUNT_NAME"
+	for DIR in vendor/* product/* system_ext/* odm/* ; do
+		busybox mount -t overlay -o "lowerdir=$basefolder/$FAKE_MOUNT_NAME/$DIR:/$DIR" overlay /$DIR
+	done
+fi
 
 # handle system in a special way since ksu creates symlinks inside
-cd "$basefolder/$FAKE_MOUNT_NAME/system"
-for DIR in $(ls -d */ | sed 's/.$//' ); do
-	# only mount if its NOT a symlink
-	[ ! -L $DIR ] && busybox mount -t overlay -o "lowerdir=$basefolder/$FAKE_MOUNT_NAME/system/$DIR:/system/$DIR" overlay /system/$DIR
-done
+if [ -d "$basefolder/$FAKE_MOUNT_NAME/system" ]; then
+	cd "$basefolder/$FAKE_MOUNT_NAME/system"
+	for DIR in $(ls -d */ | sed 's/.$//' ); do
+		# only mount if its NOT a symlink
+		[ ! -L $DIR ] && busybox mount -t overlay -o "lowerdir=$basefolder/$FAKE_MOUNT_NAME/system/$DIR:/system/$DIR" overlay /system/$DIR
+	done
+fi
 
 # EOF
