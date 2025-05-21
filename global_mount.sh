@@ -30,8 +30,9 @@ done
 
 # handle system in a special way since ksu creates symlinks inside
 cd "$basefolder/$FAKE_MOUNT_NAME/system"
-for DIR in $( ls -d */ | sed 's/.$//'  | grep -vE "^(odm|product|system_ext|vendor)$" 2>/dev/null ); do
-	busybox mount -t overlay -o "lowerdir=$basefolder/$FAKE_MOUNT_NAME/system/$DIR:/system/$DIR" overlay /system/$DIR
+for DIR in $(ls -d */ | sed 's/.$//' ); do
+	# only mount if its NOT a symlink
+	[ ! -L $DIR ] && busybox mount -t overlay -o "lowerdir=$basefolder/$FAKE_MOUNT_NAME/system/$DIR:/system/$DIR" overlay /system/$DIR
 done
 
 # EOF
