@@ -38,6 +38,17 @@ mountify_whiteouts
 - `mountify_use_susfs=1` to enable susfs usage (optional)
 - `mountify_stop_start=1` to restart android at service (optional)
 
+### Need Unmount?
+#### Easy
+- use either NoHello, Shamiko, Zygisk Assistant as umount providers
+- for ReZygisk, it should just work
+- for Zygisk Next, enable "Enforce DenyList"
+- then edit config.sh, `MOUNT_DEVICE_NAME="KSU"`
+
+#### Hard
+- requires KernelSU with [PR#2531](https://github.com/tiann/KernelSU/pull/2531) or [this](https://github.com/backslashxx/KernelSU/commit/55394c816d84852e3d944419b38dfa4645ff96ee)
+- then edit config.sh, `MOUNT_DEVICE_NAME="KSU"`
+
 ## Limitations / Recommendations
 - fails with [De-Bloater](https://github.com/sunilpaulmathew/De-Bloater), as it [uses dummy text, NOT proper whiteouts](https://github.com/sunilpaulmathew/De-Bloater/blob/cadd523f0ad8208eab31e7db51f855b89ed56ffe/app/src/main/java/com/sunilpaulmathew/debloater/utils/Utils.java#L112)
 - I recommend [System App Nuker](https://github.com/ChiseWaguri/systemapp_nuker/releases) instead. It uses proper whiteouts.
@@ -47,5 +58,6 @@ mountify_whiteouts
 
 ## Links
 [Download](https://github.com/backslashxx/mountify/releases)
+
 
 
