@@ -39,10 +39,17 @@ if [ -f "$TEST_FOLDER/CASEFOLD" ] && [ -f "$TEST_FOLDER/casefold" ]; then
 else
 	# files cant coexist, case-insensitive
 	abort "[x] files not created, casefolded"
-
 fi
 
 [ -d "$TEST_FOLDER" ] && rm -rf "$TEST_FOLDER"
 
+# migrate config
+configs="modules.txt whiteouts.txt config.sh skipped_modules"
+for file in $configs; do
+	if [ -f "/data/adb/modules/mountify/$file" ]; then
+		echo "[+] migrating $file"
+		cat "/data/adb/modules/mountify/$file" > "$MODPATH/$file"
+	fi
+done
 
 # EOF
