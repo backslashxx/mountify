@@ -41,6 +41,18 @@ else
 	abort "[x] files not created, casefolded"
 fi
 
+# need to do a test mount too
+busybox chcon --reference="/system" "$TEST_FOLDER"
+busybox chcon --reference="/system" "$TEST_FOLDER/CASEFOLD"
+busybox chcon --reference="/system" "$TEST_FOLDER/casefold"
+
+if busybox mount -t overlay -o lowerdir="$TEST_FOLDER:/system/app" overlay "/system/app" >/dev/null 2>&1; then
+	echo "[+] mount test success!"
+	umount -l /system/app
+else
+	abort "[x] mount test fail!!"
+fi
+
 [ -d "$TEST_FOLDER" ] && rm -rf "$TEST_FOLDER"
 
 # migrate config
