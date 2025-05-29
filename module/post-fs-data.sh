@@ -48,6 +48,8 @@ if [ -f "/data/adb/modules/$1/skip_mountify" ] || [ -f "/data/adb/modules/$1/dis
 	return	
 fi
 
+echo "mountify/post-fs-data: mounting $1" >> /dev/kmsg
+
 MODULE_BASEDIR="/data/adb/modules/$1/system"
 FAKE_MOUNT_NAME="$2"
 	
