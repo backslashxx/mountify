@@ -28,6 +28,7 @@ fi
 # routine start
 echo "[+] mountify (symlink ver)"
 echo "[+] SysReq test"
+printf "\n\n"
 
 ## test for overlayfs
 if grep -q "overlay" /proc/filesystems > /dev/null 2>&1; then \
@@ -93,5 +94,12 @@ for file in $configs; do
 		cat "/data/adb/modules/mountify/$file" > "$MODPATH/$file"
 	fi
 done
+
+# warn on OverlayFS managers
+if { [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ]; } || { [ "$APATCH" = true ] && [ ! "$APATCH_BIND_MOUNT" = true ]; }; then
+	printf "\n\n"
+	echo "[!] WARNING: Root manager is NOT on magic mount."
+	echo "[!] This setup can cause issues and is NOT recommended."
+fi
 
 # EOF
