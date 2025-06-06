@@ -22,7 +22,7 @@ if [ "$MMRL" = "true" ] || { [ "$KSU" = "true" ] && [ "$KSU_VER_CODE" -ge 11998 
         done
 else
 	# sleep a bit to make it look like something is happening!!
-	sleep 2
+	sleep 1
 fi
 
 # routine start
@@ -51,21 +51,23 @@ TEST_FOLDER="/data/adb/modules/mountify_casefold_test"
 mkdir -p "$TEST_FOLDER" || abort "[x] cant create test folder"
 
 # create files
-echo "CASEFOLD_TEST_UPPERCASE" >> "$TEST_FOLDER/CASEFOLD"
-echo "casefold_test_lowercase" >> "$TEST_FOLDER/casefold"
+echo "CASEFOLD_TEST_UPPERCASE" > "$TEST_FOLDER/CASEFOLD"
+echo "casefold_test_lowercase" > "$TEST_FOLDER/casefold"
 
 if [ -f "$TEST_FOLDER/CASEFOLD" ] && [ -f "$TEST_FOLDER/casefold" ]; then
 	# casefold test
 	if busybox diff -q "$TEST_FOLDER/CASEFOLD" "$TEST_FOLDER/casefold" >/dev/null 2>&1; then
 		# both files exist, but resolves to same inode, casefolded
-		abort "[x] files created, but resolves to same inode, casefolded"
+		[ -d "$TEST_FOLDER" ] && rm -rf "$TEST_FOLDER"
+		abort "[x] testfiles resolve to same inode, case-insensitive/casefolded"
 	else
 		# different contents — true case-sensitive FS
-		echo "[+] /data/adb/modules is NOT casefolded"
+		echo "[+] /data/adb/modules is case-sensitive + non-casefolded"
 	fi
 else
 	# files cant coexist, case-insensitive
-	abort "[x] files not created, casefolded"
+	[ -d "$TEST_FOLDER" ] && rm -rf "$TEST_FOLDER"
+	abort "[x] testfiles cannot coexist, case-insensitive/casefolded"
 fi
 
 ## test mount
@@ -77,6 +79,7 @@ if busybox mount -t overlay -o lowerdir="$TEST_FOLDER:/system/app" overlay "/sys
 	echo "[+] mount test success!"
 	umount -l /system/app
 else
+	[ -d "$TEST_FOLDER" ] && rm -rf "$TEST_FOLDER"
 	abort "[x] mount test fail!!"
 fi
 
