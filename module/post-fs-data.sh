@@ -13,6 +13,8 @@ MODDIR="/data/adb/modules/mountify"
 [ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
 LOG_FOLDER="$MNT_FOLDER/mountify_logs"
 mkdir -p "$LOG_FOLDER"
+# log before 
+cat /proc/mounts > "$LOG_FOLDER/before"
 
 IFS="
 "
@@ -109,5 +111,9 @@ for line in $( sed '/#/d' "$MODDIR/modules.txt" ); do
 	mount_name=$( echo $line | awk {'print $2'} )
 	mountify_symlink "$module_id" "$mount_name"
 done
+
+# log after
+cat /proc/mounts > "$LOG_FOLDER/after"
+echo "mountify/post-fs-data: finished!" >> /dev/kmsg
 
 # EOF
