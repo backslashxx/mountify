@@ -48,7 +48,22 @@ if [ -f "/data/adb/modules/$1/skip_mountify" ] || [ -f "/data/adb/modules/$1/dis
 	return	
 fi
 
-echo "mountify/post-fs-data: mounting $1" >> /dev/kmsg
+echo "mountify/post-fs-data: processing $1" >> /dev/kmsg
+	
+# skip_mount is not needed on .nomount MKSU - 5ec1cff/KernelSU/commit/76bfccd
+# skip_mount is also not needed for litemode APatch - bmax121/APatch/commit/7760519
+if { [ "$KSU_MAGIC_MOUNT" = "true" ] && [ -f /data/adb/ksu/.nomount ]; } || { [ "$APATCH_BIND_MOUNT" = "true" ] && [ -f /data/adb/.litemode_enable ]; }; then 
+	# we can delete skip_mount if nomount / litemode
+	[ -f "/data/adb/modules/$1/skip_mount" ] && rm "/data/adb/modules/$1/skip_mount"
+	[ -f "$MODDIR/skipped_modules" ] && rm "$MODDIR/skipped_modules"
+else
+	if [ ! -f "$TARGET_DIR/skip_mount" ]; then
+		touch "/data/adb/modules/$1/skip_mount"
+		# log modules that got skip_mounted
+		# we can likely clean those at uninstall
+		echo "$1" >> $MODDIR/skipped_modules
+	fi
+fi
 
 MODULE_BASEDIR="/data/adb/modules/$1/system"
 FAKE_MOUNT_NAME="$2"
