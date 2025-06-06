@@ -11,6 +11,8 @@ MODDIR="/data/adb/modules/mountify"
 # these tends to be always available
 [ -w /mnt ] && MNT_FOLDER=/mnt
 [ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
+LOG_FOLDER="$MNT_FOLDER/mountify_logs"
+mkdir -p "$LOG_FOLDER"
 
 IFS="
 "
@@ -90,6 +92,9 @@ for folder in $targets ; do
 		controlled_depth "$folder" "/"
 	fi
 done
+
+# if it reached here, module probably copied, log it
+echo "$1" >> "$LOG_FOLDER/modules"
 
 }
 
