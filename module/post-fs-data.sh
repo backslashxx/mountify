@@ -37,17 +37,23 @@ product
 system_ext
 vendor"
 
+# check if fake alias exists, if fail use overlay
+if ! grep "nodev" /proc/filesystems | grep -q "$FS_TYPE_ALIAS" > /dev/null 2>&1; then
+	FS_TYPE_ALIAS="overlay"
+fi
+
+# functions
 controlled_depth() {
 	if [ -z "$1" ] || [ -z "$2" ]; then return ; fi
 	for DIR in $(ls -d $1/*/ | sed 's/.$//' ); do
-		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:$2$DIR" overlay "$2$DIR"
+		busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$(pwd)/$DIR:$2$DIR" "$MOUNT_DEVICE_NAME" "$2$DIR"
 		[ $mountify_use_susfs = 1 ] && ${SUSFS_BIN} add_sus_mount "$2$DIR"
 	done
 }
 
 single_depth() {
 	for DIR in $( ls -d */ | sed 's/.$//'  | grep -vE "^(odm|product|system_ext|vendor)$" 2>/dev/null ); do
-		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:/system/$DIR" overlay /system/$DIR
+		busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$(pwd)/$DIR:/system/$DIR" "$MOUNT_DEVICE_NAME" /system/$DIR
 		[ $mountify_use_susfs = 1 ] && ${SUSFS_BIN} add_sus_mount "/system/$DIR"
 	done
 }
