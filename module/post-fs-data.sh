@@ -20,6 +20,21 @@ if [ $mountify_mounts = 0 ]; then
 	exit 0
 fi
 
+# add simple anti bootloop logic
+BOOTCOUNT=0
+[ -f "$MODDIR/count.sh" ] && . "$MODDIR/count.sh"
+
+BOOTCOUNT=$(( BOOTCOUNT + 1))
+
+if [ $BOOTCOUNT -gt 1 ]; then
+	touch $MODDIR/disable
+	rm "$MODDIR/count.sh"
+	string="description=anti-bootloop triggered. module disabled. enable to activate."
+	sed -i "s/^description=.*/$string/g" $MODDIR/module.prop
+	exit 1
+else
+	echo "BOOTCOUNT=1" > "$MODDIR/count.sh"
+fi
 
 # this is a fast lookup for a writable dir
 # these tends to be always available

@@ -27,8 +27,11 @@ until [ "$(getprop sys.boot_completed)" = "1" ]; do
     sleep 1
 done
 
+# reset bootcount (anti-bootloop routine)
+echo "BOOTCOUNT=0" > "$MODDIR/count.sh"
+
 # placeholder
-mode="symlink (wip) 🛠️ "
+mode="symlink 🛠️ "
 
 # display if on nomount/litemode
 if [ "$KSU_MAGIC_MOUNT" = "true" ] && [ -f /data/adb/ksu/.nomount ]; then
