@@ -38,6 +38,11 @@ mountify_whiteouts
 - `mountify_use_susfs=1` to enable susfs usage (optional)
 - `mountify_stop_start=1` to restart android at service (optional)
 
+##### I need mountify to skip mounting my module!
+- this is easy, add `skip_mountify` to your module's folder.
+- mountify checks this on /data/adb/modules/module_name
+- `[ -f /data/adb/modules/module_name/skip_mountify ]`
+
 ### Need Unmount?
 #### Easy
 - use either NoHello, Shamiko, Zygisk Assistant as umount providers
@@ -58,6 +63,3 @@ mountify_whiteouts
 
 ## Links
 [Download](https://github.com/backslashxx/mountify/releases)
-
-
-
