@@ -100,16 +100,17 @@ mountify_copy() {
 	MODULE_ID="$1"
 	
 	# return for certain modules
-	# bindhosts manages itself, you dont want to global mount hosts file
 	# De-bloater uses dummy text, not whiteouts, which does not really work
-	if [ "$MODULE_ID" = "bindhosts" ] || [ "$MODULE_ID" = "De-bloater" ]; then
+	if [ "$MODULE_ID" = "De-bloater" ]; then
 		echo "mountify/post-fs-data: module with name $MODULE_ID is blacklisted" >> /dev/kmsg
 		return
 	fi
 	
 	# test for various stuff
+	# you dont want to global mount hosts file
 	TARGET_DIR="/data/adb/modules/$MODULE_ID"
-	if [ ! -d "$TARGET_DIR/system" ] || [ -f "$TARGET_DIR/disable" ] || [ -f "$TARGET_DIR/remove" ] || [ -f "$TARGET_DIR/skip_mountify" ]; then
+	if [ ! -d "$TARGET_DIR/system" ] || [ -f "$TARGET_DIR/disable" ] || [ -f "$TARGET_DIR/remove" ] ||
+		[ -f "$TARGET_DIR/skip_mountify" ] || [ -f "$TARGET_DIR/system/etc/hosts" ]; then
 		echo "mountify/post-fs-data: module with name $MODULE_ID not meant to be mounted" >> /dev/kmsg
 		return
 	fi
