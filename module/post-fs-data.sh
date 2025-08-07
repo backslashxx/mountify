@@ -53,7 +53,19 @@ IFS="
 targets="odm
 product
 system_ext
-vendor"
+vendor
+mi_ext
+my_bigball
+my_carrier
+my_company
+my_engineering
+my_heytap
+my_manifest
+my_preload
+my_product
+my_region
+my_reserve
+my_stock"
 [ -w /mnt ] && MNT_FOLDER=/mnt
 [ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
 
