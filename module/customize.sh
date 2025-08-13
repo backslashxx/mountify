@@ -25,13 +25,6 @@ else
 	sleep 2
 fi
 
-if [ ! "$APATCH" = true ] && [ ! "$KSU" = true ] && [ -f "/data/adb/magisk/magisk" ] &&
-	[ "$(/data/adb/magisk/magisk -V)" -ge 30000 ]; then
-	echo "[!] oxidized versions of magisk has issues related to mounting!"
-	echo "[!] modify customize.sh to force installation!"
-	abort "[!] Installation aborted!"
-fi
-
 # routine start
 
 echo "[+] mountify"
