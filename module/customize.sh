@@ -86,6 +86,8 @@ if { [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ]; } || { [ "$APATCH" = 
 	printf "\n\n"
 	echo "[!] WARNING: Root manager is NOT on magic mount."
 	echo "[!] This setup can cause issues and is NOT recommended."
+	echo "[!] modify customize.sh to force installation!"
+	abort "[!] Installation aborted!"
 fi
 
 # EOF
