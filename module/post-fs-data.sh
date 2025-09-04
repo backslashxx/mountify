@@ -194,6 +194,12 @@ if [ ! -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
 	exit 1
 fi
 
+# create ext4 image
+busybox dd if=/dev/zero of=/mnt/vendor/mountify-ext4 bs=100M count=1
+/system/bin/mkfs.ext4 -O ^has_journal /mnt/vendor/mountify-ext4
+busybox mount -o loop,rw /mnt/vendor/mountify-ext4 "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+
+
 # if manual mode and modules.txt has contents
 if [ $mountify_mounts = 1 ] && grep -qv "#" "$MODDIR/modules.txt" >/dev/null 2>&1 ; then
 	# manual mode
@@ -208,6 +214,12 @@ else
 		mountify_copy "$module_id"
 	done
 fi
+
+# remount ext4 image as ro
+# to sync since this is unjournaled
+umount -l "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+sync
+busybox mount -o loop,ro /mnt/vendor/mountify-ext4 "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 
 # mount 
 cd "$MNT_FOLDER/$FAKE_MOUNT_NAME"
