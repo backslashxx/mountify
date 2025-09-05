@@ -194,8 +194,8 @@ if [ ! -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
 	exit 1
 fi
 
-# create ext4 image
-busybox dd if=/dev/zero of=/mnt/vendor/mountify-ext4 bs=100M count=1
+# create 2GB sparse
+busybox dd if=/dev/zero of=/mnt/vendor/mountify-ext4 bs=1M count=0 seek=2048
 /system/bin/mkfs.ext4 -O ^has_journal /mnt/vendor/mountify-ext4
 busybox mount -o loop,rw /mnt/vendor/mountify-ext4 "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 
@@ -219,6 +219,7 @@ fi
 # to sync since this is unjournaled
 umount -l "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 sync
+/system/bin/resize2fs -M /mnt/vendor/mountify-ext4
 busybox mount -o loop,ro /mnt/vendor/mountify-ext4 "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 
 # mount 
