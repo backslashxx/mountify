@@ -216,11 +216,14 @@ else
 fi
 
 # remount ext4 image as ro
-# to sync since this is unjournaled
+# make sure to sync since this is unjournaled
 umount -l "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 sync
-/system/bin/resize2fs -M /mnt/vendor/mountify-ext4
-busybox mount -o loop,ro /mnt/vendor/mountify-ext4 "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+/system/bin/resize2fs -M "/mnt/vendor/mountify-ext4"
+mkdir -p "/apex/com.android.mountify"
+busybox mount -o loop,ro "/mnt/vendor/mountify-ext4" "/apex/com.android.mountify"
+rm -rf "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+busybox ln -sf "/apex/com.android.mountify" "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 
 # mount 
 cd "$MNT_FOLDER/$FAKE_MOUNT_NAME"
