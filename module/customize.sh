@@ -50,7 +50,15 @@ if busybox setfattr -n trusted.overlay.whiteout -v y "$testfile" > /dev/null 2>&
 	rm $testfile > /dev/null 2>&1 
 else
 	rm $testfile > /dev/null 2>&1 
-	abort "[!] CONFIG_TMPFS_XATTR is required for this module!"
+	echo "[!] CONFIG_TMPFS_XATTR fail!"
+	echo "[+] testing for ext4 sparse image fallback mode"
+	# check for tools
+	if [ -f "/system/bin/mkfs.ext4" ] && [ -f "/system/bin/resize2fs" ]; then
+		busybox touch "$MODPATH/xattr_fail"
+		echo "[+] ext4 sparse fallback mode enabled"
+	else
+		abort "[!] tools not found, bail out."
+	fi
 fi
 
 # grab version code
