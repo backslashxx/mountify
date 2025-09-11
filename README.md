@@ -9,17 +9,33 @@
 - for module devs, you can also use [this standalone script](https://github.com/backslashxx/mountify/tree/standalone-script)
 
 ## Methodology
+### tmpfs mode 
 1. `touch /data/adb/modules/module_id/skip_mount`
 2. copies contents of `/data/adb/modules/module_id` to `/mnt/vendor/fake_folder_name`
 3. mirrors SELinux context of every file from `/data/adb/modules/module_id` to `/mnt/vendor/fake_folder_name`
 4. loops 2 and 3 for all modules
 5. overlays `/mnt/vendor/fake_folder_name/system/bin` to `/system/bin` and other folders
 
-## Why It’s Done This Way
+### ext4 sparse mode 
+1. `touch /data/adb/modules/module_id/skip_mount`
+2. create an ext4 sparse image, mount it on `/mnt/vendor/fake_folder_name`
+3. copies contents of `/data/adb/modules/module_id` to `/mnt/vendor/fake_folder_name`
+4. mirrors SELinux context of every file from `/data/adb/modules/module_id` to `/mnt/vendor/fake_folder_name`
+5. loops 3 and 4 for all modules
+6. unmounts, resizes and remounts sparse image to `/mnt/vendor/fake_folder_name`
+7. overlays `/mnt/vendor/fake_folder_name/system/bin` to `/system/bin` and other folders
+
+## Why?
 - Magic mount drastically increases mount count, making detection possible (zimperium)
 - OverlayFS mounting with ext4 image upperdir is detectable due to it creating device nodes on /proc/fs, while yes ext4 /data as overlay source is possible, who uses that nowadays?
 - F2FS /data as overlay source fails with native casefolding (ovl_dentry_weird), so only sdcardfs users can use /data as overlay source.
-- Frankly, I dont see a way to this module mounting situation, this shit is more of a shitty band-aid 
+- Frankly, I dont see a way to this module mounting situation, this shit is more of a shitty band-aid
+
+### but ext4 sparse mode creates ext4 nodes!
+- this is added to accomodate something like GPU drivers
+- this causes detections but YMMV.
+- this is not my problem, this is a fallback, not the main recommendation.
+- and yes this is basically how Official KernelSU does it.
 
 ## Usage
 by default, mountify mounts all modules with a system folder. To mount specific modules only, edit config.sh
@@ -44,14 +60,9 @@ mountify_whiteouts
 - `[ -f /data/adb/modules/module_name/skip_mountify ]`
 
 ### Need Unmount?
-#### Easy
 - use either NoHello, Shamiko, Zygisk Assistant as umount providers
 - for ReZygisk, it should just work
 - for Zygisk Next, enable "Enforce DenyList"
-- then edit config.sh, `MOUNT_DEVICE_NAME="KSU"`
-
-#### Hard
-- requires KernelSU with [PR#2531](https://github.com/tiann/KernelSU/pull/2531) or [this](https://github.com/backslashxx/KernelSU/commit/55394c816d84852e3d944419b38dfa4645ff96ee)
 - then edit config.sh, `MOUNT_DEVICE_NAME="KSU"`
 
 ## Limitations / Recommendations
@@ -63,3 +74,4 @@ mountify_whiteouts
 
 ## Links
 [Download](https://github.com/backslashxx/mountify/releases)
+
