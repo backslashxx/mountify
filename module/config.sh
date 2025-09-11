@@ -38,7 +38,17 @@ mountify_stop_start=0
 FS_TYPE_ALIAS="overlay"
 
 # this one below is its device name
-# you can put whatever bullshit you want here like '/dev/block/dm-0' whatever
+# you can put "KSU", "Apatch" here so a umount provider can umount
+# e.g. NoHello, ReZygisk, Shamiko, Zygisk Assistant, ZygiskNext-DE
+# otherwise leave default. this is if you need unmount.
 MOUNT_DEVICE_NAME="overlay"
+
+# ext4 sparse mode override
+# this only makes sense if you have tmpfs xattr but you still
+# prefer using an ext4 sparse image to mount
+# NOTE: this causes detections, but no real app does as of 250911
+# 0 to disable
+# 1 to enable
+use_ext4_sparse=0
 
 # EOF
