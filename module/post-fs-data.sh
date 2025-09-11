@@ -14,6 +14,7 @@ mountify_use_susfs=0
 FAKE_MOUNT_NAME="mountify"
 MOUNT_DEVICE_NAME="overlay"
 FS_TYPE_ALIAS="overlay"
+use_ext4_sparse=0
 # read config
 . $MODDIR/config.sh
 # exit if disabled
@@ -194,7 +195,7 @@ if [ ! -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
 	exit 1
 fi
 
-if [ -f "$MODDIR/xattr_fail" ]; then
+if [ -f "$MODDIR/xattr_fail" ] || [ "$use_ext4_sparse" = "1" ]; then
 	# create 2GB sparse
 	busybox dd if=/dev/zero of=/mnt/vendor/mountify-ext4 bs=1M count=0 seek=2048
 	/system/bin/mkfs.ext4 -O ^has_journal /mnt/vendor/mountify-ext4
@@ -216,7 +217,7 @@ else
 	done
 fi
 
-if [ -f "$MODDIR/xattr_fail" ]; then
+if [ -f "$MODDIR/xattr_fail" ] || [ "$use_ext4_sparse" = "1" ]; then
 	# unmount, sync and remount ext4 image as ro
 	busybox umount -l "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 	busybox sync
