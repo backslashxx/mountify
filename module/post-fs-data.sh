@@ -15,6 +15,8 @@ FAKE_MOUNT_NAME="mountify"
 MOUNT_DEVICE_NAME="overlay"
 FS_TYPE_ALIAS="overlay"
 use_ext4_sparse=0
+spoof_sparse=0
+FAKE_APEX_NAME="com.android.mntservice"
 # read config
 . $MODDIR/config.sh
 # exit if disabled
@@ -222,7 +224,22 @@ if [ -f "$MODDIR/xattr_fail" ] || [ "$use_ext4_sparse" = "1" ]; then
 	busybox umount -l "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 	busybox sync
 	/system/bin/resize2fs -M "$MNT_FOLDER/mountify-ext4"
-	busybox mount -o loop,ro "$MNT_FOLDER/mountify-ext4" "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+	
+	if [ "$spoof_sparse" = "1" ] && [ -w "/apex" ] && [ ! -e "/apex/$FAKE_APEX_NAME" ]; then
+		# here we copy how android does it
+		mkdir -p "/apex/$FAKE_APEX_NAME@1"
+		busybox mount -o loop,ro,dirsync,seclabel,nodev,noatime "$MNT_FOLDER/mountify-ext4" "/apex/$FAKE_APEX_NAME@1"
+		mkdir -p "/apex/$FAKE_APEX_NAME" # then prepare the original for it
+		busybox mount --bind,ro "/apex/$FAKE_APEX_NAME@1" "/apex/$FAKE_APEX_NAME"
+		rm -rf "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+		busybox ln -sf "/apex/$FAKE_APEX_NAME" "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+	else
+		busybox mount -o loop,ro "$MNT_FOLDER/mountify-ext4" "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+	fi
+
+	# or another bind mount ?? this creates another mount, but hey, it werks
+	# busybox mount --bind,ro "/apex/com.android.mntservice" "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+	
 fi
 
 # mount 
