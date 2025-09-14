@@ -19,13 +19,6 @@ mountify_mounts=2
 # you just make this shit up
 FAKE_MOUNT_NAME="mountify"
 
-# toggle to use susfs
-# this is not really required as of 250211
-# it seems recent susfs will just omit mounts done within ksu domain (100000+ mount id)
-# and no detector detects mountify mounting method yet, so no need to enforce/require
-# just set to 1 to enable
-mountify_use_susfs=0
-
 # stop; start at service
 # certain modules might need this
 # just set to 1 to enable
@@ -39,9 +32,13 @@ FS_TYPE_ALIAS="overlay"
 
 # this one below is its device name
 # you can put "KSU", "Apatch" here so a umount provider can umount
-# e.g. NoHello, ReZygisk, Shamiko, Zygisk Assistant, ZygiskNext-DE
+# e.g. NeoZygisk, NoHello, ReZygisk, Shamiko, Zygisk Assistant, ZygiskNext-DE
 # otherwise leave default. this is if you need unmount.
 MOUNT_DEVICE_NAME="overlay"
+
+#
+# settings below are mostly for sparse mode users !!!
+#
 
 # ext4 sparse mode override
 # this only makes sense if you have tmpfs xattr but you still
@@ -50,5 +47,23 @@ MOUNT_DEVICE_NAME="overlay"
 # 0 to disable
 # 1 to enable
 use_ext4_sparse=0
+
+# this tries to spoof your sparse mount as some apex service whatever
+# this makes sense if you unmount your overlays, so this should go well
+# with a custom MOUNT_DEVICE_NAME
+# 0 to disable
+# 1 to enable
+spoof_sparse=0
+
+# this is your fake apex name
+# just put random bullshit on this like com.android.wtf
+# while futile, this tries to make it look legit
+FAKE_APEX_NAME="com.android.mntservice"
+
+# this is for users who wants a custom sparse size
+# this does NOT really matter, but it seems important to some
+# modify this to any unsigned number
+# basically, sparse size in MB
+sparse_size="2048"
 
 # EOF
