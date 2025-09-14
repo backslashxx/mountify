@@ -17,6 +17,7 @@ FS_TYPE_ALIAS="overlay"
 use_ext4_sparse=0
 spoof_sparse=0
 FAKE_APEX_NAME="com.android.mntservice"
+sparse_size="2048"
 # read config
 . $MODDIR/config.sh
 # exit if disabled
@@ -199,7 +200,7 @@ fi
 
 if [ -f "$MODDIR/xattr_fail" ] || [ "$use_ext4_sparse" = "1" ]; then
 	# create 2GB sparse
-	busybox dd if=/dev/zero of="$MNT_FOLDER/mountify-ext4" bs=1M count=0 seek=2048
+	busybox dd if=/dev/zero of="$MNT_FOLDER/mountify-ext4" bs=1M count=0 seek="$sparse_size"
 	/system/bin/mkfs.ext4 -O ^has_journal "$MNT_FOLDER/mountify-ext4"
 	busybox mount -o loop,rw "$MNT_FOLDER/mountify-ext4" "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 fi
