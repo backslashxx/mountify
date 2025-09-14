@@ -24,7 +24,7 @@ fi
 
 # wait for boot-complete
 until [ "$(getprop sys.boot_completed)" = "1" ]; do
-    sleep 1
+	sleep 1
 done
 
 # reset bootcount (anti-bootloop routine)
@@ -55,5 +55,9 @@ if [ -f $LOG_FOLDER/modules ]; then
 	string="description=mode: $mode | modules: $( for module in $(cat "$LOG_FOLDER/modules" ) ; do printf "$module " ; done ) "
 fi
 sed -i "s/^description=.*/$string/g" $MODDIR/module.prop
+
+if [ ! "$APATCH" = true ] && [ ! "$KSU" = true ]; then
+	sh "$MODDIR/boot-completed.sh" &
+fi
 
 # EOF
