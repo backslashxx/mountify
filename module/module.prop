@@ -1,7 +1,7 @@
 id=mountify
 name=mountify
-version=v1.4.6
-versionCode=146
+version=v1.4.7
+versionCode=147
 author=xx
 description=Globally mounted modules via OverlayFS.
 updateJson=https://raw.githubusercontent.com/backslashxx/mountify/master/update.json
