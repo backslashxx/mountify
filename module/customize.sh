@@ -69,10 +69,10 @@ else
 	mountify_versionCode=0
 fi
 
-# replace if 129 and older
-# https://github.com/backslashxx/mountify/commit/caa2cfa1058e1f428e47047d057fa73fed3351ca
-if [ $mountify_versionCode -gt 129 ]; then
-	configs="modules.txt whiteouts.txt config.sh skipped_modules"
+# replace if 146 and older
+# https://github.com/backslashxx/mountify/commit/8a815deef8ee127d4dfad01fedd64f899500124e
+if [ $mountify_versionCode -gt 146 ]; then
+	configs="modules.txt whiteouts.txt config.sh skipped_modules boot-completed.sh"
 else
 	echo "[!] using fresh config.sh"
 	configs="modules.txt whiteouts.txt"
