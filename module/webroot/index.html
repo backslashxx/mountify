@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mountify</title>
+    <link rel="stylesheet" href="styles.css" type="text/css">
+</head>
+<body>
+    <div class="root_layout">
+        <h2>mountify <span id="version"></span></h2>
+        <div class="content-container" id="input-group-container"></div>
+        <div class="keyboard-inset"></div>
+    </div>
+    
+    <div class="modal">
+        <div class="modal-content">
+            <div class="close-button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+            </div>
+            <p></p>
+        </div>
+    </div>
+
+    <div class="module-selector">
+        <div class="module-selector-content">
+            <div class="close-button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+            </div>
+            <h2>Select Modules</h2>
+            <ul class="module-list"></ul>
+        </div>
+    </div>
+
+    <script src="index.js" type="module"></script>
+</body>
+</html>

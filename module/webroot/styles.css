@@ -1,0 +1,315 @@
+@import url('https://mui.kernelsu.org/internal/insets.css');
+@import url('https://mui.kernelsu.org/internal/colors.css');
+
+:root {
+    --top-inset: var(--window-inset-top, 0px);
+    --bottom-inset: var(--window-inset-bottom, 0px);
+
+    /* Background colors */
+    --bg-primary: var(--background, #fbf8ff);
+    --bg-secondary: var(--tonalSurface, #f3f0f9);
+    --bg-input: var(--surfaceContainerLow, #f5f2fa);
+
+    /* Text colors */
+    --text-primary: var(--onSurface, #1b1b21);
+    --text-secondary: var(--onSurfaceVariant, #757575);
+
+    /* Border colors */
+    --border-color: var(--outlineVariant, #c7c5d0);
+
+    /* Button colors */
+    --btn-primary: var(--primary, #565992);
+    --btn-primary-text: var(--onPrimary, #fff);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Background colors */
+        --bg-primary: var(--background, #131318);
+        --bg-secondary: var(--tonalSurface, #1c1c24);
+        --bg-input: var(--surfaceContainerLow, #1b1b21);
+
+        /* Text colors */
+        --text-primary: var(--onSurface, #e4e1e9);
+        --text-secondary: var(--onSurfaceVariant, #C2C2C2);
+
+        /* Border colors */
+        --border-color: var(--outlineVariant, #46464f);
+
+        /* Button colors */
+        --btn-primary: var(--primary, #bfc2ff);
+        --btn-primary-text: var(--onPrimary, #272b60);
+    }
+}
+
+body {
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+    padding-top: var(--top-inset);
+    padding-bottom: calc(var(--bottom-inset) + 50px);
+    margin: 0;
+}
+
+.root_layout {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h3 {
+    margin-top: 16px;
+    margin-bottom: 16px;
+    user-select: none;
+}
+
+p {
+    user-select: none;
+}
+
+.content-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 16px;
+    box-sizing: border-box;
+}
+
+.input-group {
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.select-group {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.input-title {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.input-group input,
+.input-group select {
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    font-size: 16px;
+    outline: none;
+    appearance: none;
+}
+
+.input-group .arrow {
+    position: absolute;
+    right: 8px;
+    width: 1.5em;
+    height: 100%;
+    fill: var(--text-primary);
+    pointer-events: none;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    border-color: var(--btn-primary);
+}
+
+h3 {
+    text-align: center;
+    margin: 0;
+    margin-top: 24px;
+}
+
+.input-btn {
+    margin-top: 5px;
+    padding: 10px 0;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--btn-primary);
+    color: var(--btn-primary-text);
+    transition: filter ease 0.2s;
+}
+
+.input-btn:active {
+    filter: opacity(80%);
+}
+
+.description-button {
+    height: 32px;
+    width: 32px;
+    border: none;
+    border-radius: 50%;
+    background-color: inherit;
+
+    svg {
+        width: 100%;
+        height: 100%;
+        fill: var(--text-primary);
+    }
+}
+
+.module-selector,
+.modal {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity ease 0.2s;
+    pointer-events: none;
+}
+
+.module-selector.show,
+.modal.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.module-selector-content,
+.modal-content {
+    background-color: var(--bg-secondary);
+    margin: auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    height: 24px;
+    width: 24px;
+    user-select: none;
+
+    svg {
+        height: 100%;
+        width: 100%;
+        fill: var(--text-primary);
+    }
+}
+
+.module-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.module-item:last-child {
+    border-bottom: none;
+}
+
+.checkbox-wrapper {
+    flex-shrink: 0;
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+}
+
+.checkbox {
+    opacity: 0;
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
+.custom-checkbox {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border-color 1s ease, transform 0.3s ease, background-color 0.2s ease;
+}
+
+.tick-symbol {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    transition: transform 0.2s ease-out, opacity 0.3s ease;
+
+    svg {
+        fill: var(--btn-primary-text);
+    }
+}
+
+.checkbox:checked + .custom-checkbox {
+    border-color: var(--btn-primary);
+    background-color: var(--btn-primary);
+    transition: border-color 0.1s ease;
+    animation: checked-bounce 0.3s ease-out;
+}
+
+.checkbox:not(:checked) + .custom-checkbox {
+    animation: unchecked-bounce 0.3s ease-out;
+}
+
+.checkbox:checked + .custom-checkbox .tick-symbol {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+@keyframes checked-bounce {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.8);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes unchecked-bounce {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.8);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.keyboard-inset {
+    flex-shrink: 0;
+    height: 0px;
+    transition: height 0.1s ease;
+}
+
+.keyboard-inset.active {
+    height: 50vh;
+}

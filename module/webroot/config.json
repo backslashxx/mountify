@@ -1,0 +1,41 @@
+{
+    "mountify_mounts": {
+        "option": [0, 1, 2],
+        "description": "Module mounting config.\n0 - disable\n1 - manual mode (mount modules that found on modules.txt)\n2 - auto mode (mount all modules with system folder)"
+    },
+    "FAKE_MOUNT_NAME": {
+        "description": "Mount folder name."
+    },
+    "test_decoy_mount": {
+        "option": [0, 1],
+        "description": "testing of decoy mounting\nThis is only meant for tmpfs mode.\n0 - disable\n1 - enable"
+    },
+    "mountify_stop_start": {
+        "option": [0, 1],
+        "description": "Start at service, certain modules might need this.\n0 - disable\n1 - enable"
+    },
+    "FS_TYPE_ALIAS": {
+        "option": ["allow-other", "overlay"],
+        "description": "Fake overlayfs params.\nThis is only useful if you patched your overlayfs to register some made up alias."
+    },
+    "MOUNT_DEVICE_NAME": {
+        "option": ["allow-other", "overlay", "KSU", "APATCH"],
+        "description": "You can put 'KSU', 'Apatch' here so a umount provider can umount.\ne.g. NeoZygisk, NoHello, ReZygisk, Shamiko, Zygisk Assistant, ZygiskNext-DE"
+    },
+    "use_ext4_sparse": {
+        "option": [0, 1],
+        "description": "ext4 sparse mode override.\nThis only makes sense if you have tmpfs xattr but you still prefer using an ext4 sparse image to mount.\n0 - disable\n1 - enable"
+    },
+    "spoof_sparse": {
+        "option": [0, 1],
+        "description": "This tries to spoof your sparse mount as some apex service whatever.\nThis makes sense if you unmount your overlays, so this should go well with a custom MOUNT_DEVICE_NAME."
+    },
+    "FAKE_APEX_NAME": {
+        "option": ["allow-other", "com.android.mntservice"],
+        "description": "Just put random bullshit on this like com.android.wtf\nWhile futile, this tries to make it look legit."
+    },
+    "sparse_size": {
+        "option": ["allow-other", "1024", "2048", "4096"],
+        "description": "This is for users who wants a custom sparse size.\nThis does NOT really matter, but it seems important to some.\nmodify this to any unsigned number.\nbasically, sparse size in MB."
+    }
+}
