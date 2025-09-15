@@ -16,6 +16,8 @@ use_ext4_sparse=0
 spoof_sparse=0
 FAKE_APEX_NAME="com.android.mntservice"
 sparse_size="2048"
+test_decoy_mount="0"
+DECOY_MOUNT_FOLDER="/oem"
 # read config
 . $MODDIR/config.sh
 # exit if disabled
@@ -78,24 +80,22 @@ decoy_folder_candidates="/oem
 /acct
 "
 
-[ -w /mnt ] && MNT_FOLDER=/mnt
-[ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
+[ -w /mnt ] && MNT_FOLDER="/mnt"
+[ -w /mnt/vendor ] && MNT_FOLDER="/mnt/vendor"
 
 # check if fake alias exists, if fail use overlay
 if ! grep "nodev" /proc/filesystems | grep -q "$FS_TYPE_ALIAS" > /dev/null 2>&1; then
 	FS_TYPE_ALIAS="overlay"
 fi
 
-decoy_mount="0"
-DECOY_MOUNT_FOLDER="/oem"
-if [ ! -f "$MODDIR/xattr_fail" ] && [ ! "$use_ext4_sparse" = "1" ]; then
+if [ "$test_decoy_mount" = "1" ] && [ ! -f "$MODDIR/xattr_fail" ] && [ ! "$use_ext4_sparse" = "1" ]; then
 	# test for decoy mount
 	# it needs to be a blank folder
 	for dir in $decoy_folder_candidates; do
 		if [ -d "$dir" ] && [ "$(ls -A "$dir" 2>/dev/null | wc -l)" -eq 0 ]; then
 			DECOY_MOUNT_FOLDER="$dir"
 			echo "mountify/post-fs-data: decoy folder $DECOY_MOUNT_FOLDER" >> /dev/kmsg
-			decoy_mount="1"
+			decoy_mount_enabled="1"
 			break
 		fi
 	done
@@ -107,7 +107,7 @@ fi
 controlled_depth() {
 	if [ -z "$1" ] || [ -z "$2" ]; then return ; fi
 	for DIR in $(ls -d $1/*/ | sed 's/.$//' ); do
-		if [ "$decoy_mount" = "1" ] && [ -w "$DECOY_MOUNT_FOLDER" ]; then
+		if [ "$decoy_mount_enabled" = "1" ] && [ -w "$DECOY_MOUNT_FOLDER" ]; then
 			mkdir -p "$DECOY_MOUNT_FOLDER/preload$2$DIR"
 			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$DECOY_MOUNT_FOLDER/preload$2$DIR:$(pwd)/$DIR:$2$DIR" "$MOUNT_DEVICE_NAME" "$2$DIR"
 		else
@@ -119,7 +119,7 @@ controlled_depth() {
 # handle single depth (/system/bin, /system/etc, et. al)
 single_depth() {
 	for DIR in $( ls -d */ | sed 's/.$//'  | grep -vE "^(odm|product|system_ext|vendor)$" 2>/dev/null ); do
-		if [ "$decoy_mount" = "1" ] && [ -w "$DECOY_MOUNT_FOLDER" ]; then
+		if [ "$decoy_mount_enabled" = "1" ] && [ -w "$DECOY_MOUNT_FOLDER" ]; then
 			mkdir -p "$DECOY_MOUNT_FOLDER/preload/system/$DIR"
 			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$DECOY_MOUNT_FOLDER/preload/system/$DIR:$(pwd)/$DIR:/system/$DIR" "$MOUNT_DEVICE_NAME" "/system/$DIR"
 		else
@@ -229,7 +229,7 @@ if [ ! -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
 	exit 1
 fi
 
-if [ "$decoy_mount" = "1" ] && [ -d "$DECOY_MOUNT_FOLDER" ] && [ "$(ls -A "$DECOY_MOUNT_FOLDER" 2>/dev/null | wc -l)" -eq 0 ]; then
+if [ "$decoy_mount_enabled" = "1" ] && [ -d "$DECOY_MOUNT_FOLDER" ] && [ "$(ls -A "$DECOY_MOUNT_FOLDER" 2>/dev/null | wc -l)" -eq 0 ]; then
 	mount -t tmpfs tmpfs "$DECOY_MOUNT_FOLDER"
 fi
 
@@ -295,7 +295,7 @@ for folder in $targets ; do
 	fi
 done
 
-if [ "$decoy_mount" = "1" ] && [ -d "$DECOY_MOUNT_FOLDER" ]; then
+if [ "$decoy_mount_enabled" = "1" ] && [ -d "$DECOY_MOUNT_FOLDER" ]; then
 	busybox umount -l "$DECOY_MOUNT_FOLDER"
 fi
 

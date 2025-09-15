@@ -19,6 +19,13 @@ mountify_mounts=2
 # you just make this shit up
 FAKE_MOUNT_NAME="mountify"
 
+# decoy mount
+# you can override here to enable/disable testing of decoy mounting
+# this is only meant for tmpfs mode
+# 0 to disable
+# 1 to enable
+test_decoy_mount="0"
+
 # stop; start at service
 # certain modules might need this
 # just set to 1 to enable
