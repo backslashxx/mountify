@@ -125,6 +125,7 @@ function appendInputGroup() {
             div.dataset.key = key;
 
             let inputElement;
+            if (metadata && metadata.hide && metadata.hide === true) continue
             if (metadata && metadata.option) {
                 if (metadata.option[0] === 'allow-other') {
                     const datalistId = `datalist-${key}`;

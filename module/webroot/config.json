@@ -15,8 +15,7 @@
         "description": "Start at service, certain modules might need this.\n0 - disable\n1 - enable"
     },
     "FS_TYPE_ALIAS": {
-        "option": ["allow-other", "overlay"],
-        "description": "Fake overlayfs params.\nThis is only useful if you patched your overlayfs to register some made up alias."
+        "hide": true
     },
     "MOUNT_DEVICE_NAME": {
         "option": ["allow-other", "overlay", "KSU", "APATCH"],
