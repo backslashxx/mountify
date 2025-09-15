@@ -68,6 +68,16 @@ my_product
 my_region
 my_reserve
 my_stock"
+
+decoy_folder_candidates="/oem
+/second_stage_resources
+/patch_hw
+/postinstall
+/system_dlkm
+/oem_dlkm
+/acct
+"
+
 [ -w /mnt ] && MNT_FOLDER=/mnt
 [ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
 
@@ -76,20 +86,45 @@ if ! grep "nodev" /proc/filesystems | grep -q "$FS_TYPE_ALIAS" > /dev/null 2>&1;
 	FS_TYPE_ALIAS="overlay"
 fi
 
+decoy_mount="0"
+DECOY_MOUNT_FOLDER="/oem"
+if [ ! -f "$MODDIR/xattr_fail" ] && [ ! "$use_ext4_sparse" = "1" ]; then
+	# test for decoy mount
+	# it needs to be a blank folder
+	for dir in $decoy_folder_candidates; do
+		if [ -d "$dir" ] && [ "$(ls -A "$dir" 2>/dev/null | wc -l)" -eq 0 ]; then
+			DECOY_MOUNT_FOLDER="$dir"
+			echo "mountify/post-fs-data: decoy folder $DECOY_MOUNT_FOLDER" >> /dev/kmsg
+			decoy_mount="1"
+			break
+		fi
+	done
+fi
+
 # functions
 
 # controlled depth ($targets fuckery)
 controlled_depth() {
 	if [ -z "$1" ] || [ -z "$2" ]; then return ; fi
 	for DIR in $(ls -d $1/*/ | sed 's/.$//' ); do
-		busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$(pwd)/$DIR:$2$DIR" "$MOUNT_DEVICE_NAME" "$2$DIR"
+		if [ "$decoy_mount" = "1" ] && [ -w "$DECOY_MOUNT_FOLDER" ]; then
+			mkdir -p "$DECOY_MOUNT_FOLDER/preload$2$DIR"
+			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$DECOY_MOUNT_FOLDER/preload$2$DIR:$(pwd)/$DIR:$2$DIR" "$MOUNT_DEVICE_NAME" "$2$DIR"
+		else
+			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$(pwd)/$DIR:$2$DIR" "$MOUNT_DEVICE_NAME" "$2$DIR"
+		fi
 	done
 }
 
 # handle single depth (/system/bin, /system/etc, et. al)
 single_depth() {
 	for DIR in $( ls -d */ | sed 's/.$//'  | grep -vE "^(odm|product|system_ext|vendor)$" 2>/dev/null ); do
-		busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$(pwd)/$DIR:/system/$DIR" "$MOUNT_DEVICE_NAME" "/system/$DIR"
+		if [ "$decoy_mount" = "1" ] && [ -w "$DECOY_MOUNT_FOLDER" ]; then
+			mkdir -p "$DECOY_MOUNT_FOLDER/preload/system/$DIR"
+			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$DECOY_MOUNT_FOLDER/preload/system/$DIR:$(pwd)/$DIR:/system/$DIR" "$MOUNT_DEVICE_NAME" "/system/$DIR"
+		else
+			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$(pwd)/$DIR:/system/$DIR" "$MOUNT_DEVICE_NAME" "/system/$DIR"
+		fi
 	done
 }
 
@@ -194,6 +229,11 @@ if [ ! -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
 	exit 1
 fi
 
+if [ "$decoy_mount" = "1" ] && [ -d "$DECOY_MOUNT_FOLDER" ] && [ "$(ls -A "$DECOY_MOUNT_FOLDER" 2>/dev/null | wc -l)" -eq 0 ]; then
+	mount -t tmpfs tmpfs "$DECOY_MOUNT_FOLDER"
+fi
+
+
 if [ -f "$MODDIR/xattr_fail" ] || [ "$use_ext4_sparse" = "1" ]; then
 	# create 2GB sparse
 	busybox dd if=/dev/zero of="$MNT_FOLDER/mountify-ext4" bs=1M count=0 seek="$sparse_size"
@@ -254,6 +294,10 @@ for folder in $targets ; do
 		controlled_depth "$folder" "/"
 	fi
 done
+
+if [ "$decoy_mount" = "1" ] && [ -d "$DECOY_MOUNT_FOLDER" ]; then
+	busybox umount -l "$DECOY_MOUNT_FOLDER"
+fi
 
 # log after
 cat /proc/mounts > "$LOG_FOLDER/after"
