@@ -37,6 +37,12 @@ case $mountify_mounts in
 	*) mode="disabled 💀" ;; # ??
 esac
 
+if [ "$use_ext4_sparse" = "1" ] || [ -f "$MODDIR/xattr_fail" ]; then
+	mode="$mode | fstype: ext4 👾"
+else
+	mode="$mode | fstype: tmpfs 👻"
+fi
+
 # display if on nomount/litemode
 if [ "$KSU_MAGIC_MOUNT" = "true" ] && [ -f /data/adb/ksu/.nomount ]; then
 	mode="$mode | nomount: ✅"
