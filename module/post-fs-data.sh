@@ -157,7 +157,7 @@ mountify_copy() {
 	# you dont want to global mount hosts file
 	TARGET_DIR="/data/adb/modules/$MODULE_ID"
 	if [ ! -d "$TARGET_DIR/system" ] || [ -f "$TARGET_DIR/disable" ] || [ -f "$TARGET_DIR/remove" ] ||
-		[ -f "$TARGET_DIR/skip_mountify" ] || [ -f "$TARGET_DIR/system/etc/hosts" ] || [ -f "$TARGET_DIR/system/bin/su" ]; then
+		[ -f "$TARGET_DIR/skip_mountify" ] || [ -f "$TARGET_DIR/system/etc/hosts" ]; then
 		echo "mountify/post-fs-data: module with name $MODULE_ID not meant to be mounted" >> /dev/kmsg
 		return
 	fi
