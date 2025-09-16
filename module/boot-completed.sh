@@ -1,5 +1,5 @@
 #!/bin/sh
-# service.sh
+# boot-completed.sh
 # this script is part of mountify
 # No warranty.
 # No rights reserved.
@@ -13,11 +13,29 @@ MODDIR="/data/adb/modules/mountify"
 # this script will be migrated by mountify re-installs / updates
 #
 
-# put your whatever in here
-# example
-# unmount my mounts via susfs
-# for mount in $(grep $MOUNT_DEVICE_NAME /proc/mounts | awk {'print $2'}) ; do 
-#	/data/adb/ksu/bin/ksu_susfs add_try_umount $mount 1
-# done
+[ -w /mnt ] && MNT_FOLDER=/mnt
+[ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
+
+# add mounts to list
+
+# add sparse first
+# on ext4 mode and sparse isn't spoofed
+if { [ -f "$MODDIR/xattr_fail" ] || [ "$use_ext4_sparse" = "1" ]; } && [ "$spoof_sparse" = "0" ];then
+	# add to umount
+	/data/adb/ksud add-try-umount "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+	# unregister sparse's ext4 node
+	/data/adb/ksud nuke-ext4-sysfs "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+fi
+
+# this assumes ksu is your mount device name
+# if $MOUNT_DEVICE_NAME is used to grep, it can grep "overlay" and will unmount all overlays !!
+for mount in $(grep "KSU" /proc/mounts | awk {'print $2'}) ; do
+        # add mounts to list
+	/data/adb/ksud add-try-umount $mount
+done
+
+# lousy maphide
+# "$MODDIR/prctl" 0xdeadbeef 0x11001 libqdMetaData.so
 
 # EOF
+
