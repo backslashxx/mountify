@@ -108,8 +108,8 @@ controlled_depth() {
 	if [ -z "$1" ] || [ -z "$2" ]; then return ; fi
 	for DIR in $(ls -d $1/*/ | sed 's/.$//' ); do
 		if [ "$decoy_mount_enabled" = "1" ] && [ -w "$DECOY_MOUNT_FOLDER" ]; then
-			mkdir -p "$DECOY_MOUNT_FOLDER/preload$2$DIR"
-			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$DECOY_MOUNT_FOLDER/preload$2$DIR:$(pwd)/$DIR:$2$DIR" "$MOUNT_DEVICE_NAME" "$2$DIR"
+			mkdir -p "$DECOY_MOUNT_FOLDER/$FAKE_MOUNT_NAME$2$DIR"
+			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$DECOY_MOUNT_FOLDER/$FAKE_MOUNT_NAME$2$DIR:$(pwd)/$DIR:$2$DIR" "$MOUNT_DEVICE_NAME" "$2$DIR"
 		else
 			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$(pwd)/$DIR:$2$DIR" "$MOUNT_DEVICE_NAME" "$2$DIR"
 		fi
@@ -120,8 +120,8 @@ controlled_depth() {
 single_depth() {
 	for DIR in $( ls -d */ | sed 's/.$//'  | grep -vE "^(odm|product|system_ext|vendor)$" 2>/dev/null ); do
 		if [ "$decoy_mount_enabled" = "1" ] && [ -w "$DECOY_MOUNT_FOLDER" ]; then
-			mkdir -p "$DECOY_MOUNT_FOLDER/preload/system/$DIR"
-			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$DECOY_MOUNT_FOLDER/preload/system/$DIR:$(pwd)/$DIR:/system/$DIR" "$MOUNT_DEVICE_NAME" "/system/$DIR"
+			mkdir -p "$DECOY_MOUNT_FOLDER/$FAKE_MOUNT_NAME/system/$DIR"
+			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$DECOY_MOUNT_FOLDER/$FAKE_MOUNT_NAME/system/$DIR:$(pwd)/$DIR:/system/$DIR" "$MOUNT_DEVICE_NAME" "/system/$DIR"
 		else
 			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$(pwd)/$DIR:/system/$DIR" "$MOUNT_DEVICE_NAME" "/system/$DIR"
 		fi
