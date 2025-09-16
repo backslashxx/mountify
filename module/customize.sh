@@ -26,6 +26,22 @@ else
 fi
 
 # routine start
+[ -w /mnt ] && MNT_FOLDER=/mnt
+[ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
+
+test_ext4_image() {
+	mkdir -p "$MNT_FOLDER/mountify-mount-test"
+	busybox dd if=/dev/zero of="$MNT_FOLDER/mountify-ext4" bs=1M count=0 seek=8 >/dev/null 2>&1 || ext4_fail=1
+	/system/bin/mkfs.ext4 -O ^has_journal "$MNT_FOLDER/mountify-ext4" >/dev/null 2>&1 || ext4_fail=1
+	busybox mount -o loop,rw "$MNT_FOLDER/mountify-ext4" "$MNT_FOLDER/mountify-mount-test" >/dev/null 2>&1 || ext4_fail=1
+
+	# cleanup
+	rm -rf "$MNT_FOLDER/mountify-ext4" "$MNT_FOLDER/mountify-mount-test"
+	
+	if [ "$ext4_fail" = "1" ]; then
+		abort "[!] ext4 fallback mode test fail!"
+	fi
+}
 
 echo "[+] mountify"
 echo "[+] SysReq test"
@@ -39,8 +55,7 @@ else
 fi
 
 # test for tmpfs xattr
-[ -w /mnt ] && MNT_FOLDER=/mnt
-[ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
+
 testfile="$MNT_FOLDER/tmpfs_xattr_testfile"
 rm $testfile > /dev/null 2>&1 
 busybox mknod "$testfile" c 0 0 > /dev/null 2>&1 
@@ -53,7 +68,8 @@ else
 	echo "[!] CONFIG_TMPFS_XATTR fail!"
 	echo "[+] testing for ext4 sparse image fallback mode"
 	# check for tools
-	if [ -f "/system/bin/mkfs.ext4" ] && [ -f "/system/bin/resize2fs" ]; then
+	if [ -f "/system/bin/mkfs.ext4" ] && [ -f "/system/bin/resize2fs" ]; then		
+		test_ext4_image
 		busybox touch "$MODPATH/xattr_fail"
 		echo "[+] ext4 sparse fallback mode enabled"
 	else
@@ -92,7 +108,7 @@ chmod +x "$MODPATH/whiteout_gen.sh"
 # while this is supported (half-assed), this is not a recommended configuration
 if { [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ]; } || { [ "$APATCH" = true ] && [ ! "$APATCH_BIND_MOUNT" = true ]; }; then
 	printf "\n\n"
-	echo "[!] WARNING: Root manager is NOT on magic mount."
+	echo "[!] ERROR: Root manager is NOT on magic mount."
 	echo "[!] This setup can cause issues and is NOT recommended."
 	echo "[!] modify customize.sh to force installation!"
 	abort "[!] Installation aborted!"
