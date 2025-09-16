@@ -60,9 +60,8 @@ mountify_whiteouts
 - `[ -f /data/adb/modules/module_name/skip_mountify ]`
 
 ### Need Unmount?
-- use either NoHello, Shamiko, Zygisk Assistant as umount providers
-- for ReZygisk, it should just work
-- for Zygisk Next, enable "Enforce DenyList"
+- use either NeoZygisk, NoHello, ReZygisk, Shamiko, Zygisk Assistant
+- you can also use Zygisk Next, but make sure to "Enforce DenyList"
 - then edit config.sh, `MOUNT_DEVICE_NAME="KSU"`
 
 ## Limitations / Recommendations
