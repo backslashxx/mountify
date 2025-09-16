@@ -101,8 +101,9 @@ for file in $configs; do
 	fi
 done
 
-# give exec to whiteout_gen.sh
+# give exec to whiteout_gen.sh and prctl
 chmod +x "$MODPATH/whiteout_gen.sh"
+chmod +x "$MODPATH/prctl"
 
 # warn on OverlayFS managers
 # while this is supported (half-assed), this is not a recommended configuration
