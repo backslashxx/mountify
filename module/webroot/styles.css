@@ -212,6 +212,11 @@ h3 {
     }
 }
 
+.module-list {
+    padding: 0;
+    list-style: none;
+}
+
 .module-item {
     display: flex;
     align-items: center;
