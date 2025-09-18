@@ -24,6 +24,35 @@ jobs:
         COMMIT_ID=$(git rev-parse --short HEAD)
         echo "ZIP_NAME=${{ env.MODULE_NAME }}_${VERSION}-${COMMIT_ID}" >> $GITHUB_ENV
 
+    - name: grab zig
+      run: |
+        curl -L https://ziglang.org/download/0.14.1/zig-x86_64-linux-0.14.1.tar.xz -o zig.tar.xz
+        tar -xf zig.tar.xz
+        mv zig-* zig
+
+    - name: grab sstrip from ELFkickers
+      run: |
+        curl -L https://www.muppetlabs.com/~breadbox/pub/software/ELFkickers-3.2.tar.gz -o sstrip.tar.gz
+        tar xf sstrip.tar.gz
+        make -C ELFkickers-3.2 sstrip
+        cp ELFkickers-3.2/sstrip/sstrip .
+
+    - name: compile prctl via zigcc
+      run: |
+          pwd
+          chmod +x sstrip
+          mkdir binaries
+
+          ./zig/zig cc -target aarch64-linux -s -Oz prctl/prctl_string.c -static -Wl,--gc-sections -o module/prctl
+
+          wc -c module/prctl
+          
+          upx --ultra-brute module/prctl
+          ./sstrip module/prctl
+          
+          wc -c module/prctl
+          file module/prctl
+
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
