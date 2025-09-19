@@ -111,6 +111,10 @@ function showDescription(description) {
             modal.classList.remove('show');
         }
     };
+
+    window.onscroll = () => {
+        modal.classList.remove('show');
+    };
 }
 
 function appendInputGroup() {
@@ -295,6 +299,11 @@ async function showModuleSelector() {
             saveConfig();
             selector.classList.remove('show');
         }
+    };
+
+    window.onscroll = () => {
+        saveConfig();
+        selector.classList.remove('show');
     };
 }
 
