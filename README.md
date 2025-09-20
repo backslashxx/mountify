@@ -4,8 +4,8 @@
 
 - mostly meant for [MKSU .nomount](https://github.com/5ec1cff/KernelSU/commit/76bfccd11f4c8953b35e1342a2461f45b7d21c22)
 - tries to mimic an OEM mount, like /mnt/vendor/my_bigball
-- susfs can be used to hide mounts
-- requires **CONFIG_OVERLAY_FS=y** and **CONFIG_TMPFS_XATTR=y** 
+- **CONFIG_OVERLAY_FS=y** is required 
+- **CONFIG_TMPFS_XATTR=y** is highly encouraged
 - for module devs, you can also use [this standalone script](https://github.com/backslashxx/mountify/tree/standalone-script)
 
 ## Methodology
@@ -27,7 +27,7 @@
 
 ## Why?
 - Magic mount drastically increases mount count, making detection possible (zimperium)
-- OverlayFS mounting with ext4 image upperdir is detectable due to it creating device nodes on /proc/fs, while yes ext4 /data as overlay source is possible, who uses that nowadays?
+- OverlayFS mounting with ext4 image upperdir is detectable due to it creating device nodes on /proc/fs, while yes ext4 /data as overlay source is possible, this is rare nowadays.
 - F2FS /data as overlay source fails with native casefolding (ovl_dentry_weird), so only sdcardfs users can use /data as overlay source.
 - Frankly, I dont see a way to this module mounting situation, this shit is more of a shitty band-aid
 
@@ -51,7 +51,6 @@ ViPER4Android-RE-Fork
 mountify_whiteouts
 ```
 - `FAKE_MOUNT_NAME="my_bigball"` to set a custom fake folder name
-- `mountify_use_susfs=1` to enable susfs usage (optional)
 - `mountify_stop_start=1` to restart android at service (optional)
 
 ##### I need mountify to skip mounting my module!
