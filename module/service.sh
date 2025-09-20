@@ -38,9 +38,9 @@ case $mountify_mounts in
 esac
 
 if [ "$use_ext4_sparse" = "1" ] || [ -f "$MODDIR/xattr_fail" ]; then
-	mode="$mode | fstype: ext4 👾"
+	mode="$mode | fstype: ext4 🛠️"
 else
-	mode="$mode | fstype: tmpfs 👻"
+	mode="$mode | fstype: tmpfs 🦾"
 fi
 
 # display if on nomount/litemode
