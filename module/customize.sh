@@ -31,12 +31,12 @@ fi
 
 test_ext4_image() {
 	mkdir -p "$MNT_FOLDER/mountify-mount-test"
-	busybox dd if=/dev/zero of="$MNT_FOLDER/mountify-ext4" bs=1M count=0 seek=8 >/dev/null 2>&1 || ext4_fail=1
-	/system/bin/mkfs.ext4 -O ^has_journal "$MNT_FOLDER/mountify-ext4" >/dev/null 2>&1 || ext4_fail=1
-	busybox mount -o loop,rw "$MNT_FOLDER/mountify-ext4" "$MNT_FOLDER/mountify-mount-test" >/dev/null 2>&1 || ext4_fail=1
+	busybox dd if=/dev/zero of="$MNT_FOLDER/mountify-ext4-test" bs=1M count=0 seek=8 >/dev/null 2>&1 || ext4_fail=1
+	/system/bin/mkfs.ext4 -O ^has_journal "$MNT_FOLDER/mountify-ext4-test" >/dev/null 2>&1 || ext4_fail=1
+	busybox mount -o loop,rw "$MNT_FOLDER/mountify-ext4-test" "$MNT_FOLDER/mountify-mount-test" >/dev/null 2>&1 || ext4_fail=1
 
 	# cleanup
-	rm -rf "$MNT_FOLDER/mountify-ext4" "$MNT_FOLDER/mountify-mount-test"
+	rm -rf "$MNT_FOLDER/mountify-ext4-test" "$MNT_FOLDER/mountify-mount-test"
 	
 	if [ "$ext4_fail" = "1" ]; then
 		abort "[!] ext4 fallback mode test fail!"
