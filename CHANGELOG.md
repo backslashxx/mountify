@@ -2,6 +2,13 @@
 Globally mounted modules and whiteouts via OverlayFS.
 
 ## Changelog
+## 151
+- documentation/CHANGELOG: fix view
+- webui/js: hide description modal on scroll
+- documentation/README: remove susfs mentions
+- scripts/service: provide better emojis for new fstype modes (#11)
+- scripts/customize: fixup test_ext4_image
+
 ## 150
 - scripts/service: add fstype to prop description
 - webui: initial
@@ -12,9 +19,6 @@ Globally mounted modules and whiteouts via OverlayFS.
 - scripts/customize: actually test for ext4 mounting capabilities
 - documentation/README: list all known umount providers
 - webui/css: fix abnormal padding in module list
-
-## 149
-- scripts/post-fs-data: allow overriding decoy mount setting
 
 ### Full Changelog
 - [Commit history](https://github.com/backslashxx/mountify/commits/master/)
