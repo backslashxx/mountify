@@ -3,6 +3,7 @@
 #### Globally mounted modules via OverlayFS.
 
 - mostly meant for [MKSU .nomount](https://github.com/5ec1cff/KernelSU/commit/76bfccd11f4c8953b35e1342a2461f45b7d21c22)
+- works on APatch and Magisk too
 - tries to mimic an OEM mount, like /mnt/vendor/my_bigball
 - **CONFIG_OVERLAY_FS=y** is required 
 - **CONFIG_TMPFS_XATTR=y** is highly encouraged
