@@ -88,7 +88,7 @@ if ! grep "nodev" /proc/filesystems | grep -q "$FS_TYPE_ALIAS" > /dev/null 2>&1;
 	FS_TYPE_ALIAS="overlay"
 fi
 
-if [ "$test_decoy_mount" = "1" ] && [ ! -f "$MODDIR/xattr_fail" ] && [ ! "$use_ext4_sparse" = "1" ]; then
+if [ "$test_decoy_mount" = "1" ] && [ ! -f "$MODDIR/xattr_fail" ]; then
 	# test for decoy mount
 	# it needs to be a blank folder
 	for dir in $decoy_folder_candidates; do
