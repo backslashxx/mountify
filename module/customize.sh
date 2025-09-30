@@ -71,7 +71,7 @@ else
 	# check for tools
 	if [ -f "/system/bin/mkfs.ext4" ] && [ -f "/system/bin/resize2fs" ]; then		
 		test_ext4_image
-		busybox touch "$MODPATH/xattr_fail"
+		busybox touch "$MODPATH/no_tmpfs_xattr"
 		echo "[+] ext4 sparse fallback mode enabled"
 	else
 		abort "[!] tools not found, bail out."

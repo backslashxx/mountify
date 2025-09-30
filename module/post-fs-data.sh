@@ -88,7 +88,7 @@ if ! grep "nodev" /proc/filesystems | grep -q "$FS_TYPE_ALIAS" > /dev/null 2>&1;
 	FS_TYPE_ALIAS="overlay"
 fi
 
-if [ "$test_decoy_mount" = "1" ] && [ ! -f "$MODDIR/xattr_fail" ]; then
+if [ "$test_decoy_mount" = "1" ] && [ ! -f "$MODDIR/no_tmpfs_xattr" ]; then
 	# test for decoy mount
 	# it needs to be a blank folder
 	for dir in $decoy_folder_candidates; do
@@ -234,7 +234,7 @@ if [ "$decoy_mount_enabled" = "1" ] && [ -d "$DECOY_MOUNT_FOLDER" ] && [ "$(ls -
 fi
 
 
-if [ -f "$MODDIR/xattr_fail" ] || [ "$use_ext4_sparse" = "1" ]; then
+if [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; then
 	# create 2GB sparse
 	busybox dd if=/dev/zero of="$MNT_FOLDER/mountify-ext4" bs=1M count=0 seek="$sparse_size"
 	/system/bin/mkfs.ext4 -O ^has_journal "$MNT_FOLDER/mountify-ext4"
@@ -256,7 +256,7 @@ else
 	done
 fi
 
-if [ -f "$MODDIR/xattr_fail" ] || [ "$use_ext4_sparse" = "1" ]; then
+if [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; then
 	# unmount, sync and remount ext4 image as ro
 	busybox umount -l "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 	busybox sync
