@@ -27,9 +27,10 @@ done
 # this will unregister sparse when ext4 is enabled and spoof_sparse is disabled!
 do_ksud_hide() {
 if { [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; } && 
-	[ "$spoof_sparse" = "0" ]; then
-	/data/adb/ksud add-try-umount "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+	[ "$spoof_sparse" = "0" ]; then	
 	/data/adb/ksud nuke-ext4-sysfs "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+	# /data/adb/ksud add-try-umount "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+	busybox umount -l "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 fi
 
 for mount in $(grep "KSU" /proc/mounts | awk {'print $2'}) ; do
@@ -43,4 +44,3 @@ done
 # do_susfs_hide
 
 # EOF
-
