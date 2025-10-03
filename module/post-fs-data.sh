@@ -117,12 +117,15 @@ controlled_depth() {
 		if [ "$decoy_mount_enabled" = "1" ] && [ -f "$DECOYS_LIST" ]; then
 			LOWERDIR=""
 			COUNT="$(busybox shuf -i 1-$(cat "$DECOYS_LIST" | wc -l) -n 1)"
-			for DECOY in $(busybox shuf -n "$COUNT" "$DECOYS_LIST"); do
+			busybox shuf -n "$COUNT" "$DECOYS_LIST" > "$LOG_FOLDER/mount_list"
+			echo "$MNT_FOLDER" >> "$LOG_FOLDER/mount_list"
+			for DECOY in $(busybox shuf "$LOG_FOLDER/mount_list"); do
 				mkdir -p "$DECOY/$FAKE_MOUNT_NAME$2$DIR"
 				LOWERDIR="$LOWERDIR$DECOY/$FAKE_MOUNT_NAME$2$DIR:"
+				echo "mountify_debug: $LOWERDIR" >> /dev/kmsg
 			done
-			# create full lowerdir
-			LOWERDIR="${LOWERDIR}$(pwd)/$DIR:$2$DIR"
+			# create full lowerdir, note the trailing ":"
+			LOWERDIR="$LOWERDIR$2$DIR"
 
 			# perform mount
 			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$LOWERDIR" "$MOUNT_DEVICE_NAME" "$2$DIR"
@@ -138,11 +141,13 @@ single_depth() {
 		if [ "$decoy_mount_enabled" = "1" ] && [ -f "$DECOYS_LIST" ]; then
 			LOWERDIR=""
 			COUNT="$(busybox shuf -i 1-$(cat "$DECOYS_LIST" | wc -l) -n 1)"
+			busybox shuf -n "$COUNT" "$DECOYS_LIST" > "$LOG_FOLDER/mount_list"
+			echo "$MNT_FOLDER" >> "$LOG_FOLDER/mount_list"
 			for DECOY in $(busybox shuf -n "$COUNT" "$DECOYS_LIST"); do
 				mkdir -p "$DECOY/$FAKE_MOUNT_NAME/system/$DIR"
-				LOWERDIR="$LOWERDIR$DECOY/$FAKE_MOUNT_NAME/system/${DIR}:"
+				LOWERDIR="$LOWERDIR$DECOY/$FAKE_MOUNT_NAME/system/$DIR:"
 			done
-			LOWERDIR="$LOWERDIR$(pwd)/$DIR:/system/$DIR"
+			LOWERDIR="$LOWERDIR/system/$DIR"
 
 			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$LOWERDIR" "$MOUNT_DEVICE_NAME" "/system/$DIR"
 		else
