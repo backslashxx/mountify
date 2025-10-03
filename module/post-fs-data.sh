@@ -116,7 +116,8 @@ controlled_depth() {
 	for DIR in $(ls -d $1/*/ | sed 's/.$//' ); do
 		if [ "$decoy_mount_enabled" = "1" ] && [ -f "$DECOYS_LIST" ]; then
 			LOWERDIR=""
-			for DECOY in $(busybox shuf "$DECOYS_LIST"); do
+			COUNT="$(busybox shuf -i 1-$(cat "$DECOYS_LIST" | wc -l) -n 1)"
+			for DECOY in $(busybox shuf -n "$COUNT" "$DECOYS_LIST"); do
 				mkdir -p "$DECOY/$FAKE_MOUNT_NAME$2$DIR"
 				LOWERDIR="$LOWERDIR$DECOY/$FAKE_MOUNT_NAME$2$DIR:"
 			done
@@ -136,7 +137,8 @@ single_depth() {
 	for DIR in $( ls -d */ | sed 's/.$//'  | grep -vE "^(odm|product|system_ext|vendor)$" 2>/dev/null ); do
 		if [ "$decoy_mount_enabled" = "1" ] && [ -f "$DECOYS_LIST" ]; then
 			LOWERDIR=""
-			for DECOY in $(busybox shuf "$DECOYS_LIST"); do
+			COUNT="$(busybox shuf -i 1-$(cat "$DECOYS_LIST" | wc -l) -n 1)"
+			for DECOY in $(busybox shuf -n "$COUNT" "$DECOYS_LIST"); do
 				mkdir -p "$DECOY/$FAKE_MOUNT_NAME/system/$DIR"
 				LOWERDIR="$LOWERDIR$DECOY/$FAKE_MOUNT_NAME/system/${DIR}:"
 			done
