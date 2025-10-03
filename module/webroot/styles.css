@@ -5,49 +5,90 @@
     --top-inset: var(--window-inset-top, 0px);
     --bottom-inset: var(--window-inset-bottom, 0px);
 
-    /* Background colors */
-    --bg-primary: var(--background, #fbf8ff);
-    --bg-secondary: var(--tonalSurface, #f3f0f9);
-    --bg-input: var(--surfaceContainerLow, #f5f2fa);
-
-    /* Text colors */
-    --text-primary: var(--onSurface, #1b1b21);
-    --text-secondary: var(--onSurfaceVariant, #757575);
-
-    /* Border colors */
-    --border-color: var(--outlineVariant, #c7c5d0);
-
-    /* Button colors */
-    --btn-primary: var(--primary, #565992);
-    --btn-primary-text: var(--onPrimary, #fff);
+    --md-sys-color-primary: var(--primary, #6750A4);
+    --md-sys-color-on-primary: var(--on-primary, #FFFFFF);
+    --md-sys-color-primary-container: var(--primary-container, #EADDFF);
+    --md-sys-color-on-primary-container: var(--on-primary-container, #4F378B);
+    --md-sys-color-secondary: var(--secondary, #625B71);
+    --md-sys-color-on-secondary: var(--on-secondary, #FFFFFF);
+    --md-sys-color-secondary-container: var(--secondary-container, #E8DEF8);
+    --md-sys-color-on-secondary-container: var(--on-secondary-container, #4A4458);
+    --md-sys-color-tertiary: var(--tertiary, #7D5260);
+    --md-sys-color-on-tertiary: var(--on-tertiary, #FFFFFF);
+    --md-sys-color-tertiary-container: var(--tertiary-container, #FFD8E4);
+    --md-sys-color-on-tertiary-container: var(--on-tertiary-container, #633B48);
+    --md-sys-color-error: var(--error, #B3261E);
+    --md-sys-color-on-error: var(--on-error, #FFFFFF);
+    --md-sys-color-error-container: var(--error-container, #F9DEDC);
+    --md-sys-color-on-error-container: var(--on-error-container, #8C1D18);
+    --md-sys-color-background: var(--background, #FEF7FF);
+    --md-sys-color-on-background: var(--on-background, #1D1B20);
+    --md-sys-color-surface: var(--surface, #FEF7FF);
+    --md-sys-color-on-surface: var(--on-surface, #1D1B20);
+    --md-sys-color-surface-variant: var(--surface-variant, #E7E0EC);
+    --md-sys-color-on-surface-variant: var(--on-surface-variant, #49454F);
+    --md-sys-color-outline: var(--outline, #79747E);
+    --md-sys-color-outline-variant: var(--outline-variant, #CAC4D0);
+    --md-sys-color-shadow: var(--shadow, #000000);
+    --md-sys-color-inverse-surface: var(--inverse-surface, #322F35);
+    --md-sys-color-inverse-on-surface: var(--inverse-on-surface, #F5EFF7);
+    --md-sys-color-inverse-primary: var(--inverse-primary, #D0BCFF);
+    --md-sys-color-surface-bright: var(--surfaceBright, #FEF7FF);
+    --md-sys-color-surface-dim: var(--surfaceDim, #DED8E1);
+    --md-sys-color-surface-container: var(--surfaceContainer, #F3EDF7);
+    --md-sys-color-surface-container-lowest: var(--surfaceContainerLowest, #FFFFFF);
+    --md-sys-color-surface-container-low: var(--surfaceContainerLow, #F7F2FA);
+    --md-sys-color-surface-container-high: var(--surfaceContainerHigh, #ECE6F0);
+    --md-sys-color-surface-container-highest: var(--surfaceContainerHighest, #E6E0E9);
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        /* Background colors */
-        --bg-primary: var(--background, #131318);
-        --bg-secondary: var(--tonalSurface, #1c1c24);
-        --bg-input: var(--surfaceContainerLow, #1b1b21);
-
-        /* Text colors */
-        --text-primary: var(--onSurface, #e4e1e9);
-        --text-secondary: var(--onSurfaceVariant, #C2C2C2);
-
-        /* Border colors */
-        --border-color: var(--outlineVariant, #46464f);
-
-        /* Button colors */
-        --btn-primary: var(--primary, #bfc2ff);
-        --btn-primary-text: var(--onPrimary, #272b60);
+        --md-sys-color-primary: var(--primary, #D0BCFF);
+        --md-sys-color-on-primary: var(--on-primary, #381E72);
+        --md-sys-color-primary-container: var(--primary-container, #4F378B);
+        --md-sys-color-on-primary-container: var(--on-primary-container, #EADDFF);
+        --md-sys-color-secondary: var(--secondary, #CCC2DC);
+        --md-sys-color-on-secondary: var(--on-secondary, #332D41);
+        --md-sys-color-secondary-container: var(--secondary-container, #4A4458);
+        --md-sys-color-on-secondary-container: var(--on-secondary-container, #E8DEF8);
+        --md-sys-color-tertiary: var(--tertiary, #EFB8C8);
+        --md-sys-color-on-tertiary: var(--on-tertiary, #492532);
+        --md-sys-color-tertiary-container: var(--tertiary-container, #633B48);
+        --md-sys-color-on-tertiary-container: var(--on-tertiary-container, #FFD8E4);
+        --md-sys-color-error: var(--error, #F2B8B5);
+        --md-sys-color-on-error: var(--on-error, #601410);
+        --md-sys-color-error-container: var(--error-container, #8C1D18);
+        --md-sys-color-on-error-container: var(--on-error-container, #F9DEDC);
+        --md-sys-color-background: var(--background, #141218);
+        --md-sys-color-on-background: var(--on-background, #E6E0E9);
+        --md-sys-color-surface: var(--surface, #141218);
+        --md-sys-color-on-surface: var(--on-surface, #E6E0E9);
+        --md-sys-color-surface-variant: var(--surface-variant, #49454F);
+        --md-sys-color-on-surface-variant: var(--on-surface-variant, #CAC4D0);
+        --md-sys-color-outline: var(--outline, #938F99);
+        --md-sys-color-outline-variant: var(--outline-variant, #49454F);
+        --md-sys-color-shadow: var(--shadow, #000000);
+        --md-sys-color-inverse-surface: var(--inverse-surface, #E6E0E9);
+        --md-sys-color-inverse-on-surface: var(--inverse-on-surface, #322F35);
+        --md-sys-color-inverse-primary: var(--inverse-primary, #6750A4);
+        --md-sys-color-surface-bright: var(--surfaceBright, #3B383E);
+        --md-sys-color-surface-dim: var(--surfaceDim, #141218);
+        --md-sys-color-surface-container: var(--surfaceContainer, #211F26);
+        --md-sys-color-surface-container-lowest: var(--surfaceContainerLowest, #0F0D13);
+        --md-sys-color-surface-container-low: var(--surfaceContainerLow, #1D1B20);
+        --md-sys-color-surface-container-high: var(--surfaceContainerHigh, #2B2930);
+        --md-sys-color-surface-container-highest: var(--surfaceContainerHighest, #36343B);
     }
 }
 
 body {
-    color: var(--text-primary);
-    background-color: var(--bg-primary);
+    background-color: var(--md-sys-color-background);
+    color: var(--md-sys-color-on-background);
     padding-top: var(--top-inset);
-    padding-bottom: calc(var(--bottom-inset) + 50px);
+    padding-bottom: calc(var(--bottom-inset) + 80px);
     margin: 0;
+    font-size: 16px;
 }
 
 .root_layout {
@@ -60,254 +101,92 @@ body {
     margin: 0 auto;
 }
 
-h3 {
-    margin-top: 16px;
-    margin-bottom: 16px;
-    user-select: none;
+.header {
+    width: 100vw;
+    position: fixed;
+    padding-top: var(--top-inset);
+    top: 0;
+    left: 0;
+    z-index: 2;
+    background-color: var(--md-sys-color-surface);
 }
 
-p {
-    user-select: none;
+.top-bar {
+    font-size: 1.4em;
+    color: var(--md-sys-color-on-surface-variant);
+    height: 64px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.3em;
+    width: 100%;
+    padding: 0 16px;
+    box-sizing: border-box;
+}
+
+md-tabs {
+    width: 100%
 }
 
 .content-container {
     width: 100%;
     max-width: 100%;
+    margin-top: 128px;
     padding: 0 16px;
     box-sizing: border-box;
 }
 
 .input-group {
-    margin-bottom: 10px;
-    display: flex;
-    flex-direction: column;
-}
-
-.select-group {
-    position: relative;
+    margin-top: 16px;
+    margin-bottom: 32px;
     width: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.input-group p {
-    margin: 5px 0;
-    font-size: 14px;
-    color: var(--text-secondary);
-}
-
-.input-title {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-}
-
-.input-group input,
-.input-group select {
-    padding: 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    background-color: var(--bg-input);
-    color: var(--text-primary);
-    font-size: 16px;
-    outline: none;
-    appearance: none;
-}
-
-.input-group .arrow {
-    position: absolute;
-    right: 8px;
-    width: 1.5em;
-    height: 100%;
-    fill: var(--text-primary);
-    pointer-events: none;
-}
-
-.input-group input:focus,
-.input-group select:focus {
-    border-color: var(--btn-primary);
-}
-
-h3 {
-    text-align: center;
-    margin: 0;
-    margin-top: 24px;
-}
-
-.input-btn {
-    margin-top: 5px;
-    padding: 10px 0;
-    border: none;
-    border-radius: 8px;
-    background-color: var(--btn-primary);
-    color: var(--btn-primary-text);
-    transition: filter ease 0.2s;
-}
-
-.input-btn:active {
-    filter: opacity(80%);
-}
-
-.description-button {
-    height: 32px;
-    width: 32px;
-    border: none;
-    border-radius: 50%;
-    background-color: inherit;
-
-    svg {
-        width: 100%;
-        height: 100%;
-        fill: var(--text-primary);
-    }
-}
-
-.module-selector,
-.modal {
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
     display: flex;
     align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity ease 0.2s;
-    pointer-events: none;
-}
-
-.module-selector.show,
-.modal.show {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.module-selector-content,
-.modal-content {
-    background-color: var(--bg-secondary);
-    margin: auto;
-    padding: 20px;
-    border-radius: 8px;
-    width: 80%;
-    max-width: 600px;
-    max-height: 80vh;
-    overflow-y: auto;
+    gap: 8px;
     position: relative;
 }
 
-.close-button {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    height: 24px;
-    width: 24px;
+md-outlined-text-field, md-outlined-select {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+md-filled-icon-button {
+    flex-shrink: 0;
+    --md-filled-icon-button-container-height: 56px;
+    --md-filled-icon-button-container-width: 56px;
+    --md-filled-icon-button-container-shape: 6px;
+}
+
+md-list {
+    width: 100%;
+    background-color: transparent;
+}
+
+label {
+    padding: 16px 0;
+    font-size: 1.1em;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     user-select: none;
 
-    svg {
-        height: 100%;
-        width: 100%;
-        fill: var(--text-primary);
-    }
+    --md-focus-ring-color: transparent;
 }
 
-.module-list {
-    padding: 0;
-    list-style: none;
-}
-
-.module-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.warning {
+    font-size: 0.9em;
+    color: var(--md-sys-color-outline);
     width: 100%;
-    padding: 5px 0;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.module-item:last-child {
-    border-bottom: none;
-}
-
-.checkbox-wrapper {
-    flex-shrink: 0;
-    position: relative;
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-}
-
-.checkbox {
-    opacity: 0;
-    position: absolute;
-    width: 0;
-    height: 0;
-}
-
-.custom-checkbox {
-    position: relative;
-    display: inline-block;
-    width: 100%;
-    height: 100%;
-    border: 2px solid #ccc;
-    border-radius: 4px;
+    text-align: center;
+    padding: 48px 32px;
     box-sizing: border-box;
-    transition: border-color 1s ease, transform 0.3s ease, background-color 0.2s ease;
 }
 
-.tick-symbol {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-    transition: transform 0.2s ease-out, opacity 0.3s ease;
-
-    svg {
-        fill: var(--btn-primary-text);
-    }
-}
-
-.checkbox:checked + .custom-checkbox {
-    border-color: var(--btn-primary);
-    background-color: var(--btn-primary);
-    transition: border-color 0.1s ease;
-    animation: checked-bounce 0.3s ease-out;
-}
-
-.checkbox:not(:checked) + .custom-checkbox {
-    animation: unchecked-bounce 0.3s ease-out;
-}
-
-.checkbox:checked + .custom-checkbox .tick-symbol {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-}
-
-@keyframes checked-bounce {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(0.8);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-@keyframes unchecked-bounce {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(0.8);
-    }
-    100% {
-        transform: scale(1);
-    }
+[slot="headline"] {
+    user-select: none;
 }
 
 .keyboard-inset {
@@ -318,4 +197,8 @@ h3 {
 
 .keyboard-inset.active {
     height: 50vh;
+}
+
+.hidden {
+    display: none;
 }

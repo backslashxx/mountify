@@ -16,7 +16,7 @@ use_ext4_sparse=0
 spoof_sparse=0
 FAKE_APEX_NAME="com.android.mntservice"
 sparse_size="2048"
-test_decoy_mount="0"
+test_decoy_mount=0
 DECOY_MOUNT_FOLDER="/oem"
 # read config
 . $MODDIR/config.sh

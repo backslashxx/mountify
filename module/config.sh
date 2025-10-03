@@ -24,7 +24,7 @@ FAKE_MOUNT_NAME="mountify"
 # this is only meant for tmpfs mode
 # 0 to disable
 # 1 to enable
-test_decoy_mount="0"
+test_decoy_mount=0
 
 # stop; start at service
 # certain modules might need this
