@@ -88,17 +88,24 @@ if ! grep "nodev" /proc/filesystems | grep -q "$FS_TYPE_ALIAS" > /dev/null 2>&1;
 	FS_TYPE_ALIAS="overlay"
 fi
 
+DECOYS_LIST="$LOG_FOLDER/decoy_list"
 if [ "$test_decoy_mount" = "1" ] && [ ! -f "$MODDIR/no_tmpfs_xattr" ]; then
-	# test for decoy mount
-	# it needs to be a blank folder
+
+	# test every usable fodler on decoy list
 	for dir in $decoy_folder_candidates; do
 		if [ -d "$dir" ] && [ "$(ls -A "$dir" 2>/dev/null | wc -l)" -eq 0 ]; then
-			DECOY_MOUNT_FOLDER="$dir"
-			echo "mountify/post-fs-data: decoy folder $DECOY_MOUNT_FOLDER" >> /dev/kmsg
-			decoy_mount_enabled="1"
-			break
+			busybox mount -t tmpfs tmpfs "$dir"
+			echo "$dir" >> "$DECOYS_LIST"
+			echo "mountify/post-fs-data: mounted tmpfs decoy: $dir" >> /dev/kmsg
 		fi
 	done
+	
+	# check if we have something on the list
+	if [ -s "$DECOYS_LIST" ]; then
+        	decoy_mount_enabled="1"	
+	else
+		rm -f "$DECOYS_LIST"
+	fi
 fi
 
 # functions
@@ -107,9 +114,17 @@ fi
 controlled_depth() {
 	if [ -z "$1" ] || [ -z "$2" ]; then return ; fi
 	for DIR in $(ls -d $1/*/ | sed 's/.$//' ); do
-		if [ "$decoy_mount_enabled" = "1" ] && [ -w "$DECOY_MOUNT_FOLDER" ]; then
-			mkdir -p "$DECOY_MOUNT_FOLDER/$FAKE_MOUNT_NAME$2$DIR"
-			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$DECOY_MOUNT_FOLDER/$FAKE_MOUNT_NAME$2$DIR:$(pwd)/$DIR:$2$DIR" "$MOUNT_DEVICE_NAME" "$2$DIR"
+		if [ "$decoy_mount_enabled" = "1" ] && [ -f "$DECOYS_LIST" ]; then
+			LOWERDIR=""
+			for DECOY in $(busybox shuf "$DECOYS_LIST"); do
+				mkdir -p "$DECOY/$FAKE_MOUNT_NAME$2$DIR"
+				LOWERDIR="$LOWERDIR$DECOY/$FAKE_MOUNT_NAME$2$DIR:"
+			done
+			# create full lowerdir
+			LOWERDIR="${LOWERDIR}$(pwd)/$DIR:$2$DIR"
+
+			# perform mount
+			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$LOWERDIR" "$MOUNT_DEVICE_NAME" "$2$DIR"
 		else
 			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$(pwd)/$DIR:$2$DIR" "$MOUNT_DEVICE_NAME" "$2$DIR"
 		fi
@@ -119,9 +134,15 @@ controlled_depth() {
 # handle single depth (/system/bin, /system/etc, et. al)
 single_depth() {
 	for DIR in $( ls -d */ | sed 's/.$//'  | grep -vE "^(odm|product|system_ext|vendor)$" 2>/dev/null ); do
-		if [ "$decoy_mount_enabled" = "1" ] && [ -w "$DECOY_MOUNT_FOLDER" ]; then
-			mkdir -p "$DECOY_MOUNT_FOLDER/$FAKE_MOUNT_NAME/system/$DIR"
-			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$DECOY_MOUNT_FOLDER/$FAKE_MOUNT_NAME/system/$DIR:$(pwd)/$DIR:/system/$DIR" "$MOUNT_DEVICE_NAME" "/system/$DIR"
+		if [ "$decoy_mount_enabled" = "1" ] && [ -f "$DECOYS_LIST" ]; then
+			LOWERDIR=""
+			for DECOY in $(busybox shuf "$DECOYS_LIST"); do
+				mkdir -p "$DECOY/$FAKE_MOUNT_NAME/system/$DIR"
+				LOWERDIR="$LOWERDIR$DECOY/$FAKE_MOUNT_NAME/system/${DIR}:"
+			done
+			LOWERDIR="$LOWERDIR$(pwd)/$DIR:/system/$DIR"
+
+			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$LOWERDIR" "$MOUNT_DEVICE_NAME" "/system/$DIR"
 		else
 			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$(pwd)/$DIR:/system/$DIR" "$MOUNT_DEVICE_NAME" "/system/$DIR"
 		fi
@@ -229,11 +250,6 @@ if [ ! -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
 	exit 1
 fi
 
-if [ "$decoy_mount_enabled" = "1" ] && [ -d "$DECOY_MOUNT_FOLDER" ] && [ "$(ls -A "$DECOY_MOUNT_FOLDER" 2>/dev/null | wc -l)" -eq 0 ]; then
-	mount -t tmpfs tmpfs "$DECOY_MOUNT_FOLDER"
-fi
-
-
 if [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; then
 	# create 2GB sparse
 	busybox dd if=/dev/zero of="$MNT_FOLDER/mountify-ext4" bs=1M count=0 seek="$sparse_size"
@@ -295,8 +311,11 @@ for folder in $targets ; do
 	fi
 done
 
-if [ "$decoy_mount_enabled" = "1" ] && [ -d "$DECOY_MOUNT_FOLDER" ]; then
-	busybox umount -l "$DECOY_MOUNT_FOLDER"
+if [ "$decoy_mount_enabled" = "1" ] && [ -f "$DECOYS_LIST" ]; then
+	 for line in $( sed '/#/d' "$DECOYS_LIST" ); do
+	 	busybox umount -l "$line"
+	 	echo "mountify/post-fs-data: unmounting decoy $line" >> /dev/kmsg
+	 done
 fi
 
 # log after
