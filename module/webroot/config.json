@@ -1,0 +1,5 @@
+{
+  "title": "mountify",
+  "exitConfirm": false,
+  "contentSecurityPolicy": "default-src 'self' data: blob: {domain}; script-src * 'unsafe-inline' 'unsafe-eval' {domain}; style-src 'self' 'unsafe-inline' {domain} *; font-src 'self' data: *; connect-src *; img-src *;"
+}
