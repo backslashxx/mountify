@@ -125,6 +125,10 @@ body {
     box-sizing: border-box;
 }
 
+#version {
+    flex-grow: 1;
+}
+
 md-tabs {
     width: 100%
 }

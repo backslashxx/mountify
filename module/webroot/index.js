@@ -393,6 +393,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
+    document.getElementById('reboot').onclick = () => {
+        const confirmationDialog = document.getElementById('confirm-reboot-dialog');
+        confirmationDialog.show();
+        window.onscroll = () => confirmationDialog.close();
+        confirmationDialog.querySelectorAll('md-text-button').forEach(btn => {
+            btn.onclick = () => {
+                confirmationDialog.close();
+                if (btn.value === 'reboot') {
+                    exec('/system/bin/reboot').then((result) => {
+                        if (result.errno !== 0) toast('Failed to reboot: ' + result.stderr);
+                    });
+                }
+            }
+        });
+    }
+
     // KernelSU WebUI remove /data/adb/ksud/bin from PATH when we're not executing as su
     // Condition 1: ksud in PATH (likey in third party manager like KSUWEBuiSrandalone, Webui-X)
     // Condition 2: su not available (when sucompat disabled, KernelSU exclusive currently)

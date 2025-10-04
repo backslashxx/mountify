@@ -13,6 +13,7 @@
         <div class="header">
             <div class="top-bar" slot="headline">
                 <span>mountify</span><span id="version"></span>
+                <md-icon-button id="reboot"><md-icon>power_settings_new</md-icon></md-icon-button>
             </div>
             <md-tabs>
                 <md-primary-tab id="general-tab" aria-controls="content-general" active>General</md-primary-tab>
@@ -37,6 +38,15 @@
         </div>
         <div class="keyboard-inset"></div>
     </div>
+
+    <md-dialog id="confirm-reboot-dialog">
+        <div slot="headline">Reboot</div>
+        <div slot="content">Reboot now?</div>
+        <div slot="actions">
+            <md-text-button value="cancel">Cancel</md-text-button>
+            <md-text-button value="reboot">Reboot</md-text-button>
+        </div>
+    </md-dialog>
 
     <md-dialog id="description-dialog">
         <div slot="headline"></div>
