@@ -37,6 +37,7 @@
 - this causes detections but YMMV.
 - this is not my problem, this is a fallback, not the main recommendation.
 - and yes this is basically how Official KernelSU does it.
+- if you know what you are doing, [this](https://github.com/tiann/KernelSU/commit/032d5e9044e63426804872ca0a6b78a101a8185a) and [this](https://github.com/tiann/KernelSU/commit/865c31bc70308bbce4eb5f0ff639e04122846472) can help.
 
 ## Usage
 by default, mountify mounts all modules with a system folder. To mount specific modules only, edit config.sh
@@ -73,4 +74,5 @@ mountify_whiteouts
 
 ## Links
 [Download](https://github.com/backslashxx/mountify/releases)
+
 
