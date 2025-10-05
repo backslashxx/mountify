@@ -24,8 +24,8 @@
     },
     "MOUNT_DEVICE_NAME": {
         "type": "general",
-        "option": ["allow-other", "overlay", "KSU", "APATCH"],
-        "description": "You can put 'KSU', 'Apatch' here so a umount provider can umount.\ne.g. NeoZygisk, NoHello, ReZygisk, Shamiko, Zygisk Assistant, ZygiskNext-DE"
+        "option": ["allow-other", "overlay", "KSU", "APatch"],
+        "description": "You can put 'KSU', 'APatch' here so a umount provider can umount.\ne.g. NeoZygisk, NoHello, ReZygisk, Shamiko, Zygisk Assistant, ZygiskNext-DE"
     },
     "use_ext4_sparse": {
         "type": "ext4",

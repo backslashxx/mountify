@@ -38,7 +38,7 @@ mountify_stop_start=0
 FS_TYPE_ALIAS="overlay"
 
 # this one below is its device name
-# you can put "KSU", "Apatch" here so a umount provider can umount
+# you can put "KSU", "APatch" here so a umount provider can umount
 # e.g. NeoZygisk, NoHello, ReZygisk, Shamiko, Zygisk Assistant, ZygiskNext-DE
 # otherwise leave default. this is if you need unmount.
 MOUNT_DEVICE_NAME="overlay"
