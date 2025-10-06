@@ -409,17 +409,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // KernelSU WebUI remove /data/adb/ksud/bin from PATH when we're not executing as su
-    // Condition 1: ksud in PATH (likey in third party manager like KSUWEBuiSrandalone, Webui-X)
-    // Condition 2: su not available (when sucompat disabled, KernelSU exclusive currently)
-    // Condition 3: ksud in path when running with su
-    exec('command -v ksud || ! command -v su || su -c command -v ksud').then((isKsu) => {
+    // ksud/apd not in PATH when not executing with su
+    // if su not available means we're in KernelSU with sucompat disabled
+    exec('su -c "command -v ksud" || ! command -v su').then((isKsu) => {
         if (isKsu.errno !== 0 && isKsu.stderr !== "ksu is not defined") return
         document.getElementById('ksu-tab').classList.remove('hidden');
         initSwitch('/data/adb/ksu/.nomount', 'nomount');
         initSwitch('/data/adb/ksu/.notmpfs', 'notmpfs');
     });
-    exec('command -v apd').then((isAp) => {
+    exec('su -c "command -v apd"').then((isAp) => {
         if (isAp.errno !== 0 && isAp.stderr !== "ksu is not defined") return
         document.getElementById('ap-tab').classList.remove('hidden');
         initSwitch('/data/adb/.litemode_enable', 'litemode')
