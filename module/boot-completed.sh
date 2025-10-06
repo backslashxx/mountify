@@ -9,6 +9,10 @@ MODDIR="/data/adb/modules/mountify"
 # read config
 . $MODDIR/config.sh
 
+# feel free to modify this script as you need, depending on methods
+# you use to unmount or a method to hide ext4 sparse /proc/fs node if
+# youre on ext4 mode. maybe in the future a KPM can do it or something.
+# - xx
 #
 # this script will be migrated by mountify re-installs / updates
 #
@@ -17,22 +21,26 @@ MODDIR="/data/adb/modules/mountify"
 [ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
 
 # requires susfs add_try_umount
-do_susfs_hide() {
+do_susfs_umount() {
 for mount in $(grep "KSU" /proc/mounts | awk {'print $2'}) ; do 
 	/data/adb/ksu/bin/ksu_susfs add_try_umount $mount 1
 done
 }
 
-# requires modded ksud+driver with add-try-umount / nuke-ext4-sysfs
+# requires modded ksud+driver with nuke-ext4-sysfs
 # this will unregister sparse when ext4 is enabled and spoof_sparse is disabled!
-do_ksud_hide() {
+do_ext4_nuke() {
 if { [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; } && 
 	[ "$spoof_sparse" = "0" ]; then	
 	/data/adb/ksud nuke-ext4-sysfs "$MNT_FOLDER/$FAKE_MOUNT_NAME"
-	# /data/adb/ksud add-try-umount "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 	busybox umount -l "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 fi
+}
 
+# requires modded ksud+driver with add-try-umount
+# umount via zygisk umount provider is still better.
+# this is here for reference purposes and as a second choice
+do_ksud_umount() {
 for mount in $(grep "KSU" /proc/mounts | awk {'print $2'}) ; do
 	/data/adb/ksud add-try-umount $mount
 done
@@ -40,7 +48,11 @@ done
 
 # uncomment hiding method you want
 
-# do_ksud_hide
-# do_susfs_hide
+# for sekrit club ksud uncomment these two options as you need
+# do_ext4_nuke
+# do_ksud_umount
+
+# for susfs, uncomment if you need
+# do_susfs_umount
 
 # EOF
