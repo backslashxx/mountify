@@ -4,13 +4,14 @@
 
 - mostly meant for [MKSU .nomount](https://github.com/5ec1cff/KernelSU/commit/76bfccd11f4c8953b35e1342a2461f45b7d21c22)
 - works on APatch and Magisk too
-- tries to mimic an OEM mount, like /mnt/vendor/my_bigball
 - **CONFIG_OVERLAY_FS=y** is required 
 - **CONFIG_TMPFS_XATTR=y** is highly encouraged
+- tries to mimic an OEM mount, like /mnt/vendor/my_bigball
 - for module devs, you can also use [this standalone script](https://github.com/backslashxx/mountify/tree/standalone-script)
 
 ## Methodology
 ### tmpfs mode 
+#### - tmpfs backed
 1. `touch /data/adb/modules/module_id/skip_mount`
 2. copies contents of `/data/adb/modules/module_id` to `/mnt/vendor/fake_folder_name`
 3. mirrors SELinux context of every file from `/data/adb/modules/module_id` to `/mnt/vendor/fake_folder_name`
@@ -18,6 +19,7 @@
 5. overlays `/mnt/vendor/fake_folder_name/system/bin` to `/system/bin` and other folders
 
 ### ext4 sparse mode 
+#### - ext4-sparse-on-tmpfs backed
 1. `touch /data/adb/modules/module_id/skip_mount`
 2. create an ext4 sparse image, mount it on `/mnt/vendor/fake_folder_name`
 3. copies contents of `/data/adb/modules/module_id` to `/mnt/vendor/fake_folder_name`
@@ -40,10 +42,12 @@
 - if you know what you are doing, [this](https://github.com/tiann/KernelSU/commit/032d5e9044e63426804872ca0a6b78a101a8185a) and [this](https://github.com/tiann/KernelSU/commit/865c31bc70308bbce4eb5f0ff639e04122846472) can help.
 
 ## Usage
-by default, mountify mounts all modules with a system folder. To mount specific modules only, edit config.sh
+- user-friendly config editing is also available on the WebUI
+- otherwise you can modify config.sh
 
-
-- `mountify_mounts=1` then modify modules.txt to list modules you want mounted
+### General
+- by default, mountify mounts all modules with a system folder. `mountify_mounts=2`
+- to mount specific modules only, edit config.sh, `mountify_mounts=1` then modify modules.txt to list modules you want mounted
 
 ```
 module_id
@@ -52,18 +56,29 @@ DisplayFeatures
 ViPER4Android-RE-Fork
 mountify_whiteouts
 ```
-- `FAKE_MOUNT_NAME="my_bigball"` to set a custom fake folder name
-- `mountify_stop_start=1` to restart android at service (optional)
-
-##### I need mountify to skip mounting my module!
-- this is easy, add `skip_mountify` to your module's folder.
-- mountify checks this on /data/adb/modules/module_name
-- `[ -f /data/adb/modules/module_name/skip_mountify ]`
+- `FAKE_MOUNT_NAME="mountify"` to set a custom fake folder name
+- `mountify_stop_start=1` to restart android at service (needed for certain modules)
 
 ### Need Unmount?
 - use either NeoZygisk, NoHello, ReZygisk, Shamiko, Zygisk Assistant
 - you can also use Zygisk Next, but make sure to "Enforce DenyList"
-- then edit config.sh, `MOUNT_DEVICE_NAME="KSU"`
+- then edit config.sh
+   - `MOUNT_DEVICE_NAME="APatch"` if you're on APatch
+   - `MOUNT_DEVICE_NAME="KSU"` if you're on KernelSU forks
+
+#### tmpfs specific
+- `test_decoy_mount=1` to enable testing for decoy mounts on tmpfs mode
+
+#### ext4 specific
+- `use_ext4_sparse=1` to force using ext4 mode if your setup is tmpfs_xattr capable
+- `spoof_sparse=1` to try spoof sparse mount as an android service
+- `FAKE_APEX_NAME="com.android.mntservice"` to customize that android service spoofed name
+- `sparse_size="2048"` to set your sparse size (in MB) to whatever you want
+
+#### I need mountify to skip mounting my module!
+- this is easy, add `skip_mountify` to your module's folder.
+- mountify checks this on /data/adb/modules/module_name
+- `[ -f /data/adb/modules/module_name/skip_mountify ]`
 
 ## Limitations / Recommendations
 - fails with [De-Bloater](https://github.com/sunilpaulmathew/De-Bloater), as it [uses dummy text, NOT proper whiteouts](https://github.com/sunilpaulmathew/De-Bloater/blob/cadd523f0ad8208eab31e7db51f855b89ed56ffe/app/src/main/java/com/sunilpaulmathew/debloater/utils/Utils.java#L112)
@@ -74,5 +89,3 @@ mountify_whiteouts
 
 ## Links
 [Download](https://github.com/backslashxx/mountify/releases)
-
-

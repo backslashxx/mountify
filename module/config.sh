@@ -31,8 +31,7 @@ test_decoy_mount=0
 # just set to 1 to enable
 mountify_stop_start=0
 
-# for settings below, if unsure, do NOT touch.
-
+# for this one, if unsure, do NOT touch.
 # fake overlayfs params
 # this is only useful if you patched your overlayfs to register some made up alias
 FS_TYPE_ALIAS="overlay"
