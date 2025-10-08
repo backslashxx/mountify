@@ -60,11 +60,12 @@ mountify_whiteouts
 - `mountify_stop_start=1` to restart android at service (needed for certain modules)
 
 ### Need Unmount?
-- use either NeoZygisk, NoHello, ReZygisk, Shamiko, Zygisk Assistant
-- you can also use Zygisk Next, but make sure to "Enforce DenyList"
+- use either NeoZygisk, NoHello, ReZygisk, Zygisk Assistant
+- if you use Zygisk Next, then set Denylist Policy to "Enforced" or "Unmount Only"
 - then edit config.sh
    - `MOUNT_DEVICE_NAME="APatch"` if you're on APatch
    - `MOUNT_DEVICE_NAME="KSU"` if you're on KernelSU forks
+   - `MOUNT_DEVICE_NAME="magisk"` if you're on Magisk
 
 #### tmpfs specific
 - `test_decoy_mount=1` to enable testing for decoy mounts on tmpfs mode
