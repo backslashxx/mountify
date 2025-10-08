@@ -29,6 +29,15 @@ jobs:
     name: Build LKM for ${{ inputs.version }}.${{ inputs.sub_level }}
 
     steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 8192
+          temp-reserve-mb: 2048
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
 
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -41,12 +50,17 @@ jobs:
 
       - name: Clone AOSP GKI kernel
         run: |
+          mkdir android-kernel && cd android-kernel
           TAG="${{ inputs.version }}-${{ inputs.os_patch_level }}"
           echo "Fetching GKI tag: ${TAG}"
-          git clone --depth=1 https://github.com/aosp-mirror/kernel_common/ -b ${TAG} kernel
+          # git clone --depth=1 https://github.com/aosp-mirror/kernel_common/ -b ${TAG} common
+          curl https://storage.googleapis.com/git-repo-downloads/repo > repo
+          chmod +x repo
+          ./repo init --depth=1 https://android.googlesource.com/kernel/manifest -b "common-${TAG}"
+          ./repo sync -c -j $(nproc)
 
       - name: Prepare GKI
-        working-directory: kernel
+        working-directory: android-kernel
         run: |
           export ARCH=arm64
           export SUBARCH=arm64
@@ -54,8 +68,9 @@ jobs:
           export CC=clang
           
           pwd
-
-          mv ../nuke_ext4_lkm drivers/nuke_ext4_lkm
+          
+          cd common
+          mv ../../nuke_ext4_lkm drivers/nuke_ext4_lkm
           ls -lha drivers/nuke_ext4_lkm
 
           sed -i 's/endmenu//g' drivers/Kconfig
@@ -65,21 +80,51 @@ jobs:
           
           # stop this exports check
           sed -i '/check_exports(mod)/d' scripts/mod/modpost.c
+
+          # force exports of these, just like ksu
+          echo "  register_kprobe" >> android/abi_gki_aarch64
+          echo "  unregister_kprobe" >> android/abi_gki_aarch64
           
           tail -n10 drivers/Kconfig
           tail -n10 drivers/Makefile
           
           echo $PATH ; pwd
-          mkdir out ; cat build.config.gki.aarch64 > out/.config
-          make O=out ARCH=arm64 olddefconfig
-          make -j$(nproc) ARCH=arm64 SUBARCH=arm64 O=out
           
-          llvm-strip-15 -d out/drivers/nuke_ext4_lkm/nuke.ko
-          ls -la out/drivers/nuke_ext4_lkm
+          cd ../
+          ls -la
+
+          # bazel build, android14-5.15, android14-6.1 use bazel
+          if [ ! -e build/build.sh ]; then
+            sed -i 's/needs unknown symbol/Dont abort when unknown symbol/g' build/kernel/*.sh || echo "No unknown symbol scripts found"
+            if [ -e common/modules.bzl ]; then
+              sed -i 's/_COMMON_GKI_MODULES_LIST = \[/_COMMON_GKI_MODULES_LIST = \[ "drivers\/nuke_ext4_lkm\/nuke.ko",/g' common/modules.bzl
+            fi
+          else
+            TARGET_FILE="build/kernel/build.sh"
+            if [ ! -e "$TARGET_FILE" ]; then
+              TARGET_FILE="build/build.sh"
+            fi
+            sed -i 's/needs unknown symbol/Dont abort when unknown symbol/g' $TARGET_FILE || echo "No unknown symbol in $TARGET_FILE"
+            sed -i 's/if ! diff -u "\${KERNEL_DIR}\/\${MODULES_ORDER}" "\${OUT_DIR}\/modules\.order"; then/if false; then/g' $TARGET_FILE
+            sed -i 's@${ROOT_DIR}/build/abi/compare_to_symbol_list@echo@g' $TARGET_FILE
+            sed -i 's/needs unknown symbol/Dont abort when unknown symbol/g' build/kernel/*.sh || echo "No unknown symbol scripts found"
+          fi
+
+          if [ -e build/build.sh ]; then
+            LTO=thin BUILD_CONFIG=common/build.config.gki.aarch64 build/build.sh CC="clang"
+          else
+            tools/bazel run --disk_cache=/home/runner/.cache/bazel --config=fast --config=stamp --lto=thin //common:kernel_aarch64_dist -- --dist_dir=dist
+          fi
+          
+          if [ -f ./dist/nuke.ko ]; then
+          	mv ./dist/nuke.ko nuke.ko
+          else
+          	mv out/${{ inputs.version }}/common/drivers/nuke_ext4_lkm/nuke.ko nuke.ko
+          fi
 
       - name: Upload nuke.ko
         uses: actions/upload-artifact@v4
         with:
           name: nuke_ext4-${{ inputs.version }}.${{ inputs.sub_level }}
-          path: kernel/out/drivers/nuke_ext4_lkm/nuke.ko
+          path: android-kernel/nuke.ko
 
