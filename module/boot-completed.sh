@@ -22,7 +22,7 @@ MODDIR="/data/adb/modules/mountify"
 
 # requires susfs add_try_umount
 do_susfs_umount() {
-for mount in $(grep "KSU" /proc/mounts | awk {'print $2'}) ; do 
+for mount in $(grep "$FAKE_MOUNT_NAME" /proc/mounts | awk {'print $2'}) ; do 
 	/data/adb/ksu/bin/ksu_susfs add_try_umount $mount 1
 done
 }
@@ -41,7 +41,7 @@ fi
 # umount via zygisk umount provider is still better.
 # this is here for reference purposes and as a second choice
 do_ksud_umount() {
-for mount in $(grep "KSU" /proc/mounts | awk {'print $2'}) ; do
+for mount in $(grep "$FAKE_MOUNT_NAME" /proc/mounts | awk {'print $2'}) ; do
 	/data/adb/ksud add-try-umount $mount
 done
 }
