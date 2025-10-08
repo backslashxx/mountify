@@ -1,0 +1,17 @@
+name: Build LKM for Non-GKI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-lkm:
+    strategy:
+      matrix:
+        include:    
+          - version: "android-4.19-stable"
+          - version: "android-4.14-stable"
+
+    uses: ./.github/workflows/ngki-kernel.yaml
+    with:
+      version: ${{ matrix.version }}
+

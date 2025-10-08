@@ -1,0 +1,28 @@
+name: Build LKM for ALL GKI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-lkm:
+    strategy:
+      matrix:
+        include:
+          - version: "android12-5.10"
+            os_patch_level: 2025-05
+          - version: "android13-5.10"
+            os_patch_level: 2025-03
+          - version: "android13-5.15"
+            os_patch_level: 2025-03
+          - version: "android14-5.15"
+            os_patch_level: 2025-03
+          - version: "android14-6.1"
+            os_patch_level: 2025-05
+          - version: "android15-6.6"
+            os_patch_level: 2025-05
+
+    uses: ./.github/workflows/gki-kernel.yaml
+    with:
+      version: ${{ matrix.version }}
+      os_patch_level: ${{ matrix.os_patch_level }}
+

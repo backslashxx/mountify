@@ -1,0 +1,85 @@
+name: Build nuke_ext4 LKM
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: "GKI version (e.g. android14-6.1)"
+        required: true
+        type: string
+      os_patch_level:
+        description: "Patch level (e.g. 2025-10)"
+        required: true
+        type: string
+
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "GKI version (e.g. android14-6.1)"
+        required: true
+        type: string
+      os_patch_level:
+        description: "Patch level (e.g. 2025-10)"
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build LKM for ${{ inputs.version }}.${{ inputs.sub_level }}
+
+    steps:
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install required packages
+        run: |
+          echo lol
+          sudo apt-get update
+          sudo apt-get install -y bc build-essential flex bison libssl-dev libelf-dev git python3 unzip wget cpio gcc-aarch64-linux-gnu llvm-15
+
+      - name: Clone AOSP GKI kernel
+        run: |
+          TAG="${{ inputs.version }}-${{ inputs.os_patch_level }}"
+          echo "Fetching GKI tag: ${TAG}"
+          git clone --depth=1 https://github.com/aosp-mirror/kernel_common/ -b ${TAG} kernel
+
+      - name: Prepare GKI
+        working-directory: kernel
+        run: |
+          export ARCH=arm64
+          export SUBARCH=arm64
+          export CROSS_COMPILE=aarch64-linux-gnu-
+          export CC=clang
+          
+          pwd
+
+          mv ../nuke_ext4_lkm drivers/nuke_ext4_lkm
+          ls -lha drivers/nuke_ext4_lkm
+
+          sed -i 's/endmenu//g' drivers/Kconfig
+          echo "source \"drivers/nuke_ext4_lkm/Kconfig\"" >> drivers/Kconfig
+          echo "endmenu" >> drivers/Kconfig
+          echo 'obj-y += nuke_ext4_lkm/' >> drivers/Makefile
+          
+          # stop this exports check
+          sed -i '/check_exports(mod)/d' scripts/mod/modpost.c
+          
+          tail -n10 drivers/Kconfig
+          tail -n10 drivers/Makefile
+          
+          echo $PATH ; pwd
+          mkdir out ; cat build.config.gki.aarch64 > out/.config
+          make O=out ARCH=arm64 olddefconfig
+          make -j$(nproc) ARCH=arm64 SUBARCH=arm64 O=out
+          
+          llvm-strip-15 -d out/drivers/nuke_ext4_lkm/nuke.ko
+          ls -la out/drivers/nuke_ext4_lkm
+
+      - name: Upload nuke.ko
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuke_ext4-${{ inputs.version }}.${{ inputs.sub_level }}
+          path: kernel/out/drivers/nuke_ext4_lkm/nuke.ko
+
