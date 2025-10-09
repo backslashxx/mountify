@@ -42,9 +42,6 @@ static int ext4_unregister_sysfs_fn(struct super_block *sb)
 		return -EAGAIN;
 	}
 
-	// cast to its actual fn type since kallsyms_lookup_name returns long address
-	// extern void ext4_unregister_sysfs(struct super_block *sb); on fs/ext4/ext4.h
-	// now I have no idea how kernelsu uses it as is, this fn is not exported for LKM
 	ext4_unregister_sysfs_ptr = (void (*)(struct super_block *))kp.addr;
 	pr_info("nuke_ext4: ext4_unregister_sysfs found on 0x%p\n", ext4_unregister_sysfs_ptr);
 
@@ -59,7 +56,7 @@ static int ext4_unregister_sysfs_fn(struct super_block *sb)
 static int ext4_unregister_sysfs_fn(struct super_block *sb) 
 {
 	// pullout via kallsyms_lookup_name
-	void (*ext4_unregister_sysfs_compat)(struct super_block *);
+	void (*ext4_unregister_sysfs_ptr)(struct super_block *);
 	unsigned long addr = kallsyms_lookup_name("ext4_unregister_sysfs");
 	if (addr)
 		pr_info("nuke_ext4: ext4_unregister_sysfs found on 0x%lx\n",addr);
@@ -70,8 +67,8 @@ static int ext4_unregister_sysfs_fn(struct super_block *sb)
 	// cast to its actual fn type since kallsyms_lookup_name returns long address
 	// extern void ext4_unregister_sysfs(struct super_block *sb); on fs/ext4/ext4.h
 	// now I have no idea how kernelsu uses it as is, this fn is not exported for LKM
-	ext4_unregister_sysfs_compat = (void (*)(struct super_block *))addr;
-	ext4_unregister_sysfs_compat(sb);
+	ext4_unregister_sysfs_ptr = (void (*)(struct super_block *))addr;
+	ext4_unregister_sysfs_ptr(sb);
 	return 0;
 }
 #endif
@@ -101,7 +98,20 @@ static int __init nuke_entry(void)
 	ext4_unregister_sysfs_fn(sb);
 	path_put(&path);
 
-	pr_info("nuke_ext4: done, unload\n");
+	// now recheck if the node still exists
+	// this is on /proc/fs/ext4
+	char procfs_path[64];
+	snprintf(procfs_path, sizeof(procfs_path), "/proc/fs/ext4/%s", sb->s_id);
+
+	err = kern_path(procfs_path, 0, &path);
+	if (!err) {
+		pr_info("nuke_ext4: procfs node still exists at %s\n", procfs_path);
+		path_put(&path);
+	} else
+		pr_info("nuke_ext4: procfs node nuked (%s is gone)\n", procfs_path);
+
+
+	pr_info("nuke_ext4: unload\n");
 	return -EAGAIN;
 }
 
