@@ -113,6 +113,17 @@ if { [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ]; } || { [ "$APATCH" = 
 	echo "[!] This setup can cause issues and is NOT recommended."
 	echo "[!] modify customize.sh to force installation!"
 	abort "[!] Installation aborted!"
+	# ^ just change abort to echo or something
+fi
+
+SUSFS_BIN="/data/adb/ksu/bin/ksu_susfs"
+if [ "$KSU" = true ] && [ -f ${SUSFS_BIN} ] && [ "$( ${SUSFS_BIN} show version | head -n1 | sed 's/v//; s/\.//g' )" -ge 1510 ]; then
+	printf "\n\n"
+	echo "[!] ERROR: Mountify causes conflicts with this susfs version."
+	echo "[!] This setup can cause issues and is NOT recommended."
+	echo "[!] modify customize.sh to force installation!"
+	abort "[!] Installation aborted!"
+	# ^ just change abort to echo or something
 fi
 
 # EOF
