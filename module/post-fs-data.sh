@@ -18,6 +18,7 @@ FAKE_APEX_NAME="com.android.mntservice"
 sparse_size="2048"
 test_decoy_mount=0
 DECOY_MOUNT_FOLDER="/oem"
+mountify_expert_mode=0
 # read config
 . $MODDIR/config.sh
 # exit if disabled
@@ -210,7 +211,7 @@ mountify_copy() {
 }
 
 # make sure its not there
-if [ -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
+if [ ! "$mountify_expert_mode" = 1 ] && [ -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
 	# anti fuckup
 	# this is important as someone might actually use legit folder names
 	# and same shit exists on MNT_FOLDER, prevent this issue.

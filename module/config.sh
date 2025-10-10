@@ -42,6 +42,12 @@ FS_TYPE_ALIAS="overlay"
 # otherwise leave default. this is if you need unmount.
 MOUNT_DEVICE_NAME="overlay"
 
+# this is to toggle mountify expert mode
+# tweaking this to 1 will remove some safety checks and can cause issues
+# this is here for debugging purposes for users that know what they are doing
+# YOU HAVE BEEN WARNED
+mountify_expert_mode=0
+
 #
 # settings below are mostly for sparse mode users !!!
 #
