@@ -82,8 +82,7 @@ jobs:
           sed -i '/check_exports(mod)/d' scripts/mod/modpost.c
 
           # force exports of these, just like ksu
-          echo "  register_kprobe" >> android/abi_gki_aarch64
-          echo "  unregister_kprobe" >> android/abi_gki_aarch64
+          [ -f "android/abi_gki_aarch64" ] && echo "  register_kprobe" >> android/abi_gki_aarch64 && echo "  unregister_kprobe" >> android/abi_gki_aarch64
           
           tail -n10 drivers/Kconfig
           tail -n10 drivers/Makefile
