@@ -17,12 +17,12 @@ MODDIR="/data/adb/modules/mountify"
 # this script will be migrated by mountify re-installs / updates
 #
 
-[ -w /mnt ] && MNT_FOLDER=/mnt
-[ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
+[ -w /mnt ] && MNT_FOLDER=/mnt && LOG_FOLDER=/mnt/mountify_logs
+[ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor && LOG_FOLDER=/mnt/vendor/mountify_logs
 
 # requires susfs add_try_umount
 do_susfs_umount() {
-for mount in $(grep "$FAKE_MOUNT_NAME" /proc/mounts | awk {'print $2'}) ; do 
+for mount in $(cat "$LOG_FOLDER/mountify_mount_list") ; do 
 	/data/adb/ksu/bin/ksu_susfs add_try_umount $mount 1
 done
 }

@@ -114,6 +114,7 @@ controlled_depth() {
 		else
 			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$(pwd)/$DIR:$2$DIR" "$MOUNT_DEVICE_NAME" "$2$DIR"
 		fi
+		echo "$2$DIR" >> "$LOG_FOLDER/mountify_mount_list"
 	done
 }
 
@@ -126,6 +127,7 @@ single_depth() {
 		else
 			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$(pwd)/$DIR:/system/$DIR" "$MOUNT_DEVICE_NAME" "/system/$DIR"
 		fi
+		echo "/system/$DIR" >> "$LOG_FOLDER/mountify_mount_list"
 	done
 }
 
