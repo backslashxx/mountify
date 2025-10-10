@@ -19,6 +19,8 @@ sparse_size="2048"
 test_decoy_mount=0
 DECOY_MOUNT_FOLDER="/oem"
 mountify_expert_mode=0
+enable_lkm_nuke=0
+lkm_filename="nuke.ko"
 # read config
 . $MODDIR/config.sh
 # exit if disabled
@@ -300,6 +302,17 @@ done
 
 if [ "$decoy_mount_enabled" = "1" ] && [ -d "$DECOY_MOUNT_FOLDER" ]; then
 	busybox umount -l "$DECOY_MOUNT_FOLDER"
+fi
+
+# nuke ext4 sysfs
+# this unregisters an ext4 node used on ext4 mode (duh)
+# this way theres no nodes are lingering on /proc/fs
+if [ $enable_lkm_nuke = 1 ] && [ -f "$MODDIR/lkm/$lkm_filename" ] && 
+	{ [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; } && 
+	[ "$spoof_sparse" = "0" ]; then	
+	echo "mountify/service: nuking $MNT_FOLDER/$FAKE_MOUNT_NAME node via lkm " >> /dev/kmsg
+	busybox insmod "$MODDIR/lkm/$lkm_filename" mount_point="$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")" > /dev/null 2>&1
+	busybox umount -l "$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")" > /dev/null 2>&1
 fi
 
 if [ "$mountify_expert_mode" = 1 ] ; then
