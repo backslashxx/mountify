@@ -89,7 +89,7 @@ fi
 # replace if 146 and older
 # https://github.com/backslashxx/mountify/commit/8a815deef8ee127d4dfad01fedd64f899500124e
 if [ $mountify_versionCode -gt 146 ]; then
-	configs="modules.txt whiteouts.txt config.sh skipped_modules boot-completed.sh"
+	configs="modules.txt whiteouts.txt config.sh skipped_modules boot-completed.sh expert.sh"
 else
 	echo "[!] using fresh config.sh"
 	configs="modules.txt whiteouts.txt"

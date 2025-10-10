@@ -300,6 +300,10 @@ if [ "$decoy_mount_enabled" = "1" ] && [ -d "$DECOY_MOUNT_FOLDER" ]; then
 	busybox umount -l "$DECOY_MOUNT_FOLDER"
 fi
 
+if [ "$mountify_expert_mode" = 1 ] ; then
+	sh "$MODDIR/expert.sh"
+fi
+
 # log after
 cat /proc/mounts > "$LOG_FOLDER/after"
 echo "mountify/post-fs-data: finished!" >> /dev/kmsg
