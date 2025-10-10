@@ -315,8 +315,8 @@ if [ $enable_lkm_nuke = 1 ] && [ -f "$MODDIR/lkm/$lkm_filename" ] &&
 	busybox umount -l "$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")" > /dev/null 2>&1
 fi
 
-if [ "$mountify_expert_mode" = 1 ] ; then
-	sh "$MODDIR/expert.sh"
+if [ -f "$MODDIR/after-post-fs-data.sh" ] ; then
+	sh "$MODDIR/after-post-fs-data.sh"
 fi
 
 # log after
