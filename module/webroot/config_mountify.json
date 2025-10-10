@@ -27,6 +27,10 @@
         "option": ["allow-other", "overlay", "KSU", "APatch"],
         "description": "You can put 'KSU', 'APatch' here so a umount provider can umount.\ne.g. NeoZygisk, NoHello, ReZygisk, Shamiko, Zygisk Assistant, ZygiskNext-DE"
     },
+    "mountify_expert_mode": {
+        "type": "general",
+        "hide": true
+    },
     "use_ext4_sparse": {
         "type": "ext4",
         "option": [0, 1],
@@ -46,5 +50,13 @@
         "type": "ext4",
         "option": ["allow-other", "1024", "2048", "4096"],
         "description": "This is for users who wants a custom sparse size.\nThis does NOT really matter, but it seems important to some.\nmodify this to any unsigned number.\nbasically, sparse size in MB."
+    },
+    "enable_lkm_nuke": {
+        "type": "general",
+        "hide": true
+    },
+    "lkm_filename": {
+        "type": "general",
+        "hide": true
     }
 }
