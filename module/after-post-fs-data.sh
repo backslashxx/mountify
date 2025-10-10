@@ -20,7 +20,11 @@ MODDIR="/data/adb/modules/mountify"
 # requires susfs add_try_umount
 do_susfs_umount() {
 for mount in $(cat "$LOG_FOLDER/mountify_mount_list") ; do 
-	/data/adb/ksu/bin/ksu_susfs add_try_umount $mount 1
+	# workaround for oplus devices
+	if echo "$mount" | grep -q "/my_" ; then
+		/data/adb/ksu/bin/ksu_susfs add_try_umount "/mnt/vendor$mount" 1
+	fi
+	/data/adb/ksu/bin/ksu_susfs add_try_umount "$mount" 1
 done
 }
 
