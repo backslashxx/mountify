@@ -78,4 +78,11 @@ FAKE_APEX_NAME="com.android.mntservice"
 # basically, sparse size in MB
 sparse_size="2048"
 
+# EXPERIMENTAL !!!
+# this is for unregistering an ext4 node
+# set 1 to insmod an LKM that unregisters an ext4 node
+# for now mostly GKI and ACK 4.14 is supported
+enable_lkm_nuke=0
+lkm_filename="nuke.ko"
+
 # EOF

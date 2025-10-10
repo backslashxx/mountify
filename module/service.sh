@@ -7,8 +7,13 @@
 PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
 MODDIR="/data/adb/modules/mountify"
 mountify_stop_start=0
+enable_lkm_nuke=0
+lkm_filename="nuke.ko"
 # read config
 . $MODDIR/config.sh
+
+[ -w /mnt ] && MNT_FOLDER="/mnt"
+[ -w /mnt/vendor ] && MNT_FOLDER="/mnt/vendor"
 
 # stop; start
 # restart android at service
@@ -20,6 +25,17 @@ mountify_stop_start=0
 # this is disabled by default on config.sh
 if [ $mountify_stop_start = 1 ]; then
 	stop; start
+fi
+
+# nuke ext4 sysfs
+# this unregisters an ext4 node used on ext4 mode (duh)
+# this way theres no nodes are lingering on /proc/fs
+if [ $enable_lkm_nuke = 1 ] && [ -f "$MODDIR/lkm/$lkm_filename" ] && 
+	{ [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; } && 
+	[ "$spoof_sparse" = "0" ]; then	
+	echo "mountify/service: nuking $MNT_FOLDER/$FAKE_MOUNT_NAME node via lkm " >> /dev/kmsg
+	busybox insmod "$MODDIR/lkm/$lkm_filename" mount_point="$MNT_FOLDER/$FAKE_MOUNT_NAME"
+	busybox umount -l "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 fi
 
 # wait for boot-complete
