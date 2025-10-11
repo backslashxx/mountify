@@ -85,8 +85,13 @@ mountify_whiteouts
 - fails with [De-Bloater](https://github.com/sunilpaulmathew/De-Bloater), as it [uses dummy text, NOT proper whiteouts](https://github.com/sunilpaulmathew/De-Bloater/blob/cadd523f0ad8208eab31e7db51f855b89ed56ffe/app/src/main/java/com/sunilpaulmathew/debloater/utils/Utils.java#L112)
 - I recommend [System App Nuker](https://github.com/ChiseWaguri/systemapp_nuker/releases) instead. It uses proper whiteouts.
 
+## License
+- module is on [The Unlicense](https://github.com/backslashxx/mountify/blob/master/LICENSE)
+- LKM is on [GPLv2](https://github.com/backslashxx/mountify/blob/master/nuke_ext4_lkm/LICENSE)
+
 ## Support / Warranty
 - None, none at all. I am handing you a sharp knife, it is not on me if you stab yourself with it.
 
 ## Links
 [Download](https://github.com/backslashxx/mountify/releases)
+
