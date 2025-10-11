@@ -18,6 +18,8 @@ Compatibility:
 - Linux 4.4 ~ 6.17.
 - CONFIG_KALLSYMS=y
 
+[Older version](https://github.com/backslashxx/mountify/tree/f0108a151e3be123e4aaf7319890db160692c309/nuke_ext4_lkm) 
+- uses kp.addr / kallsyms_lookup_name
 
-From: KernelSU - [de29115](https://github.com/tiann/KernelSU/commit/de291151f1c2bd63cae1f797d938bfb14cbf2dc0)
-
+Credits: 
+- KernelSU - [de29115](https://github.com/tiann/KernelSU/commit/de291151f1c2bd63cae1f797d938bfb14cbf2dc0)
