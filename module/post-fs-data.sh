@@ -310,9 +310,15 @@ fi
 if [ $enable_lkm_nuke = 1 ] && [ -f "$MODDIR/lkm/$lkm_filename" ] && 
 	{ [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; } && 
 	[ "$spoof_sparse" = "0" ]; then	
-	echo "mountify/service: nuking $MNT_FOLDER/$FAKE_MOUNT_NAME node via lkm " >> /dev/kmsg
-	busybox insmod "$MODDIR/lkm/$lkm_filename" mount_point="$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")" > /dev/null 2>&1
-	busybox umount -l "$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")" > /dev/null 2>&1
+	
+	mnt="$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")"
+	kptr_set=$(cat /proc/sys/kernel/kptr_restrict)
+	echo 1 > /proc/sys/kernel/kptr_restrict
+	ptr_address=$(grep ext4_unregister_sysfs /proc/kallsyms | awk {'print "0x"$1'})
+	busybox insmod "$MODDIR/lkm/$lkm_filename" mount_point="$mnt" symaddr="$ptr_address" > /dev/null 2>&1
+	echo $kptr_set > /proc/sys/kernel/kptr_restrict
+	busybox umount -l "$mnt"
+
 fi
 
 if [ -f "$MODDIR/after-post-fs-data.sh" ] ; then
