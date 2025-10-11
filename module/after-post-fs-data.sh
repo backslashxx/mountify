@@ -31,8 +31,8 @@ done
 # requires modded ksud+driver with nuke-ext4-sysfs
 # this will unregister sparse when ext4 is enabled and spoof_sparse is disabled!
 do_ext4_nuke() {
-if { [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; } && 
-	[ "$spoof_sparse" = "0" ]; then	
+if [ ! $enable_lkm_nuke = 1 ] && [ "$spoof_sparse" = "0" ] && 
+	{ [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; }; then
 	/data/adb/ksud nuke-ext4-sysfs "$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")"
 	busybox umount -l "$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")"
 fi
