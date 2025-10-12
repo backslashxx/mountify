@@ -17,17 +17,6 @@ MODDIR="/data/adb/modules/mountify"
 [ -w /mnt ] && MNT_FOLDER=/mnt && LOG_FOLDER=/mnt/mountify_logs
 [ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor && LOG_FOLDER=/mnt/vendor/mountify_logs
 
-# requires susfs add_try_umount
-do_susfs_umount() {
-for mount in $(cat "$LOG_FOLDER/mountify_mount_list") ; do 
-	# workaround for oplus devices
-	if echo "$mount" | grep -q "/my_" ; then
-		/data/adb/ksu/bin/ksu_susfs add_try_umount "/mnt/vendor$mount" 1
-	fi
-	/data/adb/ksu/bin/ksu_susfs add_try_umount "$mount" 1
-done
-}
-
 # requires modded ksud+driver with nuke-ext4-sysfs
 # this will unregister sparse when ext4 is enabled and spoof_sparse is disabled!
 do_ext4_nuke() {
@@ -52,8 +41,5 @@ done
 # for sekrit club ksud uncomment these two options as you need
 # do_ext4_nuke
 # do_ksud_umount
-
-# for susfs, uncomment if you need
-# do_susfs_umount
 
 # EOF

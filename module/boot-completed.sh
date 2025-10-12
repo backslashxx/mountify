@@ -15,6 +15,23 @@ MODDIR="/data/adb/modules/mountify"
 # this script will be migrated by mountify re-installs / updates
 #
 
+[ -w /mnt ] && MNT_FOLDER=/mnt && LOG_FOLDER=/mnt/mountify_logs
+[ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor && LOG_FOLDER=/mnt/vendor/mountify_logs
+
+# requires susfs add_try_umount
+do_susfs_umount() {
+for mount in $(cat "$LOG_FOLDER/mountify_mount_list") ; do 
+	# workaround for oplus devices
+	if echo "$mount" | grep -q "/my_" ; then
+		/data/adb/ksu/bin/ksu_susfs add_try_umount "/mnt/vendor$mount" 1
+	fi
+	/data/adb/ksu/bin/ksu_susfs add_try_umount "$mount" 1
+done
+}
+
+# for susfs, uncomment if you need
+# do_susfs_umount
+
 # by default this script does nothing
 
 # EOF
