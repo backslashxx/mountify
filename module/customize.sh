@@ -58,14 +58,14 @@ fi
 # test for tmpfs xattr
 
 testfile="$MNT_FOLDER/tmpfs_xattr_testfile"
-rm $testfile > /dev/null 2>&1 
+rm "$testfile" > /dev/null 2>&1 
 busybox mknod "$testfile" c 0 0 > /dev/null 2>&1 
 if busybox setfattr -n trusted.overlay.whiteout -v y "$testfile" > /dev/null 2>&1 ; then 
 	echo "[+] CONFIG_TMPFS_XATTR"
 	echo "[+] tmpfs extended attribute test passed"
-	rm $testfile > /dev/null 2>&1 
+	rm "$testfile" > /dev/null 2>&1 
 else
-	rm $testfile > /dev/null 2>&1 
+	rm "$testfile" > /dev/null 2>&1 
 	echo "[!] CONFIG_TMPFS_XATTR fail!"
 	echo "[+] testing for ext4 sparse image fallback mode"
 	# check for tools
@@ -86,13 +86,12 @@ else
 	mountify_versionCode=0
 fi
 
-# replace if 146 and older
-# https://github.com/backslashxx/mountify/commit/8a815deef8ee127d4dfad01fedd64f899500124e
-if [ $mountify_versionCode -gt 146 ]; then
+# full migration if 154+
+if [ "$mountify_versionCode" -ge 155 ]; then
 	configs="modules.txt whiteouts.txt config.sh skipped_modules boot-completed.sh after-post-fs-data.sh"
 else
 	echo "[!] using fresh config.sh"
-	configs="modules.txt whiteouts.txt"
+	configs="modules.txt whiteouts.txt skipped_modules"
 fi
 
 for file in $configs; do
