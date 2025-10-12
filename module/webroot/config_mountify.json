@@ -24,12 +24,14 @@
     },
     "MOUNT_DEVICE_NAME": {
         "type": "general",
-        "option": ["allow-other", "overlay", "KSU", "APatch"],
+        "option": ["allow-other", "overlay", "KSU", "APatch", "magisk"],
         "description": "You can put 'KSU', 'APatch' here so a umount provider can umount.\ne.g. NeoZygisk, NoHello, ReZygisk, Shamiko, Zygisk Assistant, ZygiskNext-DE"
     },
     "mountify_expert_mode": {
         "type": "general",
-        "hide": true
+        "hide": true,
+        "option": [0, 1],
+        "description": "🚨 WARNING!\n ⚠️ This disables mountify's safety checks. mostly for debugging purposes.\n0 - disable\n1 - enable"
     },
     "use_ext4_sparse": {
         "type": "ext4",
@@ -52,11 +54,19 @@
         "description": "This is for users who wants a custom sparse size.\nThis does NOT really matter, but it seems important to some.\nmodify this to any unsigned number.\nbasically, sparse size in MB."
     },
     "enable_lkm_nuke": {
-        "type": "general",
-        "hide": true
+        "type": "ext4",
+        "option": [0, 1],
+        "description": "🚨 WARNING!\n⚠️ Experimental feature.\nLoads a oneshot LKM that unregisters ext4 sysfs nodes. \n0 - disable\n1 - enable"
     },
     "lkm_filename": {
-        "type": "general",
-        "hide": true
+        "type": "ext4",
+        "option": ["nuke-android12-5.10.ko", 
+        	"nuke-android13-5.10.ko",
+        	"nuke-android13-5.15.ko", 
+        	"nuke-android14-5.15.ko",
+        	"nuke-android14-6.1.ko",
+        	"nuke-android15-6.6.ko",
+        	"nuke-android-4.14.ko" ],
+        "description": "Only GKI 5.10+ are properly supported.\nSelect your Android KMI."
     }
 }
