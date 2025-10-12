@@ -2,6 +2,9 @@
 Globally mounted modules and whiteouts via OverlayFS.
 
 ## Changelog
+## 156
+- scripts/post-fs-data: add insmod compat
+
 ## 155
 - scripts/post-fs-data: allow bypassing folder check
 - scripts: add expert.sh for post-fs-data scripting support
