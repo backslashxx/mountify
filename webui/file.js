@@ -76,11 +76,15 @@ export async function writeConfig() {
                 let command;
                 if (typeof value === 'string') {
                     value = value.replace(/"/g, '\"').replace(/\\/g, '');
-                    command = `sed -i 's|^${key}=.*|${key}="${value}"|' ${moddir}/webroot/config.sh`;
+                    command = `sed 's|^${key}=.*|${key}="${value}"|'`;
                 } else {
-                    command = `sed -i 's|^${key}=.*|${key}=${value}|' ${moddir}/webroot/config.sh`;
+                    command = `sed 's|^${key}=.*|${key}=${value}|'`;
                 }
-                commands.push(command);
+                commands.push(command
+                    + ` ${moddir}/webroot/config.sh > ${moddir}/webroot/config.sh.tmp`
+                    + ` && cat ${moddir}/webroot/config.sh.tmp > ${moddir}/webroot/config.sh`
+                    + ` && rm -f ${moddir}/webroot/config.sh.tmp`
+                );
             }
         }
     }
