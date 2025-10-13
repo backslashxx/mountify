@@ -1,5 +1,5 @@
-import { exec, spawn, toast } from './kernelsu.js';
-import { config } from '../index.js'
+import { exec, spawn, toast } from 'kernelsu-alt';
+import { config } from './index.js'
 
 const moddir = '/data/adb/modules/mountify';
 

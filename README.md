@@ -89,6 +89,7 @@ mountify_whiteouts
 ## License
 - module is on [The Unlicense](https://github.com/backslashxx/mountify/blob/master/LICENSE)
 - LKM is on [GPLv2](https://github.com/backslashxx/mountify/blob/master/nuke_ext4_lkm/LICENSE)
+- WebUI is on [MIT](https://github.com/backslashxx/mountify/blob/master/webui/LICENSE)
 
 ## Support / Warranty
 - None, none at all. I am handing you a sharp knife, it is not on me if you stab yourself with it.

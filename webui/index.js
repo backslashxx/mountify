@@ -1,5 +1,7 @@
-import { exec, toast } from './assets/kernelsu.js';
-import * as file from './assets/file.js';
+import { exec, toast } from 'kernelsu-alt';
+import '@material/web/all.js';
+import '@fontsource/material-symbols-outlined/400.css';
+import * as file from './file.js';
 
 const moddir = '/data/adb/modules/mountify';
 export let config = {};

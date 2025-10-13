@@ -1,0 +1,23 @@
+{
+  "name": "mountify",
+  "version": "1.5.6",
+  "description": "",
+  "scripts": {
+    "dev": "vite",
+    "clean": "rimraf ../module/webroot/assets/*",
+    "build": "npm run clean && vite build"
+  },
+  "keywords": [
+    "mountify"
+  ],
+  "author": "KOWX712",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@fontsource/material-symbols-outlined": "^5.2.26",
+    "@material/web": "^2.4.0",
+    "kernelsu-alt": "^1.0.2",
+    "rimraf": "^6.0.1",
+    "vite": "^7.1.9"
+  }
+}

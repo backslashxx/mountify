@@ -1,4 +1,4 @@
-@import "./assets/theme.css";
+@import "./theme.css";
 
 body {
     background-color: var(--md-sys-color-background);
