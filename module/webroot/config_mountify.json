@@ -60,13 +60,15 @@
     },
     "lkm_filename": {
         "type": "ext4",
-        "option": ["nuke-android12-5.10.ko", 
+        "option": [
+            "nuke-android12-5.10.ko",
         	"nuke-android13-5.10.ko",
-        	"nuke-android13-5.15.ko", 
+        	"nuke-android13-5.15.ko",
         	"nuke-android14-5.15.ko",
         	"nuke-android14-6.1.ko",
         	"nuke-android15-6.6.ko",
-        	"nuke-android-4.14.ko" ],
+        	"nuke-android-4.14.ko"
+        ],
         "description": "Only GKI 5.10+ are properly supported.\nSelect your Android KMI."
     }
 }

@@ -21,15 +21,15 @@ function appendInputGroup() {
     for (const key in config) {
         if (Object.prototype.hasOwnProperty.call(config, key)) {
             const value = config[key];
-            const metadata = configMetadata[key];
+            const metadata = configMetadata[key] || false;
             const header = key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
             const container = document.getElementById(`content-${metadata.type}`);
             const div = document.createElement('div');
             div.className = 'input-group';
             div.dataset.key = key;
 
-            if (metadata && metadata.hide && metadata.hide === true) continue;
-            if (metadata && metadata.option) { // Fixed options
+            if (metadata.hide && metadata.hide === true || !metadata) continue;
+            if (metadata.option) { // Fixed options
                 if (metadata.option[0] === 'allow-other') { // Fixed options + custom input
                     const textField = document.createElement('md-outlined-text-field');
                     textField.label = key;
