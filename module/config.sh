@@ -13,27 +13,24 @@
 # 2 for auto mode (this will mount all modules with a system folder)
 mountify_mounts=2
 
-# fake mount time
-# since all module files will now be unified to a single folder
-# you can use shit like my_bigball, mi_ext, preload_common, special_preload
-# you just make this shit up
+# fake mount name
+# mount folder name
 FAKE_MOUNT_NAME="mountify"
 
-# decoy mount
-# you can override here to enable/disable testing of decoy mounting
-# this is only meant for tmpfs mode
+# Test for decoy mounting.
+# This is meant for tmpfs mode.
 # 0 to disable
 # 1 to enable
 test_decoy_mount=0
 
-# stop; start at service
+# restart android at at service
 # certain modules might need this
-# just set to 1 to enable
+# 0 to disable
+# 1 to enable
 mountify_stop_start=0
 
-# for this one, if unsure, do NOT touch.
-# fake overlayfs params
-# this is only useful if you patched your overlayfs to register some made up alias
+# You can put 'KSU', 'APatch', 'magisk' here so a umount provider can umount.
+# Examples: NeoZygisk, NoHello, ReZygisk, Shamiko, Zygisk Assistant, ZygiskNext-DE
 FS_TYPE_ALIAS="overlay"
 
 # this one below is its device name
@@ -42,9 +39,10 @@ FS_TYPE_ALIAS="overlay"
 # otherwise leave default. this is if you need unmount.
 MOUNT_DEVICE_NAME="overlay"
 
-# this is to toggle mountify expert mode
-# tweaking this to 1 will remove some safety checks and can cause issues
-# this is here for debugging purposes for users that know what they are doing
+# WARNING!
+# This disables mountify's safety checks. mostly for debugging purposes.
+# 0 - disable
+# 1 - enable
 # YOU HAVE BEEN WARNED
 mountify_expert_mode=0
 
@@ -52,36 +50,33 @@ mountify_expert_mode=0
 # settings below are mostly for sparse mode users !!!
 #
 
-# ext4 sparse mode override
-# this only makes sense if you have tmpfs xattr but you still
-# prefer using an ext4 sparse image to mount
-# NOTE: this causes detections, but no real app does as of 250911
-# 0 to disable
-# 1 to enable
+# ext4 sparse mode override.
+# For tmpfs xattr capable setups that prefers using an ext4 sparse image to mount.
+# 0 - disable
+# 1 - enable
 use_ext4_sparse=0
 
-# this tries to spoof your sparse mount as some apex service whatever
-# this makes sense if you unmount your overlays, so this should go well
-# with a custom MOUNT_DEVICE_NAME
+# Spoof sparse as an apex mount.
+# Goes well with a custom MOUNT_DEVICE_NAME.
+# NOTE: when this is enabled, LKM nuking is disabled.
 # 0 to disable
 # 1 to enable
 spoof_sparse=0
 
-# this is your fake apex name
-# just put random bullshit on this like com.android.wtf
-# while futile, this tries to make it look legit
+# Customize spoofed apex mount name.
+# While futile, this tries to make it look legit.
 FAKE_APEX_NAME="com.android.mntservice"
 
-# this is for users who wants a custom sparse size
-# this does NOT really matter, but it seems important to some
-# modify this to any unsigned number
-# basically, sparse size in MB
+# Set a custom sparse size.
+# Modify this to any unsigned number.
+# - sparse size in MB
 sparse_size="2048"
 
-# EXPERIMENTAL !!!
-# this is for unregistering an ext4 node
-# set 1 to insmod an LKM that unregisters an ext4 node
-# only GKI 5.10, 5.15, 6.1, 6.6 are currently supported
+# WARNING! 
+# Experimental feature. Don't expect 100% success rate.
+# Loads a oneshot LKM that unregisters ext4 sysfs nodes. 
+# 0 - disable
+# 1 - enable
 enable_lkm_nuke=0
 lkm_filename="nuke.ko"
 

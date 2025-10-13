@@ -11,12 +11,12 @@
     "test_decoy_mount": {
         "type": "general",
         "option": [0, 1],
-        "description": "testing of decoy mounting\nThis is only meant for tmpfs mode.\n0 - disable\n1 - enable"
+        "description": "Test for decoy mounting.\nThis is meant for tmpfs mode.\n0 - disable\n1 - enable"
     },
     "mountify_stop_start": {
         "type": "general",
         "option": [0, 1],
-        "description": "Start at service, certain modules might need this.\n0 - disable\n1 - enable"
+        "description": "Restart android at service, certain modules might need this.\n0 - disable\n1 - enable"
     },
     "FS_TYPE_ALIAS": {
         "type": "general",
@@ -25,7 +25,7 @@
     "MOUNT_DEVICE_NAME": {
         "type": "general",
         "option": ["allow-other", "overlay", "KSU", "APatch", "magisk"],
-        "description": "You can put 'KSU', 'APatch' here so a umount provider can umount.\ne.g. NeoZygisk, NoHello, ReZygisk, Shamiko, Zygisk Assistant, ZygiskNext-DE"
+        "description": "You can put 'KSU', 'APatch' here so a umount provider can umount.\nExamples: NeoZygisk, NoHello, ReZygisk, Shamiko, Zygisk Assistant, ZygiskNext-DE"
     },
     "mountify_expert_mode": {
         "type": "general",
@@ -36,27 +36,27 @@
     "use_ext4_sparse": {
         "type": "ext4",
         "option": [0, 1],
-        "description": "ext4 sparse mode override.\nThis only makes sense if you have tmpfs xattr but you still prefer using an ext4 sparse image to mount.\n0 - disable\n1 - enable"
+        "description": "ext4 sparse mode override.\nFor tmpfs xattr capable setups that prefers using an ext4 sparse image to mount.\n0 - disable\n1 - enable"
     },
     "spoof_sparse": {
         "type": "ext4",
         "option": [0, 1],
-        "description": "This tries to spoof your sparse mount as some apex service whatever.\nThis makes sense if you unmount your overlays, so this should go well with a custom MOUNT_DEVICE_NAME."
+        "description": "Spoof sparse as an apex mount.\nGoes well with a custom MOUNT_DEVICE_NAME.\nNOTE: when this is enabled, LKM nuking is disabled."
     },
     "FAKE_APEX_NAME": {
         "type": "ext4",
         "option": ["allow-other", "com.android.mntservice"],
-        "description": "Just put random bullshit on this like com.android.wtf\nWhile futile, this tries to make it look legit."
+        "description": "Customize spoofed apex mount name.\nWhile futile, this tries to make it look legit."
     },
     "sparse_size": {
         "type": "ext4",
-        "option": ["allow-other", "1024", "2048", "4096"],
-        "description": "This is for users who wants a custom sparse size.\nThis does NOT really matter, but it seems important to some.\nmodify this to any unsigned number.\nbasically, sparse size in MB."
+        "option": ["allow-other", "512", "1024", "2048", "4096"],
+        "description": "Set a custom sparse size.\nModify this to any unsigned number.\n- sparse size in MB."
     },
     "enable_lkm_nuke": {
         "type": "ext4",
         "option": [0, 1],
-        "description": "🚨 WARNING!\n⚠️ Experimental feature.\nLoads a oneshot LKM that unregisters ext4 sysfs nodes. \n0 - disable\n1 - enable"
+        "description": "🚨 WARNING!\n⚠️ Experimental feature. Don't expect 100% success rate.\nLoads a oneshot LKM that unregisters ext4 sysfs nodes. \n0 - disable\n1 - enable"
     },
     "lkm_filename": {
         "type": "ext4",
