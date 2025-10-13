@@ -31,13 +31,19 @@ export async function loadConfig() {
             }, {});
         return conf;
     } catch (e) {
-        exec(`ln -s "${moddir}/config.sh" "${moddir}/webroot/config.sh"`).then((result) => {
+        exec(`
+            CONFIG="${moddir}/config.sh"
+            if [ -f "/data/adb/modules_update/mountify/config.sh" ]; then
+                CONFIG="/data/adb/modules_update/mountify/config.sh"
+            fi
+            ln -s "$CONFIG" "${moddir}/webroot/config.sh"
+        `).then((result) => {
             if (result.errno !== 0) {
                 toast("Failed to load config");
                 return;
             }
             window.location.reload();
-        })
+        });
     }
 }
 
@@ -70,9 +76,9 @@ export async function writeConfig() {
                 let command;
                 if (typeof value === 'string') {
                     value = value.replace(/"/g, '\"').replace(/\\/g, '');
-                    command = `sed -i 's|^${key}=.*|${key}="${value}"|' ${moddir}/config.sh`;
+                    command = `sed -i 's|^${key}=.*|${key}="${value}"|' ${moddir}/webroot/config.sh`;
                 } else {
-                    command = `sed -i 's|^${key}=.*|${key}=${value}|' ${moddir}/config.sh`;
+                    command = `sed -i 's|^${key}=.*|${key}=${value}|' ${moddir}/webroot/config.sh`;
                 }
                 commands.push(command);
             }

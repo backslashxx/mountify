@@ -101,6 +101,9 @@ for file in $configs; do
 	fi
 done
 
+# Remove old config symlink and now webui will read and edit config directly from modules_update/mountify/config.sh before reboot
+rm -f "/data/adb/modules/mountify/webroot/config.sh"
+
 # give exec to whiteout_gen.sh
 chmod +x "$MODPATH/whiteout_gen.sh"
 
