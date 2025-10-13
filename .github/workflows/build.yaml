@@ -18,6 +18,12 @@ jobs:
       with:
         fetch-depth: 2
 
+    - name: Build webui
+      run: |
+        cd webui
+        npm ci
+        npm run build
+
     - name: Set variables
       run: |
         VERSION=$(jq -r .version update.json)
