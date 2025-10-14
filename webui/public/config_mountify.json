@@ -27,6 +27,11 @@
         "option": ["allow-other", "overlay", "KSU", "APatch", "magisk"],
         "description": "You can put 'KSU', 'APatch' here so a umount provider can umount.\nExamples: NeoZygisk, NoHello, ReZygisk, Shamiko, Zygisk Assistant, ZygiskNext-DE"
     },
+    "mountify_custom_umount": {
+        "type": "general",
+        "option": [0, 1, 2],
+        "description": "Enable in-kernel umount methods here.\n0 - disable\n1 - susfs4ksu\n2 - ksud add-try-umount"
+    },
     "mountify_expert_mode": {
         "type": "general",
         "hide": true,
