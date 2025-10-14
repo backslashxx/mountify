@@ -226,6 +226,7 @@ fi
 # create it
 mkdir -p "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 if [ ! -f "$MODDIR/no_tmpfs_xattr" ] && [ ! "$use_ext4_sparse" = "1" ]; then
+	echo "mountify/post-fs-data: mounting $(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")" >> /dev/kmsg
 	busybox mount -t tmpfs tmpfs "$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")"
 fi
 touch "$MNT_FOLDER/$FAKE_MOUNT_NAME/placeholder"
@@ -238,6 +239,7 @@ if [ ! -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
 fi
 
 if [ "$decoy_mount_enabled" = "1" ] && [ -d "$DECOY_MOUNT_FOLDER" ] && [ "$(ls -A "$DECOY_MOUNT_FOLDER" 2>/dev/null | wc -l)" -eq 0 ]; then
+	echo "mountify/post-fs-data: mounting $DECOY_MOUNT_FOLDER" >> /dev/kmsg
 	mount -t tmpfs tmpfs "$DECOY_MOUNT_FOLDER"
 fi
 
@@ -304,10 +306,12 @@ for folder in $targets ; do
 done
 
 if [ "$decoy_mount_enabled" = "1" ] && [ -d "$DECOY_MOUNT_FOLDER" ]; then
+	echo "mountify/post-fs-data: unmounting $DECOY_MOUNT_FOLDER" >> /dev/kmsg
 	busybox umount -l "$DECOY_MOUNT_FOLDER"
 fi
 
 if [ ! -f "$MODDIR/no_tmpfs_xattr" ] && [ ! "$use_ext4_sparse" = "1" ]; then
+	echo "mountify/post-fs-data: unmounting $(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")" >> /dev/kmsg
 	busybox umount -l "$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")"
 fi
 
