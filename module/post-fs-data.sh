@@ -225,6 +225,9 @@ fi
 
 # create it
 mkdir -p "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+if [ ! -f "$MODDIR/no_tmpfs_xattr" ] && [ ! "$use_ext4_sparse" = "1" ]; then
+	busybox mount -t tmpfs tmpfs "$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")"
+fi
 touch "$MNT_FOLDER/$FAKE_MOUNT_NAME/placeholder"
 
 # then make sure its there
@@ -302,6 +305,10 @@ done
 
 if [ "$decoy_mount_enabled" = "1" ] && [ -d "$DECOY_MOUNT_FOLDER" ]; then
 	busybox umount -l "$DECOY_MOUNT_FOLDER"
+fi
+
+if [ ! -f "$MODDIR/no_tmpfs_xattr" ] && [ ! "$use_ext4_sparse" = "1" ]; then
+	busybox umount -l "$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")"
 fi
 
 # insmod compat - system provided insmod most of the times is betterer
