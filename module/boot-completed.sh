@@ -9,12 +9,6 @@ MODDIR="/data/adb/modules/mountify"
 # read config
 . $MODDIR/config.sh
 
-# feel free to modify this script as you need
-# - xx
-#
-# this script will be migrated by mountify re-installs / updates
-#
-
 [ -w /mnt ] && MNT_FOLDER=/mnt && LOG_FOLDER=/mnt/mountify_logs
 [ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor && LOG_FOLDER=/mnt/vendor/mountify_logs
 
@@ -29,8 +23,22 @@ for mount in $(cat "$LOG_FOLDER/mountify_mount_list") ; do
 done
 }
 
-# for susfs, uncomment if you need
-# do_susfs_umount
+# requires modded ksud+driver with add-try-umount
+# umount via zygisk umount provider is still better.
+# this is here for reference purposes and as a second choice
+do_ksud_umount() {
+for mount in $(cat "$LOG_FOLDER/mountify_mount_list"); do
+	/data/adb/ksud add-try-umount $mount
+done
+}
+
+if [ "$mountify_custom_umount" = 1 ]; then
+	do_susfs_umount
+fi
+
+if [ "$mountify_custom_umount" = 2 ]; then
+	do_ksud_umount
+fi
 
 # cleanup
 # prep logs for status

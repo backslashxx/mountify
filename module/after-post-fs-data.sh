@@ -27,19 +27,9 @@ if [ ! $enable_lkm_nuke = 1 ] && [ "$spoof_sparse" = "0" ] &&
 fi
 }
 
-# requires modded ksud+driver with add-try-umount
-# umount via zygisk umount provider is still better.
-# this is here for reference purposes and as a second choice
-do_ksud_umount() {
-for mount in $(grep "$FAKE_MOUNT_NAME" /proc/mounts | awk {'print $2'}) ; do
-	/data/adb/ksud add-try-umount $mount
-done
-}
-
 # uncomment hiding method you want
 
 # for sekrit club ksud uncomment these two options as you need
 # do_ext4_nuke
-# do_ksud_umount
 
 # EOF

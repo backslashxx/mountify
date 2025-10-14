@@ -39,8 +39,14 @@ FS_TYPE_ALIAS="overlay"
 # otherwise leave default. this is if you need unmount.
 MOUNT_DEVICE_NAME="overlay"
 
+# You can enable in-kernel umount methods here
+# 0 = disable
+# 1 = susfs4ksu
+# 2 = ksud add-try-umount (kowsu / xxksu)
+mountify_custom_umount=0
+
 # WARNING!
-# This disables mountify's safety checks. mostly for debugging purposes.
+# This disables mountify's safety checks. mostly for debugging and development purposes.
 # 0 - disable
 # 1 - enable
 # YOU HAVE BEEN WARNED
