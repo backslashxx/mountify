@@ -345,6 +345,10 @@ if [ -f "$MODDIR/after-post-fs-data.sh" ] ; then
 	sh "$MODDIR/after-post-fs-data.sh"
 fi
 
+if [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; then
+	[ -f "$MNT_FOLDER/mountify-ext4" ] && rm "$MNT_FOLDER/mountify-ext4"
+fi
+
 # log after
 cat /proc/mounts > "$LOG_FOLDER/after"
 echo "mountify/post-fs-data: finished!" >> /dev/kmsg

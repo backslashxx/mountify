@@ -32,6 +32,11 @@ done
 # for susfs, uncomment if you need
 # do_susfs_umount
 
-# by default this script does nothing
+# cleanup
+# prep logs for status
+busybox diff "$LOG_FOLDER/before" "$LOG_FOLDER/after" | grep " $FS_TYPE_ALIAS " > "$MODDIR/mount_diff"
+
+# clean log folder
+[ -d "$LOG_FOLDER" ] && rm -rf "$LOG_FOLDER"
 
 # EOF

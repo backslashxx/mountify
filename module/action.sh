@@ -21,8 +21,8 @@ if ! grep "nodev" /proc/filesystems | grep -q "$FS_TYPE_ALIAS" > /dev/null 2>&1;
 	FS_TYPE_ALIAS="overlay"
 fi
 
-if [ -f "$LOG_FOLDER/before" ] && [ -f "$LOG_FOLDER/after" ]; then
-	diff "$LOG_FOLDER/before" "$LOG_FOLDER/after" | grep " $FS_TYPE_ALIAS "
+if [ -f "$MODDIR/mount_diff" ]; then
+	cat "$MODDIR/mount_diff"
 else
 	echo "[!] no logs found!"
 fi
