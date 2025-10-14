@@ -22,14 +22,6 @@ if [ $mountify_stop_start = 1 ]; then
 	stop; start
 fi
 
-# wait for boot-complete
-until [ "$(getprop sys.boot_completed)" = "1" ]; do
-	sleep 1
-done
-
-# reset bootcount (anti-bootloop routine)
-echo "BOOTCOUNT=0" > "$MODDIR/count.sh"
-
 # handle operating mode
 case $mountify_mounts in
 	1) mode="manual 🤓" ;;
@@ -61,6 +53,14 @@ if [ -f $LOG_FOLDER/modules ]; then
 	string="description=mode: $mode | modules: $( for module in $(cat "$LOG_FOLDER/modules" ) ; do printf "$module " ; done ) "
 fi
 sed -i "s/^description=.*/$string/g" $MODDIR/module.prop
+
+# wait for boot-complete
+until [ "$(getprop sys.boot_completed)" = "1" ]; do
+	sleep 1
+done
+
+# reset bootcount (anti-bootloop routine)
+echo "BOOTCOUNT=0" > "$MODDIR/count.sh"
 
 if [ ! "$APATCH" = true ] && [ ! "$KSU" = true ]; then
 	sh "$MODDIR/boot-completed.sh" &
