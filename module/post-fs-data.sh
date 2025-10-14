@@ -341,10 +341,19 @@ if [ $enable_lkm_nuke = 1 ] && [ -f "$MODDIR/lkm/$lkm_filename" ] &&
 
 fi
 
-if [ -f "$MODDIR/after-post-fs-data.sh" ] ; then
-	sh "$MODDIR/after-post-fs-data.sh"
+# just automatically do this when lkm nuking is disabled
+# this way we dont need after-post-fs-data
+if [ ! $enable_lkm_nuke = 1 ] && [ "$spoof_sparse" = "0" ] && { [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; }; then
+	if /data/adb/ksud -h | grep -q "nuke-ext4-sysfs" >/dev/null 2>&1; then
+		mnt="$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")"
+		echo "mountify/post-fs-data: ksud nuke-ext4-sysfs $mnt" >> /dev/kmsg
+		/data/adb/ksud nuke-ext4-sysfs "$mnt"
+		echo "mountify/post-fs-data: unmounting $mnt" >> /dev/kmsg
+		busybox umount -l "$mnt"
+	fi
 fi
 
+# delete the sparse
 if [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; then
 	[ -f "$MNT_FOLDER/mountify-ext4" ] && rm "$MNT_FOLDER/mountify-ext4"
 fi

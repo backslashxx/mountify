@@ -88,7 +88,7 @@ fi
 
 # full migration if 154+
 if [ "$mountify_versionCode" -ge 155 ]; then
-	configs="modules.txt whiteouts.txt config.sh skipped_modules after-post-fs-data.sh"
+	configs="modules.txt whiteouts.txt config.sh skipped_modules"
 else
 	echo "[!] using fresh config.sh"
 	configs="modules.txt whiteouts.txt skipped_modules"
