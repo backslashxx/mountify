@@ -101,6 +101,12 @@ for file in $configs; do
 	fi
 done
 
+# for small config changes, just add them
+if ! grep -q "^mountify_custom_umount" "$MODPATH/config.sh" > /dev/null 2>&1; then
+	busybox sed -i 's|# EOF|mountify_custom_umount=0|g' "$MODPATH/config.sh"
+	echo "# EOF" >> "$MODPATH/config.sh"
+fi
+
 # Remove old config symlink and now webui will read and edit config directly from modules_update/mountify/config.sh before reboot
 rm -f "/data/adb/modules/mountify/webroot/config.sh"
 
