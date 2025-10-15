@@ -1,4 +1,5 @@
 ## standalone scripts
+- tmpfs mode only!
 - you can put this onto post-fs-data of modules that you want globally mounted.
 - heavily commented, read them.
 
