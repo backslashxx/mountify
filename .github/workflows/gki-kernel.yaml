@@ -110,10 +110,12 @@ jobs:
           fi
 
           if [ -e build/build.sh ]; then
-            LTO=thin BUILD_CONFIG=common/build.config.gki.aarch64 build/build.sh CC="clang"
+            LTO=thin BUILD_CONFIG=common/build.config.gki.aarch64 build/build.sh CC="clang" > /dev/null 2>&1
           else
-            tools/bazel run --disk_cache=/home/runner/.cache/bazel --config=fast --config=stamp --lto=thin //common:kernel_aarch64_dist -- --dist_dir=dist
+            tools/bazel run --disk_cache=/home/runner/.cache/bazel --config=fast --config=stamp --lto=thin //common:kernel_aarch64_dist -- --dist_dir=dist > /dev/null 2>&1
           fi
+          
+          find ./ -name "nuke.ko"
           
           if [ -f ./dist/nuke.ko ]; then
           	mv ./dist/nuke.ko nuke.ko
