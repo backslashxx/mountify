@@ -332,7 +332,7 @@ if [ $enable_lkm_nuke = 1 ] && [ -f "$MODDIR/lkm/$lkm_filename" ] &&
 	mnt="$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")"
 	kptr_set=$(cat /proc/sys/kernel/kptr_restrict)
 	echo 1 > /proc/sys/kernel/kptr_restrict
-	ptr_address=$(grep ext4_unregister_sysfs /proc/kallsyms | awk {'print "0x"$1'})
+	ptr_address=$(grep " ext4_unregister_sysfs$" /proc/kallsyms | awk {'print "0x"$1'})
 	echo "mountify/post-fs-data: loading LKM with mount_point=$mnt symaddr=$ptr_address" >> /dev/kmsg
 	insmod "$MODDIR/lkm/$lkm_filename" mount_point="$mnt" symaddr="$ptr_address" > /dev/null 2>&1
 	echo $kptr_set > /proc/sys/kernel/kptr_restrict

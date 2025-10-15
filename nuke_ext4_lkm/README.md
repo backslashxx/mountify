@@ -9,7 +9,7 @@ Usage:
 
 kptr_set=$(cat /proc/sys/kernel/kptr_restrict)
 echo 1 > /proc/sys/kernel/kptr_restrict
-ptr_address=$(grep ext4_unregister_sysfs /proc/kallsyms | awk {'print "0x"$1'})
+ptr_address=$(grep " ext4_unregister_sysfs$" /proc/kallsyms | awk {'print "0x"$1'})
 insmod nuke.ko mount_point="/data/adb/modules" symaddr="$ptr_address"
 echo $kptr_set > /proc/sys/kernel/kptr_restrict
 ```
