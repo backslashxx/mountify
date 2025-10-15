@@ -2,6 +2,9 @@
 Globally mounted modules and whiteouts via OverlayFS.
 
 ## Changelog
+## 162
+- LKM: update prebuilts to 66cd4af
+- LKM, scripts/post-fs-data: fix usage when kernel is on cfi
 
 ## 160
 - scripts/post-fs-data: mount our own tmpfs
@@ -14,15 +17,6 @@ Globally mounted modules and whiteouts via OverlayFS.
 - webui: add umount config option
 - scripts/customize: handle small config changes
 - scripts/service: fixup "no modules mounted"
-
-## 158
-- scripts: move SusFS umount logic to boot-completed stage
-- scripts/customize: ban installation only on susfs 1.5.10 / 1.5.11 (#13)
-- webui: fix freeze when a config is added but not available in json
-- webui: setup npm
-- workflows/build: add webui build step
-- webui: read config from modules_update after installing mountify
-- webui/js: fix config not saving
 
 ### Full Changelog
 - [Commit history](https://github.com/backslashxx/mountify/commits/master/)
