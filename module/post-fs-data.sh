@@ -214,6 +214,12 @@ mountify_copy() {
 	echo "$MODULE_ID" >> "$LOG_FOLDER/modules"
 }
 
+# prevent this fuckup since on expert mode this isnt checked
+if [ "$FAKE_MOUNT_NAME" = "persist" ]; then
+	echo "mountify/post-fs-data: folder name named $FAKE_MOUNT_NAME is not allowed!" >> /dev/kmsg
+	exit 1
+fi
+
 # make sure its not there
 if [ ! "$mountify_expert_mode" = 1 ] && [ -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
 	# anti fuckup
