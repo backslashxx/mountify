@@ -79,7 +79,7 @@ jobs:
           echo 'obj-y += nuke_ext4_lkm/' >> drivers/Makefile
           
           # stop this exports check
-          sed -i '/check_exports(mod)/d' scripts/mod/modpost.c
+          # sed -i '/check_exports(mod)/d' scripts/mod/modpost.c
 
           # force exports of these, just like ksu
           [ -f "android/abi_gki_aarch64" ] && echo "  register_kprobe" >> android/abi_gki_aarch64 && echo "  unregister_kprobe" >> android/abi_gki_aarch64
