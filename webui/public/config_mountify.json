@@ -50,6 +50,7 @@
     },
     "FAKE_APEX_NAME": {
         "type": "ext4",
+        "require": [{"spoof_sparse": 1}],
         "option": ["allow-other", "com.android.mntservice"],
         "description": "Customize spoofed apex mount name.\nWhile futile, this tries to make it look legit."
     },
@@ -65,6 +66,7 @@
     },
     "lkm_filename": {
         "type": "ext4",
+        "require": [{"enable_lkm_nuke": 1}],
         "option": [
             "nuke-android12-5.10.ko",
         	"nuke-android13-5.10.ko",

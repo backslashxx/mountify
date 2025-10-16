@@ -161,6 +161,43 @@ function appendInputGroup() {
             container.appendChild(div);
         }
     }
+
+    for (const key in configMetadata) {
+        const metadata = configMetadata[key];
+        if (metadata.require) {
+            const dependentGroup = document.querySelector(`.input-group[data-key="${key}"]`);
+            if (!dependentGroup) continue;
+            const dependentInput = dependentGroup.querySelector('md-outlined-select, md-outlined-text-field');
+            if (!dependentInput) continue;
+
+            const checkAndSetDisabled = () => {
+                const satisfied = metadata.require.every(req =>
+                    Object.entries(req).every(([reqKey, reqValue]) => config[reqKey] === reqValue)
+                );
+
+                if (satisfied) {
+                    dependentInput.removeAttribute('disabled');
+                } else {
+                    dependentInput.setAttribute('disabled', '');
+                }
+            };
+
+            metadata.require.forEach(req => {
+                Object.keys(req).forEach(reqKey => {
+                    const requirementGroup = document.querySelector(`.input-group[data-key="${reqKey}"]`);
+                    if (requirementGroup) {
+                        const requirementInput = requirementGroup.querySelector('md-outlined-select, md-outlined-text-field');
+                        if (requirementInput) {
+                            const eventType = requirementInput.tagName.toLowerCase() === 'md-outlined-select' ? 'change' : 'input';
+                            requirementInput.addEventListener(eventType, checkAndSetDisabled);
+                        }
+                    }
+                });
+            });
+            checkAndSetDisabled();
+        }
+    }
+
     setupKeyboard();
     appendExtras();
 }
