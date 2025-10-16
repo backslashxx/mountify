@@ -7,6 +7,6 @@ config NUKE_EXT4_SYSFS
 	help
 	  this LKM unregisters an ext4 sysfs node given with mount point.
 	  Usage: 
-	     "insmod nuke_sysfs.ko mount_point=/data/adb/modules"
+	     "insmod nuke_sysfs.ko mount_point=/data/adb/modules symaddr=0xfffff12345"
 
 endmenu

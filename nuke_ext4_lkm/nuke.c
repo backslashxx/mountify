@@ -39,7 +39,7 @@ static int ext4_unregister_sysfs_fn(struct super_block *sb)
 	char buf[32] = {0};
 
 	if (!symaddr) {
-		pr_info("nuke_ext4: symaddr not provided!\n");
+		pr_info("mountify/nuke_ext4: symaddr not provided!\n");
 		return -EINVAL;
 	}
 
@@ -51,11 +51,11 @@ static int ext4_unregister_sysfs_fn(struct super_block *sb)
 	// if strstarts symbol
 	// output is like "ext4_unregister_sysfs+0x0/0x70"
 	if (!!strncmp(buf, sym, strlen(sym))) {
-		pr_info("nuke_ext4: wrong symbol!? %s found!\n", buf);
+		pr_info("mountify/nuke_ext4: wrong symbol!? %s found!\n", buf);
 		return -EAGAIN;
 	}
 
-	pr_info("nuke_ext4: sprint_symbol 0x%lx: %s\n", symaddr, buf);
+	pr_info("mountify/nuke_ext4: sprint_symbol 0x%lx: %s\n", symaddr, buf);
 	ext4_unregister_sysfs_ptr = (void (*)(struct super_block *))symaddr;
 	ext4_unregister_sysfs_ptr(sb);
 	return 0;
@@ -64,24 +64,24 @@ static int ext4_unregister_sysfs_fn(struct super_block *sb)
 static int __init nuke_entry(void) 
 {
 	struct path path;
-	pr_info("nuke_ext4: init with symaddr: 0x%lx mount_point: %s\n", symaddr, mount_point);
+	pr_info("mountify/nuke_ext4: init with symaddr: 0x%lx mount_point: %s\n", symaddr, mount_point);
 
 	// kang from ksu
 	int err = kern_path(mount_point, 0, &path);
 	if (err) {
-		pr_info("nuke_ext4: kern_path failed: %d\n", err);
+		pr_info("mountify/nuke_ext4: kern_path failed: %d\n", err);
 		return -EAGAIN;
 	}
 
 	struct super_block* sb = path.dentry->d_inode->i_sb;
 	const char* name = sb->s_type->name;
 	if (strcmp(name, "ext4") != 0) {
-		pr_info("nuke_ext4: not ext4\n");
+		pr_info("mountify/nuke_ext4: not ext4\n");
 		path_put(&path);
 		return -EAGAIN;
 	}
 
-	pr_info("nuke_ext4: unregistering sysfs node for ext4 volume (%s)\n", sb->s_id);
+	pr_info("mountify/nuke_ext4: unregistering sysfs node for ext4 volume (%s)\n", sb->s_id);
 	ext4_unregister_sysfs_fn(sb);
 	path_put(&path);
 
@@ -92,12 +92,12 @@ static int __init nuke_entry(void)
 
 	err = kern_path(procfs_path, 0, &path);
 	if (!err) {
-		pr_info("nuke_ext4: procfs node still exists at %s\n", procfs_path);
+		pr_info("mountify/nuke_ext4: procfs node still exists at %s\n", procfs_path);
 		path_put(&path);
 	} else
-		pr_info("nuke_ext4: procfs node nuked (%s is gone)\n", procfs_path);
+		pr_info("mountify/nuke_ext4: procfs node nuked (%s is gone)\n", procfs_path);
 
-	pr_info("nuke_ext4: unload\n");
+	pr_info("mountify/nuke_ext4: unload\n");
 	return -EAGAIN;
 }
 
