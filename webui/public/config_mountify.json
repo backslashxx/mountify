@@ -45,6 +45,7 @@
     },
     "spoof_sparse": {
         "type": "ext4",
+        "require": [{"enable_lkm_nuke": 0}],
         "option": [0, 1],
         "description": "Spoof sparse as an apex mount.\nGoes well with a custom MOUNT_DEVICE_NAME.\nNOTE: when this is enabled, LKM nuking is disabled."
     },
@@ -61,6 +62,7 @@
     },
     "enable_lkm_nuke": {
         "type": "ext4",
+        "require": [{"spoof_sparse": 0}],
         "option": [0, 1],
         "description": "🚨 WARNING!\n⚠️ Experimental feature. Don't expect 100% success rate.\nLoads a oneshot LKM that unregisters ext4 sysfs nodes. \n0 - disable\n1 - enable"
     },
