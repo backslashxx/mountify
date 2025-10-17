@@ -268,7 +268,7 @@ async function showModuleSelector() {
                 </md-list-item>
             `;
         }).join('');
-    });
+    }).catch(() => {});
 
     const saveConfig = () => {
         const selectedModules = Array.from(list.querySelectorAll('md-checkbox'))
@@ -279,7 +279,7 @@ async function showModuleSelector() {
             if (result.errno !== 0) {
                 toast('Failed to save: ' + result.stderr);
             }
-        });
+        }).catch(() => {});
     }
 
     saveBtn.onclick = () => {
@@ -350,7 +350,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (btn.value === 'reboot') {
                     exec('/system/bin/reboot').then((result) => {
                         if (result.errno !== 0) toast('Failed to reboot: ' + result.stderr);
-                    });
+                    }).catch(() => {});
                 }
             }
         });
@@ -363,12 +363,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('ksu-tab').classList.remove('hidden');
         initSwitch('/data/adb/ksu/.nomount', 'nomount');
         initSwitch('/data/adb/ksu/.notmpfs', 'notmpfs');
-    });
+    }).catch(() => {});
     exec('su -c "command -v apd"').then((isAp) => {
         if (isAp.errno !== 0 && isAp.stderr !== "ksu is not defined") return
         document.getElementById('ap-tab').classList.remove('hidden');
         initSwitch('/data/adb/.litemode_enable', 'litemode')
-    });
+    }).catch(() => {});
 
     document.querySelectorAll('[unresolved]').forEach(el => {
         el.removeAttribute('unresolved');

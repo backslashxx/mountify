@@ -7,7 +7,7 @@ export function loadVersion() {
     exec(`grep "^version=" ${moddir}/module.prop | cut -d= -f2`).then((result) => {
         if (result.errno !== 0) return;
         document.getElementById('version').innerHTML = result.stdout.trim();
-    });
+    }).catch(() => {});
 }
 
 export async function loadConfig() {
@@ -43,7 +43,7 @@ export async function loadConfig() {
                 return;
             }
             window.location.reload();
-        });
+        }).catch(() => {});
     }
 }
 
