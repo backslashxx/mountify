@@ -369,4 +369,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('ap-tab').classList.remove('hidden');
         initSwitch('/data/adb/.litemode_enable', 'litemode')
     });
+
+    document.querySelectorAll('[unresolved]').forEach(el => {
+        el.removeAttribute('unresolved');
+    });
 });

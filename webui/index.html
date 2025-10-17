@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="styles.css" type="text/css">
 </head>
 <body>
-    <div class="root_layout">
+    <div class="root_layout" unresolved>
         <div class="header">
             <div class="top-bar" slot="headline">
                 <span>mountify</span><span id="version"></span>
@@ -38,7 +38,7 @@
         <div class="keyboard-inset"></div>
     </div>
 
-    <div class="dialog-wrapper">
+    <div class="dialog-wrapper" unresolved>
         <md-dialog id="confirm-reboot-dialog">
             <div slot="headline">Reboot</div>
             <div slot="content">Reboot now?</div>
@@ -49,7 +49,7 @@
         </md-dialog>
     </div>
 
-    <div class="dialog-wrapper">
+    <div class="dialog-wrapper" unresolved>
         <md-dialog id="description-dialog">
             <div slot="headline"></div>
             <div slot="content"></div>
@@ -59,7 +59,7 @@
         </md-dialog>
     </div>
 
-    <div class="dialog-wrapper">
+    <div class="dialog-wrapper" unresolved>
         <md-dialog id="module-selector-dialog">
             <div slot="headline">Select Modules</div>
             <div slot="content">
