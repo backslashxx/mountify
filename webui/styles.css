@@ -111,6 +111,11 @@ label {
     user-select: none;
 }
 
+.dialog-wrapper {
+    z-index: 10;
+    position: relative;
+}
+
 .keyboard-inset {
     flex-shrink: 0;
     height: 0px;
