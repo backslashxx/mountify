@@ -60,14 +60,6 @@ mountify_whiteouts
 - `FAKE_MOUNT_NAME="mountify"` to set a custom fake folder name
 - `mountify_stop_start=1` to restart android at service (needed for certain modules)
 
-### Need Unmount?
-- use either NeoZygisk, NoHello, ReZygisk, Zygisk Assistant
-- if you use Zygisk Next, then set Denylist Policy to "Enforced" or "Unmount Only"
-- then edit config.sh
-   - `MOUNT_DEVICE_NAME="APatch"` if you're on APatch
-   - `MOUNT_DEVICE_NAME="KSU"` if you're on KernelSU forks
-   - `MOUNT_DEVICE_NAME="magisk"` if you're on Magisk
-
 #### tmpfs specific
 - `test_decoy_mount=1` to enable testing for decoy mounts on tmpfs mode
 
@@ -76,6 +68,18 @@ mountify_whiteouts
 - `spoof_sparse=1` to try spoof sparse mount as an android service
 - `FAKE_APEX_NAME="com.android.mntservice"` to customize that android service spoofed name
 - `sparse_size="2048"` to set your sparse size (in MB) to whatever you want
+- `enable_lkm_nuke=1` to try load an experimental LKM.
+- `lkm_filename="nuke.ko"` to define LKM's filename
+
+### Need Unmount?
+- use either NeoZygisk, NoHello, ReZygisk, Zygisk Assistant
+- if you use Zygisk Next, then set Denylist Policy to "Enforced" or "Unmount Only"
+- then edit config.sh
+   - `MOUNT_DEVICE_NAME="APatch"` if you're on APatch
+   - `MOUNT_DEVICE_NAME="KSU"` if you're on KernelSU forks
+   - `MOUNT_DEVICE_NAME="magisk"` if you're on Magisk
+- `mountify_custom_umount=0` modify this value to enable known in-kernel umount methods.
+   - NOTE: zygisk provider umount is still better, this is here as a second choice.
 
 #### I need mountify to skip mounting my module!
 - this is easy, add `skip_mountify` to your module's folder.
