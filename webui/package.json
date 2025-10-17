@@ -4,8 +4,7 @@
   "description": "",
   "scripts": {
     "dev": "vite",
-    "clean": "rimraf ../module/webroot/assets/*",
-    "build": "npm run clean && vite build"
+    "build": "vite build --emptyOutDir"
   },
   "keywords": [
     "mountify"
@@ -14,10 +13,9 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
-    "@fontsource/material-symbols-outlined": "^5.2.26",
     "@material/web": "^2.4.0",
     "kernelsu-alt": "^1.0.2",
-    "rimraf": "^6.0.1",
-    "vite": "^7.1.9"
+    "vite": "^7.1.9",
+    "vite-plugin-html": "^3.2.2"
   }
 }
