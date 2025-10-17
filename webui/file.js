@@ -96,6 +96,6 @@ export async function writeConfig() {
             if (code !== 0) {
                 toast('Error saving config: ' + stderr.join(' '));
             }
-        })
+        });
     }
 }

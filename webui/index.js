@@ -99,7 +99,7 @@ function appendInputGroup() {
                     textField.addEventListener('focus', (event) => {
                         setTimeout(() => {
                             if (document.activeElement === textField) filterMenuItems(event.target.value);
-                        }, 100)
+                        }, 100);
                     });
                 } else { // Fixed options only
                     const select = document.createElement('md-outlined-select');
@@ -173,12 +173,7 @@ function appendInputGroup() {
                 const satisfied = metadata.require.every(req =>
                     Object.entries(req).every(([reqKey, reqValue]) => config[reqKey] === reqValue)
                 );
-
-                if (satisfied) {
-                    dependentInput.removeAttribute('disabled');
-                } else {
-                    dependentInput.setAttribute('disabled', '');
-                }
+                dependentInput.disabled = !satisfied;
             };
 
             metadata.require.forEach(req => {
@@ -367,7 +362,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     exec('su -c "command -v apd"').then((isAp) => {
         if (isAp.errno !== 0 && isAp.stderr !== "ksu is not defined") return
         document.getElementById('ap-tab').classList.remove('hidden');
-        initSwitch('/data/adb/.litemode_enable', 'litemode')
+        initSwitch('/data/adb/.litemode_enable', 'litemode');
     }).catch(() => {});
 
     document.querySelectorAll('[unresolved]').forEach(el => {
