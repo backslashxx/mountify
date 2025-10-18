@@ -87,6 +87,14 @@ md-list {
     background-color: transparent;
 }
 
+.title {
+    margin-top: 48px;
+    font-size: 0.8em;
+    font-weight: bold;
+    color: var(--md-sys-color-primary);
+    user-select: none;
+}
+
 label {
     padding: 16px 0;
     font-size: 1.1em;
@@ -103,8 +111,6 @@ label {
     font-size: 0.9em;
     color: var(--md-sys-color-outline);
     width: 100%;
-    text-align: center;
-    padding: 48px 32px;
     box-sizing: border-box;
 }
 
@@ -130,8 +136,4 @@ label {
 [unresolved] {
     opacity: 0;
     overflow: hidden;
-}
-
-.hidden {
-    display: none;
 }

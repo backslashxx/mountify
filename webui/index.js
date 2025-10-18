@@ -29,7 +29,7 @@ function appendInputGroup() {
             div.className = 'input-group';
             div.dataset.key = key;
 
-            if (metadata.hide && metadata.hide === true || !metadata) continue;
+            if (!metadata) continue;
             if (metadata.option) { // Fixed options
                 if (metadata.option[0] === 'allow-other') { // Fixed options + custom input
                     const textField = document.createElement('md-outlined-text-field');
@@ -305,6 +305,17 @@ function setupKeyboard() {
     });
 }
 
+function toggleAdvanced(advanced) {
+    document.querySelectorAll('.input-group').forEach(group => {
+        const key = group.dataset.key;
+        if (!key) return;
+        const metadata = configMetadata[key] || false;
+        if (metadata.advanced) {
+            group.style.display = advanced ? '' : 'none';
+        }
+    });
+}
+
 function initSwitch(path, id) {
     const element = document.getElementById(id);
     if (!element) return;
@@ -321,7 +332,16 @@ function initSwitch(path, id) {
 
 document.addEventListener('DOMContentLoaded', async () => {
     [config, configMetadata] = await Promise.all([file.loadConfig(), file.loadConfigMetadata()]);
-    if (config) appendInputGroup();
+    const advanced = document.getElementById('advanced');
+    advanced.selected = localStorage.getItem('advanced') === 'true';
+    advanced.addEventListener('change', () => {
+        localStorage.setItem('advanced', advanced.selected ? 'true' : 'false');
+        if (config) toggleAdvanced(advanced.selected);
+    });
+    if (config) {
+        appendInputGroup();
+        toggleAdvanced(advanced.selected);
+    }
     file.loadVersion();
 
     const controller = document.querySelector('md-tabs');
@@ -351,21 +371,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // ksud/apd not in PATH when not executing with su
-    // if su not available means we're in KernelSU with sucompat disabled
-    exec('su -c "command -v ksud" || ! command -v su').then((isKsu) => {
-        if (isKsu.errno !== 0 && isKsu.stderr !== "ksu is not defined") return
-        document.getElementById('ksu-tab').classList.remove('hidden');
-        initSwitch('/data/adb/ksu/.nomount', 'nomount');
-        initSwitch('/data/adb/ksu/.notmpfs', 'notmpfs');
-    }).catch(() => {});
-    exec('su -c "command -v apd"').then((isAp) => {
-        if (isAp.errno !== 0 && isAp.stderr !== "ksu is not defined") return
-        document.getElementById('ap-tab').classList.remove('hidden');
-        initSwitch('/data/adb/.litemode_enable', 'litemode');
-    }).catch(() => {});
+    initSwitch('/data/adb/ksu/.nomount', 'nomount');
+    initSwitch('/data/adb/ksu/.notmpfs', 'notmpfs');
+    initSwitch('/data/adb/.litemode_enable', 'litemode');
 
-    document.querySelectorAll('[unresolved]').forEach(el => {
-        el.removeAttribute('unresolved');
-    });
+    document.querySelectorAll('[unresolved]').forEach(el => el.removeAttribute('unresolved'));
 });

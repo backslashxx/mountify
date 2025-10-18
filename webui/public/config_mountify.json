@@ -20,7 +20,9 @@
     },
     "FS_TYPE_ALIAS": {
         "type": "general",
-        "hide": true
+        "advanced": true,
+        "option": ["allow-other", "overlay"],
+        "description": "You can put 'KSU', 'APatch' here so a umount provider can umount.\nExamples: NeoZygisk, NoHello, ReZygisk, Shamiko, Zygisk Assistant, ZygiskNext-DE"
     },
     "MOUNT_DEVICE_NAME": {
         "type": "general",
@@ -34,7 +36,7 @@
     },
     "mountify_expert_mode": {
         "type": "general",
-        "hide": true,
+        "advanced": true,
         "option": [0, 1],
         "description": "🚨 WARNING!\n ⚠️ This disables mountify's safety checks. mostly for debugging purposes.\n0 - disable\n1 - enable"
     },
