@@ -20,22 +20,22 @@
                 <md-primary-tab id="advanced-tab" aria-controls="content-advanced">Advanced</md-primary-tab>
             </md-tabs>
         </div>
-        <div class="content-container" id="content-general" role="tabpanel" aria-labelledby="general-tab"></div>
-        <div class="content-container" id="content-ext4" role="tabpanel" aria-labelledby="ext4-tab" hidden></div>
+        <div class="content-container content" id="content-general" role="tabpanel" aria-labelledby="general-tab"></div>
+        <div class="content-container content" id="content-ext4" role="tabpanel" aria-labelledby="ext4-tab" hidden></div>
         <div class="content-container" id="content-advanced" role="tabpanel" aria-labelledby="advanced-tab" hidden>
-            <label>Show advanced option<md-switch id="advanced"></md-switch></label>
+            <label class="content">Show advanced option<md-switch id="advanced"></md-switch><md-ripple></md-ripple></label>
 
-            <p class="title">KernelSU</p>
+            <p class="title content">KernelSU</p>
             <!-- /data/adb/ksu/.nomount -->
-            <label>Enable nomount<md-switch id="nomount"></md-switch></label>
+            <label class="content">Enable nomount<md-switch id="nomount"></md-switch><md-ripple></md-ripple></label>
             <!-- /data/adb/ksu/.notmpfs -->
-            <label>Enable notmpfs<md-switch id="notmpfs"></md-switch></label>
-            <p class="warning">These options require KernelSU support. Known supported versions include mKSU and its derivative forks.</p>
+            <label class="content">Enable notmpfs<md-switch id="notmpfs"></md-switch><md-ripple></md-ripple></label>
+            <p class="warning content">These options require KernelSU support. Known supported versions include mKSU and its derivative forks.</p>
 
-            <p class="title">APatch</p>
+            <p class="title content">APatch</p>
             <!-- /data/adb/.litemode_enable -->
-            <label>Enable litemode<md-switch id="litemode"></md-switch></label>
-            <p class="warning">Litemode is introduced in APatch since v11024</p>
+            <label class="content">Enable litemode<md-switch id="litemode"></md-switch><md-ripple></md-ripple></label>
+            <p class="warning content">Litemode is introduced in APatch since v11024</p>
         </div>
         <div class="keyboard-inset"></div>
     </div>

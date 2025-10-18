@@ -56,6 +56,9 @@ md-tabs {
     width: 100%;
     max-width: 100%;
     margin-top: 128px;
+}
+
+.content {
     padding: 0 16px;
     box-sizing: border-box;
 }
@@ -96,7 +99,8 @@ md-list {
 }
 
 label {
-    padding: 16px 0;
+    position: relative;
+    padding: 16px !important;
     font-size: 1.1em;
     width: 100%;
     display: flex;
@@ -111,7 +115,6 @@ label {
     font-size: 0.9em;
     color: var(--md-sys-color-outline);
     width: 100%;
-    box-sizing: border-box;
 }
 
 [slot="headline"] {
