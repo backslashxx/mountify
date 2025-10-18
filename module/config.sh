@@ -29,8 +29,9 @@ test_decoy_mount=0
 # 1 to enable
 mountify_stop_start=0
 
-# You can put 'KSU', 'APatch', 'magisk' here so a umount provider can umount.
-# Examples: NeoZygisk, NoHello, ReZygisk, Shamiko, Zygisk Assistant, ZygiskNext-DE
+# customized overlayfs driver
+# this is only useful if you patched your overlayfs to register another alias
+# e.g. MODULE_ALIAS_FS("my_weird_overlay");
 FS_TYPE_ALIAS="overlay"
 
 # this one below is its device name

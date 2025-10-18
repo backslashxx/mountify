@@ -22,7 +22,7 @@
         "type": "general",
         "advanced": true,
         "option": ["allow-other", "overlay"],
-        "description": "You can put 'KSU', 'APatch' here so a umount provider can umount.\nExamples: NeoZygisk, NoHello, ReZygisk, Shamiko, Zygisk Assistant, ZygiskNext-DE"
+        "description": "Change this if you have a customized overlayfs driver registered with another alias."
     },
     "MOUNT_DEVICE_NAME": {
         "type": "general",
@@ -38,7 +38,7 @@
         "type": "general",
         "advanced": true,
         "option": [0, 1],
-        "description": "🚨 WARNING!\n ⚠️ This disables mountify's safety checks. mostly for debugging purposes.\n0 - disable\n1 - enable"
+        "description": "🚨 WARNING!\n ⚠️ This disables safety checks.\nMostly for development and debugging purposes.\n0 - disable\n1 - enable"
     },
     "use_ext4_sparse": {
         "type": "ext4",
