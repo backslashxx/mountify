@@ -323,7 +323,7 @@ function initSwitch(path, id) {
         if (result.errno === 0) element.selected = true;
     });
     element.addEventListener('change', () => {
-        const cmd = element.selected ? 'touch' : 'rm -f';
+        const cmd = element.selected ? 'echo "mountify" >' : 'rm -f';
         exec(`${cmd} ${path}`).then((result) => {
             if (result.errno !== 0) toast('Failed to toggle ' + path + ': ' + result.stderr);
         });
