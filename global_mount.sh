@@ -9,7 +9,7 @@ MODDIR="${0%/*}"
 
 # you can mimic vendor mounts like, my_bigball, vendor_dklm, mi_ext
 # whatever. use what you want. provided here is just an example
-FAKE_MOUNT_NAME="my_bullshit"
+FAKE_MOUNT_NAME="mountify_1"
 
 [ ! -f $MODDIR/skip_mount ] && touch $MODDIR/skip_mount
 [ ! -f $MODDIR/skip_mountify ] && touch $MODDIR/skip_mountify
