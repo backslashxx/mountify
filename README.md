@@ -7,4 +7,5 @@
   - I don't want to get blamed for module issues.
 
 ### integration demo
-- [spoof_vendor_sepolicy](https://github.com/backslashxx/spoof_vendor_sepolicy)
+- [ChiseWaguri/systemapp_nuker](https://github.com/ChiseWaguri/systemapp_nuker)
+- [KOWX712/unlock-cn-gms](https://github.com/KOWX712/unlock-cn-gms)
