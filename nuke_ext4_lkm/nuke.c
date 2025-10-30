@@ -36,7 +36,7 @@ static int ext4_unregister_sysfs_fn(struct super_block *sb)
 {
 	void (*ext4_unregister_sysfs_ptr)(struct super_block *);
 	const char *sym = "ext4_unregister_sysfs";
-	char buf[32] = {0};
+	char buf[KSYM_SYMBOL_LEN] = {0};
 
 	if (!symaddr) {
 		pr_info("mountify/nuke_ext4: symaddr not provided!\n");
@@ -46,7 +46,7 @@ static int ext4_unregister_sysfs_fn(struct super_block *sb)
 	// https://elixir.bootlin.com/linux/v6.17.1/source/kernel/kallsyms.c#L474
 	// turns out we can confirm the symbol!
 	sprint_symbol(buf, symaddr);
-	buf[31] = '\0';
+	buf[KSYM_SYMBOL_LEN - 1] = '\0';
 
 	// if strstarts symbol
 	// output is like "ext4_unregister_sysfs+0x0/0x70"
