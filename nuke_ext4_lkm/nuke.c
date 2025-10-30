@@ -83,13 +83,16 @@ static int __init nuke_entry(void)
 
 	pr_info("mountify/nuke_ext4: unregistering sysfs node for ext4 volume (%s)\n", sb->s_id);
 	ext4_unregister_sysfs_fn(sb);
-	path_put(&path);
 
 	// now recheck if the node still exists
 	// this is on /proc/fs/ext4
-	char procfs_path[64];
+	char procfs_path[64] = {0};
 	snprintf(procfs_path, sizeof(procfs_path), "/proc/fs/ext4/%s", sb->s_id);
 
+	// release ref here, we now have a copy of sb->s_id on procfs_path
+	path_put(&path);
+
+	// reuse &path
 	err = kern_path(procfs_path, 0, &path);
 	if (!err) {
 		pr_info("mountify/nuke_ext4: procfs node still exists at %s\n", procfs_path);
