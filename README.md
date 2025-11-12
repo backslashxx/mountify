@@ -40,7 +40,7 @@
 - this is not my problem, this is a fallback, not the main recommendation.
 - and yes this is basically how Official KernelSU does it.
 - if you're on GKI 5.10+, theres an experimental LKM that nukes these nodes.
-- if youre on non-GKI or the LKM doesn't work for you, [this](https://github.com/tiann/KernelSU/commit/032d5e9044e63426804872ca0a6b78a101a8185a) and [this](https://github.com/tiann/KernelSU/commit/865c31bc70308bbce4eb5f0ff639e04122846472) can help.
+- if youre on non-GKI or the LKM doesn't work for you, [this](https://github.com/tiann/KernelSU/commit/654aa9f0911d8a23d97a73d12d110e9ff1195629) and [this](https://github.com/tiann/KernelSU/commit/5ef24fe3ff49f6919f3431f184e719f2d65c80e3) can help.
 
 ## Usage
 - user-friendly config editing is available on the WebUI
@@ -100,4 +100,5 @@ mountify_whiteouts
 
 ## Links
 [Download](https://github.com/backslashxx/mountify/releases)
+
 
