@@ -3,5 +3,6 @@ name=mountify
 version=v1.6.6
 versionCode=166
 author=xx, KOWX712
+metamodule=true
 description=Globally mounted modules via OverlayFS.
 updateJson=https://raw.githubusercontent.com/backslashxx/mountify/master/update.json
