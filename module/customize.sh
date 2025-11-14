@@ -113,17 +113,6 @@ rm -f "/data/adb/modules/mountify/webroot/config.sh"
 # give exec to whiteout_gen.sh
 chmod +x "$MODPATH/whiteout_gen.sh"
 
-# warn on OverlayFS managers
-# while this is supported (half-assed), this is not a recommended configuration
-if { [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ]; } || { [ "$APATCH" = true ] && [ ! "$APATCH_BIND_MOUNT" = true ]; }; then
-	printf "\n\n"
-	echo "[!] ERROR: Root manager is NOT on magic mount."
-	echo "[!] This setup can cause issues and is NOT recommended."
-	echo "[!] modify customize.sh to force installation!"
-	abort "[!] Installation aborted!"
-	# ^ just change abort to echo or something
-fi
-
 SUSFS_BIN="/data/adb/ksu/bin/ksu_susfs"
 SUSFS_VERSION="$( ${SUSFS_BIN} show version | head -n1 | sed 's/v//; s/\.//g' )"
 if [ "$KSU" = true ] && [ -f ${SUSFS_BIN} ] && { [ "$SUSFS_VERSION" -eq 1510 ] || [ "$SUSFS_VERSION" -eq 1511 ]; }; then
@@ -133,6 +122,10 @@ if [ "$KSU" = true ] && [ -f ${SUSFS_BIN} ] && { [ "$SUSFS_VERSION" -eq 1510 ] |
 	echo "[!] modify customize.sh to force installation!"
 	abort "[!] Installation aborted!"
 	# ^ just change abort to echo or something
+fi
+
+if [ "$METAMODULE_CONDITION" = "true" ]; then
+	mv "$MODPATH/post-fs-data.sh" "$MODPATH/module-mount.sh"
 fi
 
 # EOF
