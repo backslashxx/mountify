@@ -181,8 +181,10 @@ mountify_copy() {
 
 	# skip_mount is not needed on .nomount MKSU - 5ec1cff/KernelSU/commit/76bfccd
 	# skip_mount is also not needed for litemode APatch - bmax121/APatch/commit/7760519
-	if { [ "$KSU_MAGIC_MOUNT" = "true" ] && [ -f /data/adb/ksu/.nomount ]; } || { [ "$APATCH_BIND_MOUNT" = "true" ] && [ -f /data/adb/.litemode_enable ]; }; then 
-		# we can delete skip_mount if nomount / litemode
+	if { [ "$KSU_MAGIC_MOUNT" = "true" ] && [ -f /data/adb/ksu/.nomount ]; } || 
+		{ [ "$APATCH_BIND_MOUNT" = "true" ] && [ -f /data/adb/.litemode_enable ]; } || 
+		[ -f "$MODDIR/metamount.sh" ]; then 
+		# we can delete skip_mount if nomount / litemode / metamodule mode
 		[ -f "$TARGET_DIR/skip_mount" ] && rm "$TARGET_DIR/skip_mount"
 		[ -f "$PERSISTENT_DIR/skipped_modules" ] && rm "$PERSISTENT_DIR/skipped_modules"
 	else
