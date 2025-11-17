@@ -8,7 +8,8 @@ PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
 MODDIR="/data/adb/modules/mountify"
 mountify_stop_start=0
 # read config
-. $MODDIR/config.sh
+PERSISTENT_DIR="/data/adb/mountify"
+. $PERSISTENT_DIR/config.sh
 
 # stop; start
 # restart android at service

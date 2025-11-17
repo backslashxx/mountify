@@ -22,7 +22,8 @@ mountify_expert_mode=0
 enable_lkm_nuke=0
 lkm_filename="nuke.ko"
 # read config
-. $MODDIR/config.sh
+PERSISTENT_DIR="/data/adb/mountify"
+. $PERSISTENT_DIR/config.sh
 # exit if disabled
 if [ $mountify_mounts = 0 ]; then
 	exit 0

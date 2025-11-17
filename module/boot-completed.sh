@@ -7,7 +7,8 @@
 PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
 MODDIR="/data/adb/modules/mountify"
 # read config
-. $MODDIR/config.sh
+PERSISTENT_DIR="/data/adb/mountify"
+. $PERSISTENT_DIR/config.sh
 
 [ -w /mnt ] && MNT_FOLDER=/mnt && LOG_FOLDER=/mnt/mountify_logs
 [ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor && LOG_FOLDER=/mnt/vendor/mountify_logs
