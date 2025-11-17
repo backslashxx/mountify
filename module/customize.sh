@@ -135,9 +135,16 @@ if [ "$KSU" = true ] && [ -f ${SUSFS_BIN} ] && { [ "$SUSFS_VERSION" -eq 1510 ] |
 	# ^ just change abort to echo or something
 fi
 
+# workaround for awry versioning on KernelSU forks
+# we cannot rely on just ksu vercode
 if [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ] &&  [ "$KSU_VER_CODE" -ge 22098 ]; then
 	echo "[+] mountify will be installed in metamodule mode!"
 	mv "$MODPATH/post-fs-data.sh" "$MODPATH/metamount.sh"
+fi
+
+# since even mm ksud can have this feature, we check this and add a flag that we can check
+if [ "$KSU" = true ] && /data/adb/ksud kernel 2>&1 | grep -q "nuke-ext4-sysfs" >/dev/null 2>&1; then
+	touch "$MODPATH/ksud_has_nuke_ext4"
 fi
 
 # EOF
