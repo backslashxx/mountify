@@ -360,10 +360,14 @@ fi
 # just automatically do this when lkm nuking is disabled
 # this way we dont need after-post-fs-data
 if [ ! $enable_lkm_nuke = 1 ] && [ "$spoof_sparse" = "0" ] && { [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; }; then
-	if /data/adb/ksud -h | grep -q "nuke-ext4-sysfs" >/dev/null 2>&1; then
+	if /data/adb/ksud -h | grep -qE "nuke-ext4-sysfs|Kernel interface" >/dev/null 2>&1; then
 		mnt="$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")"
 		echo "mountify/post-fs-data: ksud nuke-ext4-sysfs $mnt" >> /dev/kmsg
-		/data/adb/ksud nuke-ext4-sysfs "$mnt"
+		if /data/adb/ksud -h | grep -q "nuke-ext4-sysfs" >/dev/null 2>&1; then
+			/data/adb/ksud nuke-ext4-sysfs "$mnt"
+		else
+			/data/adb/ksud kernel nuke-ext4-sysfs "$mnt"
+		fi
 		echo "mountify/post-fs-data: unmounting $mnt" >> /dev/kmsg
 		busybox umount -l "$mnt"
 	fi
