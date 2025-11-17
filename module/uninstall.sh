@@ -10,7 +10,7 @@ FLAGS="/data/adb/ksu/.nomount
 /data/adb/.litemode_enable"
 
 # remove skip_mount on modules we skip_mounted
-for module in $(cat /data/adb/modules/mountify/skipped_modules) ; do 
+for module in $(cat /data/adb/mountify/skipped_modules) ; do 
 	rm /data/adb/modules/"$module"/skip_mount > /dev/null 2>&1
 done
 
@@ -20,5 +20,8 @@ for flag in $FLAGS; do
 		rm -f "$flag"
 	fi
 done
+
+# delete config directory
+[ -d "/data/adb/mountify/" ] && rm -rf "/data/adb/mountify/"
 
 # EOF
