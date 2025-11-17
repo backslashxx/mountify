@@ -4,6 +4,7 @@
 
 - mostly meant for [MKSU .nomount](https://github.com/5ec1cff/KernelSU/commit/76bfccd11f4c8953b35e1342a2461f45b7d21c22)
 - works on APatch and Magisk too
+- can also act as a KernelSU metamodule
 - **CONFIG_OVERLAY_FS=y** is required 
 - **CONFIG_TMPFS_XATTR=y** is highly encouraged
 - tries to mimic an OEM mount, like /mnt/vendor/my_bigball
@@ -44,7 +45,7 @@
 
 ## Usage
 - user-friendly config editing is available on the WebUI
-- otherwise you can modify config.sh
+- otherwise you can modify /data/adb/mountify/config.sh
 
 ### General
 - by default, mountify mounts all modules with a system folder. `mountify_mounts=2`
