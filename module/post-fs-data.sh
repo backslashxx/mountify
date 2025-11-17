@@ -29,6 +29,15 @@ if [ $mountify_mounts = 0 ]; then
 	exit 0
 fi
 
+# single instance run
+# on ksu's metamodule mode, it seems post-fs-data runs twice
+MOUNTIFY_LOCK="/dev/mountify_single_instance"
+if [ -f "$MOUNTIFY_LOCK" ]; then
+	echo "mountify/post-fs-data: mountify already ran!" >> /dev/kmsg
+	exit 1
+fi
+touch "$MOUNTIFY_LOCK"
+
 # add simple anti bootloop logic
 BOOTCOUNT=0
 [ -f "$MODDIR/count.sh" ] && . "$MODDIR/count.sh"
