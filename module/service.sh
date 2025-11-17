@@ -67,4 +67,11 @@ if [ ! "$APATCH" = true ] && [ ! "$KSU" = true ]; then
 	sh "$MODDIR/boot-completed.sh" &
 fi
 
+# remove mountify single instance lock
+MOUNTIFY_LOCK="/dev/mountify_single_instance"
+if [ -f "$MOUNTIFY_LOCK" ]; then
+	echo "mountify/service: lifting single instance lock" >> /dev/kmsg
+	rm "$MOUNTIFY_LOCK"
+fi
+
 # EOF
