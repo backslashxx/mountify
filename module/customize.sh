@@ -91,12 +91,12 @@ PERSISTENT_DIR="/data/adb/mountify"
 
 
 # full migration if 166+
-if [ "$mountify_versionCode" -ge 166 ]; then
-	configs="modules.txt whiteouts.txt config.sh skipped_modules"
-else
+if [ "$mountify_versionCode" -lt 166 ]; then
 	echo "[!] using fresh config.sh"
-	configs="modules.txt whiteouts.txt skipped_modules"
+	cat "$MODPATH/config.sh" > "$PERSISTENT_DIR/config.sh"
 fi
+
+configs="modules.txt whiteouts.txt config.sh skipped_modules"
 
 for file in $configs; do
 	if [ ! -f "$PERSISTENT_DIR/$file" ]; then
@@ -109,10 +109,6 @@ rm "$MODPATH/modules.txt"
 rm "$MODPATH/whiteouts.txt"
 rm "$MODPATH/config.sh"
 rm "$MODPATH/skipped_modules"
-
-
-# Remove old config symlink and now webui will read and edit config directly from modules_update/mountify/config.sh before reboot
-rm -f "/data/adb/modules/mountify/webroot/config.sh"
 
 # give exec to whiteout_gen.sh
 chmod +x "$MODPATH/whiteout_gen.sh"
