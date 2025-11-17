@@ -86,8 +86,12 @@ else
 	mountify_versionCode=0
 fi
 
-# full migration if 154+
-if [ "$mountify_versionCode" -ge 155 ]; then
+PERSISTENT_DIR="/data/adb/mountify"
+[ ! -d $PERSISTENT_DIR ] && mkdir -p $PERSISTENT_DIR
+
+
+# full migration if 166+
+if [ "$mountify_versionCode" -ge 166 ]; then
 	configs="modules.txt whiteouts.txt config.sh skipped_modules"
 else
 	echo "[!] using fresh config.sh"
@@ -95,17 +99,17 @@ else
 fi
 
 for file in $configs; do
-	if [ -f "/data/adb/modules/mountify/$file" ]; then
-		echo "[+] migrating $file"
-		cat "/data/adb/modules/mountify/$file" > "$MODPATH/$file"
+	if [ ! -f "$PERSISTENT_DIR/$file" ]; then
+		echo "[+] moving $file"
+		cat "$MODPATH/$file" > "$PERSISTENT_DIR/$file"
 	fi
 done
 
-# for small config changes, just add them
-if ! grep -q "^mountify_custom_umount" "$MODPATH/config.sh" > /dev/null 2>&1; then
-	busybox sed -i 's|# EOF|mountify_custom_umount=0|g' "$MODPATH/config.sh"
-	echo "# EOF" >> "$MODPATH/config.sh"
-fi
+rm "$MODPATH/modules.txt"
+rm "$MODPATH/whiteouts.txt"
+rm "$MODPATH/config.sh"
+rm "$MODPATH/skipped_modules"
+
 
 # Remove old config symlink and now webui will read and edit config directly from modules_update/mountify/config.sh before reboot
 rm -f "/data/adb/modules/mountify/webroot/config.sh"
@@ -115,7 +119,7 @@ chmod +x "$MODPATH/whiteout_gen.sh"
 
 # warn on OverlayFS managers
 # while this is supported (half-assed), this is not a recommended configuration
-if { [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ]; } || { [ "$APATCH" = true ] && [ ! "$APATCH_BIND_MOUNT" = true ]; }; then
+if { [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ] &&  [ "$KSU_VER_CODE" -lt 22098 ]; } || { [ "$APATCH" = true ] && [ ! "$APATCH_BIND_MOUNT" = true ]; }; then
 	printf "\n\n"
 	echo "[!] ERROR: Root manager is NOT on magic mount."
 	echo "[!] This setup can cause issues and is NOT recommended."
@@ -133,6 +137,11 @@ if [ "$KSU" = true ] && [ -f ${SUSFS_BIN} ] && { [ "$SUSFS_VERSION" -eq 1510 ] |
 	echo "[!] modify customize.sh to force installation!"
 	abort "[!] Installation aborted!"
 	# ^ just change abort to echo or something
+fi
+
+if [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ] &&  [ "$KSU_VER_CODE" -ge 22098 ]; then
+	echo "[+] mountify will be installed in metamodule mode!"
+	mv "$MODPATH/post-fs-data.sh" "$MODPATH/metamount.sh"
 fi
 
 # EOF
