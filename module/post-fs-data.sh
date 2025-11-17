@@ -184,13 +184,13 @@ mountify_copy() {
 	if { [ "$KSU_MAGIC_MOUNT" = "true" ] && [ -f /data/adb/ksu/.nomount ]; } || { [ "$APATCH_BIND_MOUNT" = "true" ] && [ -f /data/adb/.litemode_enable ]; }; then 
 		# we can delete skip_mount if nomount / litemode
 		[ -f "$TARGET_DIR/skip_mount" ] && rm "$TARGET_DIR/skip_mount"
-		[ -f "$MODDIR/skipped_modules" ] && rm "$MODDIR/skipped_modules"
+		[ -f "$PERSISTENT_DIR/skipped_modules" ] && rm "$PERSISTENT_DIR/skipped_modules"
 	else
 		if [ ! -f "$TARGET_DIR/skip_mount" ]; then
 			touch "$TARGET_DIR/skip_mount"
 			# log modules that got skip_mounted
 			# we can likely clean those at uninstall
-			echo "$MODULE_ID" >> $MODDIR/skipped_modules
+			echo "$MODULE_ID" >> $PERSISTENT_DIR/skipped_modules
 		fi
 	fi
 
