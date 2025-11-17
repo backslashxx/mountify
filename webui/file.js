@@ -32,9 +32,9 @@ export async function loadConfig() {
         return conf;
     } catch (e) {
         exec(`
-            CONFIG="${moddir}/config.sh"
-            if [ -f "/data/adb/modules_update/mountify/config.sh" ]; then
-                CONFIG="/data/adb/modules_update/mountify/config.sh"
+            CONFIG="/data/adb/mountify/config.sh"
+            if [ -f "/data/adb/mountify/config.sh" ]; then
+                CONFIG="/data/adb/mountify/config.sh"
             fi
             ln -s "$CONFIG" "${moddir}/webroot/config.sh"
         `).then((result) => {
