@@ -7,15 +7,16 @@
 # This is free software; you can redistribute it and/or modify it under the terms of The Unlicense.
 PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
 MODDIR="/data/adb/modules/mountify"
-MODULE_UPDATES_DIR="/data/adb/modules_update/mountify_whiteouts"
 MODULE_DIR="/data/adb/modules/mountify_whiteouts"
+MODULE_UPDATES_DIR="/data/adb/modules_update/mountify_whiteouts"
+PERSISTENT_DIR="/data/adb/mountify"
 
 echo "[+] mountify's whiteout generator"
 
 if [ -z $1 ] || [ ! -f $1 ]; then
 	echo "[!] list missing or not specified!"
 	echo "[!] using whiteouts.txt"
-	TEXTFILE="$MODDIR/whiteouts.txt"
+	TEXTFILE="$PERSISTENT_DIR/whiteouts.txt"
 	if [ ! -f $TEXTFILE ]; then
 		echo "[!] whiteouts.txt not found!"
 		exit 1
@@ -24,8 +25,14 @@ else
 	TEXTFILE="$(realpath $1)"
 fi
 
-# mark module for update
-mkdir -p $MODULE_DIR ; touch $MODULE_DIR/update
+#  however if we are metamodule
+if [ -f "/data/adb/modules/mountify/metamount.sh" ]; then
+	MODULE_UPDATES_DIR="/data/adb/modules/mountify_whiteouts"
+	[ -d "$MODULE_UPDATES_DIR" ] && rm -rf "$MODULE_UPDATES_DIR"
+else
+	# mark module for update
+	mkdir -p $MODULE_DIR ; touch $MODULE_DIR/update
+fi
 # create 
 mkdir -p $MODULE_UPDATES_DIR ; cd $MODULE_UPDATES_DIR
 busybox chcon --reference="/system" "$MODULE_UPDATES_DIR"
