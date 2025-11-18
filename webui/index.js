@@ -421,6 +421,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    const updateSwitch = document.getElementById('update');
+    function checkUpdateState() {
+        exec(`grep -q "^updateJson=" ${moddir}/module.prop`).then((result) => {
+            updateSwitch.selected = result.errno === 0;
+        });
+    }
+    checkUpdateState();
+    updateSwitch.addEventListener('change', () => {
+        const cmd = updateSwitch.selected ? `"s/updateLink/updateJson/g"` : `"s/updateJson/updateLink/g"`;
+        exec(`sed -i ${cmd} ${moddir}/module.prop`).then((result) => {
+            checkUpdateState();
+            if (result.errno !== 0) toast('Failed to toggle update: ' + result.stderr);
+        }).catch(() => {});
+    });
+
     initSwitch('/data/adb/ksu/.nomount', 'nomount');
     initSwitch('/data/adb/ksu/.notmpfs', 'notmpfs');
     initSwitch('/data/adb/.litemode_enable', 'litemode');
