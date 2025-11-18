@@ -270,9 +270,9 @@ if [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; then
 fi
 
 # if manual mode and modules.txt has contents
-if [ $mountify_mounts = 1 ] && grep -qv "#" "$MODDIR/modules.txt" >/dev/null 2>&1 ; then
+if [ $mountify_mounts = 1 ] && grep -qv "#" "$PERSISTENT_DIR/modules.txt" >/dev/null 2>&1 ; then
 	# manual mode
-	for line in $( sed '/#/d' "$MODDIR/modules.txt" ); do
+	for line in $( sed '/#/d' "$PERSISTENT_DIR/modules.txt" ); do
 		module_id=$( echo $line | awk {'print $1'} )
 		mountify_copy "$module_id"
 	done
