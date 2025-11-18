@@ -23,10 +23,13 @@ MOUNT_DEVICE_NAME="overlay"
 # uncomment to use
 # FAKE_MOUNT_NAME="$(cat /dev/urandom | tr -dc A-Za-z0-9 | head -c 10)"
 
-# susfs usage is not required but we can use it if its there.
 SUSFS_BIN=/data/adb/ksu/bin/ksu_susfs
-# set to 1 to enable
-mountify_use_susfs=0
+KSUD_BIN=/data/adb/ksud
+# kernel umount is not needed but you can tweak it here if you want to
+# set to 0 to disable
+# set to 1 for susfs4ksu
+# set to 2 for ksud kernel umount
+mountify_kernel_umount=0
 
 # separate shit with lines
 IFS="
@@ -57,7 +60,8 @@ controlled_depth() {
 	if [ -z "$1" ] || [ -z "$2" ]; then return ; fi
 	for DIR in $(ls -d $1/*/ | sed 's/.$//' ); do
 		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:$2$DIR" "$MOUNT_DEVICE_NAME" "$2$DIR"
-		[ $mountify_use_susfs = 1 ] && ${SUSFS_BIN} add_try_umount "$2$DIR" 1
+		[ $mountify_kernel_umount = 1 ] && ${SUSFS_BIN} add_try_umount "$2$DIR" 1 > /dev/null 2>&1
+		[ $mountify_kernel_umount = 2 ] && ${KSUD_BIN} kernel umount add "$2$DIR" --flags 2 > /dev/null 2>&1
 	done
 }
 
@@ -65,7 +69,8 @@ controlled_depth() {
 single_depth() {
 	for DIR in $( ls -d */ | sed 's/.$//' | grep -vE "(odm|product|system_ext|vendor)$" 2>/dev/null ); do
 		busybox mount -t overlay -o "lowerdir=$(pwd)/$DIR:/system/$DIR" "$MOUNT_DEVICE_NAME" "/system/$DIR"
-		[ $mountify_use_susfs = 1 ] && ${SUSFS_BIN} add_try_umount "$2$DIR" 1
+		[ $mountify_kernel_umount = 1 ] && ${SUSFS_BIN} add_try_umount "/system/$DIR" 1 > /dev/null 2>&1
+		[ $mountify_kernel_umount = 2 ] && ${KSUD_BIN} kernel umount add "/system/$DIR" --flags 2 > /dev/null 2>&1
 	done
 }
 
