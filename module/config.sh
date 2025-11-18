@@ -84,6 +84,7 @@ sparse_size="2048"
 # Loads a oneshot LKM that unregisters ext4 sysfs nodes. 
 # 0 - disable
 # 1 - enable
+# NOTE: on KernelSU 22105+ this is handled on ksud
 enable_lkm_nuke=0
 lkm_filename="nuke.ko"
 

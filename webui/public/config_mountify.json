@@ -66,7 +66,7 @@
         "type": "ext4",
         "require": [{"spoof_sparse": 0}],
         "option": [0, 1],
-        "description": "🚨 WARNING!\n⚠️ Experimental feature. Don't expect 100% success rate.\nLoads a oneshot LKM that unregisters ext4 sysfs nodes. \n0 - disable\n1 - enable"
+        "description": "🚨 WARNING!\n⚠️ Experimental feature. Don't expect 100% success rate.\nLoads a oneshot LKM that unregisters ext4 sysfs nodes. \n0 - disable\n1 - enable\n\nNOTE: on KernelSU 22105+ this is handled on ksud"
     },
     "lkm_filename": {
         "type": "ext4",
