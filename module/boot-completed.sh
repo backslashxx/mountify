@@ -29,7 +29,12 @@ done
 # this is here for reference purposes and as a second choice
 do_ksud_umount() {
 for mount in $(cat "$LOG_FOLDER/mountify_mount_list"); do
-	/data/adb/ksud add-try-umount $mount
+	# TODO: deprecate this
+	/data/adb/ksud add-try-umount $mount > /dev/null 2>&1
+	/data/adb/ksud kernel umount add $mount --flags 2 > /dev/null 2>&1
+
+	# now inform ksud so that the kernel unlocks the feature
+	/data/adb/ksud kernel notify-module-mounted >/dev/null 2>&1
 done
 }
 
