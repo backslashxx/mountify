@@ -92,6 +92,23 @@ echo "mountify/standalone: start!" >> /dev/kmsg
 [ -w /mnt ] && MNT_FOLDER=/mnt
 [ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
 
+# folder hierarchy prep
+# undo_handle_partition
+# because ksu moves them e.g. MODDIR/system/product to MODDIR/product
+# this undoes that
+undo_handle_partition() {
+	partition_to_undo="$1"
+	if [ -L "$MODDIR/system/$partition_to_undo" ] && [ -d "$MODDIR/$partition_to_undo" ]; then
+		rm -f "$MODDIR/system/$partition_to_undo"
+		mv -f "$MODDIR/$partition_to_undo" "$MODDIR/system/$partition_to_undo"
+	fi
+}
+
+undo_handle_partition vendor
+undo_handle_partition product
+undo_handle_partition system_ext
+undo_handle_partition odm
+
 # make sure fake_mount name does not exist
 if [ -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then 
 	echo "mountify/standalone: folder with name $FAKE_MOUNT_NAME already exists!" >> /dev/kmsg
