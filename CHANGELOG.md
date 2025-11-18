@@ -2,7 +2,7 @@
 Globally mounted modules and whiteouts via OverlayFS.
 
 ## Changelog
-## 168
+## 169
 - module: more tweaks for ksu metamodule mode
 
 ## 167
