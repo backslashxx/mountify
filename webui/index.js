@@ -250,7 +250,7 @@ async function showModuleSelector() {
         done
     `);
 
-    exec(`cat ${moddir}/modules.txt`).then((result) => {
+    exec(`cat /data/adb/mountify/modules.txt`).then((result) => {
         const selected = result.stdout.trim().split('\n').map(line => line.trim()).filter(Boolean);
         const modules = moduleList.stdout.trim().split('\n').filter(Boolean);
 
@@ -270,7 +270,7 @@ async function showModuleSelector() {
             .filter(checkbox => checkbox.checked)
             .map(checkbox => checkbox.dataset.moduleName);
         
-        exec(`echo "${selectedModules.join('\n').trim()}" > ${moddir}/modules.txt`).then((result) => {
+        exec(`echo "${selectedModules.join('\n').trim()}" > /data/adb/mountify/modules.txt`).then((result) => {
             if (result.errno !== 0) {
                 toast('Failed to save: ' + result.stderr);
             }
