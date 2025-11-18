@@ -1,4 +1,14 @@
 #!/bin/sh
+# metainstall.sh
+# this script is part of mountify
+# No warranty.
+# No rights reserved.
+# This is free software; you can redistribute it and/or modify it under the terms of The Unlicense.
+
+# so other modules can identify
+# mind you mountify restores magic mount folder hierarchy!
+export KSU_METAMODULE="mountify"
+export MOUNTIFY="true"
 
 # restore REPLACE
 mark_replace() {
@@ -21,6 +31,7 @@ undo_handle_partition() {
 	fi
 }
 
+# call install function, this is important!
 install_module
 
 # Handle replace folders
