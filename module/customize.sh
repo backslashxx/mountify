@@ -96,7 +96,7 @@ if [ "$mountify_versionCode" -lt 166 ]; then
 	cat "$MODPATH/config.sh" > "$PERSISTENT_DIR/config.sh"
 fi
 
-configs="modules.txt whiteouts.txt config.sh skipped_modules"
+configs="modules.txt whiteouts.txt config.sh"
 
 for file in $configs; do
 	if [ ! -f "$PERSISTENT_DIR/$file" ]; then
@@ -108,7 +108,6 @@ done
 rm "$MODPATH/modules.txt"
 rm "$MODPATH/whiteouts.txt"
 rm "$MODPATH/config.sh"
-rm "$MODPATH/skipped_modules"
 
 # give exec to whiteout_gen.sh
 chmod +x "$MODPATH/whiteout_gen.sh"
