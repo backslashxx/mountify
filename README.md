@@ -39,9 +39,9 @@
 - this is added to accomodate something like GPU drivers
 - this causes detections but YMMV.
 - this is not my problem, this is a fallback, not the main recommendation.
-- and yes this is basically how Official KernelSU does it.
+- and yes this is basically how Official KernelSU used to do it.
 - if you're on GKI 5.10+, theres an experimental LKM that nukes these nodes.
-- if youre on non-GKI or the LKM doesn't work for you, [this](https://github.com/tiann/KernelSU/commit/654aa9f0911d8a23d97a73d12d110e9ff1195629) and [this](https://github.com/tiann/KernelSU/commit/5ef24fe3ff49f6919f3431f184e719f2d65c80e3) can help.
+- if you're on KernelSU 22105+ this is automatically handled.
 
 ## Usage
 - user-friendly config editing is available on the WebUI
