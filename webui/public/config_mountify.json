@@ -32,7 +32,7 @@
     "mountify_custom_umount": {
         "type": "general",
         "option": [0, 1, 2],
-        "description": "Enable in-kernel umount methods here.\n0 - disable\n1 - susfs4ksu\n2 - ksud add-try-umount"
+        "description": "Enable in-kernel umount methods here.\n0 - disable\n1 - susfs4ksu\n2 - ksud kernel umount (22106+)"
     },
     "mountify_expert_mode": {
         "type": "general",

@@ -43,7 +43,7 @@ MOUNT_DEVICE_NAME="overlay"
 # You can enable in-kernel umount methods here
 # 0 = disable
 # 1 = susfs4ksu
-# 2 = ksud add-try-umount (kowsu / xxksu)
+# 2 = ksud kernel umount (ksu 22106+)
 mountify_custom_umount=0
 
 # WARNING!
