@@ -34,13 +34,6 @@ undo_handle_partition() {
 # call install function, this is important!
 install_module
 
-# Handle replace folders
-for TARGET in $REPLACE; do
-    ui_print "- Replace target: $TARGET"
-    mark_replace $MODPATH$TARGET
-done
-
-
 # Run for typical partitions
 undo_handle_partition vendor
 undo_handle_partition product
