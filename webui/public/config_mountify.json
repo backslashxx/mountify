@@ -16,7 +16,7 @@
     "mountify_stop_start": {
         "type": "general",
         "option": [0, 1],
-        "description": "Restart android at service, certain modules might need this.\n0 - disable\n1 - enable"
+        "description": "Restarts android at service, certain modules might need this.\nThis is a workaround for 'racey' modules such as bootanimations and gpu drivers.\n⚠️ if you do NOT have a problem, you do NOT need this\n\n0 - disable\n1 - enable"
     },
     "FS_TYPE_ALIAS": {
         "type": "general",

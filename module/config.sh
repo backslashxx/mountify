@@ -25,6 +25,8 @@ test_decoy_mount=0
 
 # restart android at at service
 # certain modules might need this
+# this is a workaround for 'racey' modules such as bootanimations and gpu drivers
+# if you do NOT have a problem, you do NOT need this.
 # 0 to disable
 # 1 to enable
 mountify_stop_start=0
