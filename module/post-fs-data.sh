@@ -1,5 +1,5 @@
 #!/bin/sh
-# post-fs-data.sh
+# post-fs-data.sh / metamount.sh
 # this script is part of mountify
 # No warranty.
 # No rights reserved.
@@ -29,11 +29,19 @@ if [ $mountify_mounts = 0 ]; then
 	exit 0
 fi
 
+# set prefix
+# this is to handle it properly on kernelsu's metamodule mode
+# we move this as metamount.sh on customize
+DMESG_PREFIX="mountify/post-fs-data"
+if [ -f "$MODDIR/metamount.sh" ]; then
+	DMESG_PREFIX="mountify/metamount"
+fi
+
 # single instance run
 # on ksu's metamodule mode, it seems post-fs-data runs twice
 MOUNTIFY_LOCK="/dev/mountify_single_instance"
 if [ -f "$MOUNTIFY_LOCK" ]; then
-	echo "mountify/post-fs-data: mountify already ran!" >> /dev/kmsg
+	echo "$DMESG_PREFIX: mountify already ran!" >> /dev/kmsg
 	exit 1
 fi
 touch "$MOUNTIFY_LOCK"
@@ -55,7 +63,7 @@ else
 fi
 
 # grab start time
-echo "mountify/post-fs-data: start!" >> /dev/kmsg
+echo "$DMESG_PREFIX: start!" >> /dev/kmsg
 
 # find and create logging folder
 [ -w /mnt ] && LOG_FOLDER=/mnt/mountify_logs
@@ -107,7 +115,7 @@ if [ "$test_decoy_mount" = "1" ] && [ ! -f "$MODDIR/no_tmpfs_xattr" ]; then
 	for dir in $decoy_folder_candidates; do
 		if [ -d "$dir" ] && [ "$(ls -A "$dir" 2>/dev/null | wc -l)" -eq 0 ]; then
 			DECOY_MOUNT_FOLDER="$dir"
-			echo "mountify/post-fs-data: decoy folder $DECOY_MOUNT_FOLDER" >> /dev/kmsg
+			echo "$DMESG_PREFIX: decoy folder $DECOY_MOUNT_FOLDER" >> /dev/kmsg
 			decoy_mount_enabled="1"
 			break
 		fi
@@ -155,7 +163,7 @@ mountify_copy() {
 	# return for missing args
 	if [ -z "$1" ]; then
 		# echo "$(basename "$0" ) module_id fake_folder_name"
-		echo "mountify/post-fs-data: missing arguments, fuck off" >> /dev/kmsg
+		echo "$DMESG_PREFIX: missing arguments, fuck off" >> /dev/kmsg
 		return
 	fi
 
@@ -164,7 +172,7 @@ mountify_copy() {
 	# return for certain modules
 	# De-bloater uses dummy text, not whiteouts, which does not really work
 	if [ "$MODULE_ID" = "De-bloater" ]; then
-		echo "mountify/post-fs-data: module with name $MODULE_ID is blacklisted" >> /dev/kmsg
+		echo "$DMESG_PREFIX: module with name $MODULE_ID is blacklisted" >> /dev/kmsg
 		return
 	fi
 	
@@ -173,11 +181,11 @@ mountify_copy() {
 	TARGET_DIR="/data/adb/modules/$MODULE_ID"
 	if [ ! -d "$TARGET_DIR/system" ] || [ -f "$TARGET_DIR/disable" ] || [ -f "$TARGET_DIR/remove" ] ||
 		[ -f "$TARGET_DIR/skip_mountify" ] || [ -f "$TARGET_DIR/system/etc/hosts" ]; then
-		echo "mountify/post-fs-data: module with name $MODULE_ID not meant to be mounted" >> /dev/kmsg
+		echo "$DMESG_PREFIX: module with name $MODULE_ID not meant to be mounted" >> /dev/kmsg
 		return
 	fi
 
-	echo "mountify/post-fs-data: processing $MODULE_ID" >> /dev/kmsg
+	echo "$DMESG_PREFIX: processing $MODULE_ID" >> /dev/kmsg
 
 	# skip_mount is not needed on .nomount MKSU - 5ec1cff/KernelSU/commit/76bfccd
 	# skip_mount is also not needed for litemode APatch - bmax121/APatch/commit/7760519
@@ -228,7 +236,7 @@ mountify_copy() {
 
 # prevent this fuckup since on expert mode this isnt checked
 if [ "$FAKE_MOUNT_NAME" = "persist" ]; then
-	echo "mountify/post-fs-data: folder name named $FAKE_MOUNT_NAME is not allowed!" >> /dev/kmsg
+	echo "$DMESG_PREFIX: folder name named $FAKE_MOUNT_NAME is not allowed!" >> /dev/kmsg
 	exit 1
 fi
 
@@ -237,14 +245,14 @@ if [ ! "$mountify_expert_mode" = 1 ] && [ -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; t
 	# anti fuckup
 	# this is important as someone might actually use legit folder names
 	# and same shit exists on MNT_FOLDER, prevent this issue.
-	echo "mountify/post-fs-data: exiting since fake folder name $FAKE_MOUNT_NAME already exists!" >> /dev/kmsg
+	echo "$DMESG_PREFIX: exiting since fake folder name $FAKE_MOUNT_NAME already exists!" >> /dev/kmsg
 	exit 1
 fi
 
 # create it
 mkdir -p "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 if [ ! -f "$MODDIR/no_tmpfs_xattr" ] && [ ! "$use_ext4_sparse" = "1" ]; then
-	echo "mountify/post-fs-data: mounting $(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")" >> /dev/kmsg
+	echo "$DMESG_PREFIX: mounting $(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")" >> /dev/kmsg
 	busybox mount -t tmpfs tmpfs "$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")"
 fi
 touch "$MNT_FOLDER/$FAKE_MOUNT_NAME/placeholder"
@@ -252,12 +260,12 @@ touch "$MNT_FOLDER/$FAKE_MOUNT_NAME/placeholder"
 # then make sure its there
 if [ ! -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
 	# weird if it happens
-	echo "mountify/post-fs-data: failed creating folder with fake_folder_name $FAKE_MOUNT_NAME !" >> /dev/kmsg
+	echo "$DMESG_PREFIX: failed creating folder with fake_folder_name $FAKE_MOUNT_NAME !" >> /dev/kmsg
 	exit 1
 fi
 
 if [ "$decoy_mount_enabled" = "1" ] && [ -d "$DECOY_MOUNT_FOLDER" ] && [ "$(ls -A "$DECOY_MOUNT_FOLDER" 2>/dev/null | wc -l)" -eq 0 ]; then
-	echo "mountify/post-fs-data: mounting $DECOY_MOUNT_FOLDER" >> /dev/kmsg
+	echo "$DMESG_PREFIX: mounting $DECOY_MOUNT_FOLDER" >> /dev/kmsg
 	mount -t tmpfs tmpfs "$DECOY_MOUNT_FOLDER"
 fi
 
@@ -324,12 +332,12 @@ for folder in $targets ; do
 done
 
 if [ "$decoy_mount_enabled" = "1" ] && [ -d "$DECOY_MOUNT_FOLDER" ]; then
-	echo "mountify/post-fs-data: unmounting $DECOY_MOUNT_FOLDER" >> /dev/kmsg
+	echo "$DMESG_PREFIX: unmounting $DECOY_MOUNT_FOLDER" >> /dev/kmsg
 	busybox umount -l "$DECOY_MOUNT_FOLDER"
 fi
 
 if [ ! -f "$MODDIR/no_tmpfs_xattr" ] && [ ! "$use_ext4_sparse" = "1" ]; then
-	echo "mountify/post-fs-data: unmounting $(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")" >> /dev/kmsg
+	echo "$DMESG_PREFIX: unmounting $(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")" >> /dev/kmsg
 	busybox umount -l "$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")"
 fi
 
@@ -351,10 +359,10 @@ if [ ! -f "$MODDIR/ksud_has_nuke_ext4" ] && [ $enable_lkm_nuke = 1 ] && [ -f "$M
 	kptr_set=$(cat /proc/sys/kernel/kptr_restrict)
 	echo 1 > /proc/sys/kernel/kptr_restrict
 	ptr_address=$(grep " ext4_unregister_sysfs$" /proc/kallsyms | awk {'print "0x"$1'})
-	echo "mountify/post-fs-data: loading LKM with mount_point=$mnt symaddr=$ptr_address" >> /dev/kmsg
+	echo "$DMESG_PREFIX: loading LKM with mount_point=$mnt symaddr=$ptr_address" >> /dev/kmsg
 	insmod "$MODDIR/lkm/$lkm_filename" mount_point="$mnt" symaddr="$ptr_address" > /dev/null 2>&1
 	echo $kptr_set > /proc/sys/kernel/kptr_restrict
-	echo "mountify/post-fs-data: unmounting $mnt" >> /dev/kmsg
+	echo "$DMESG_PREFIX: unmounting $mnt" >> /dev/kmsg
 	busybox umount -l "$mnt"
 
 fi
@@ -365,9 +373,9 @@ if [ -f "$MODDIR/ksud_has_nuke_ext4" ] && [ "$spoof_sparse" = "0" ] &&
 	{ [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; }; then
 
 	mnt="$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")"
-	echo "mountify/post-fs-data: ksud kernel nuke-ext4-sysfs $mnt" >> /dev/kmsg
+	echo "$DMESG_PREFIX: ksud kernel nuke-ext4-sysfs $mnt" >> /dev/kmsg
 	/data/adb/ksud kernel nuke-ext4-sysfs "$mnt"
-	echo "mountify/post-fs-data: unmounting $mnt" >> /dev/kmsg
+	echo "$DMESG_PREFIX: unmounting $mnt" >> /dev/kmsg
 	busybox umount -l "$mnt"
 
 fi
@@ -379,6 +387,6 @@ fi
 
 # log after
 cat /proc/mounts > "$LOG_FOLDER/after"
-echo "mountify/post-fs-data: finished!" >> /dev/kmsg
+echo "$DMESG_PREFIX: finished!" >> /dev/kmsg
 
 # EOF
