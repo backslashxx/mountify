@@ -37,8 +37,8 @@ mountify_stop_start=0
 FS_TYPE_ALIAS="overlay"
 
 # this one below is its device name
-# you can put "KSU", "APatch" here so a umount provider can umount
-# e.g. NeoZygisk, NoHello, ReZygisk, Shamiko, Zygisk Assistant, ZygiskNext-DE
+# you can put "KSU", "APatch" here so a zygisk provider can umount
+# e.g. NeoZygisk, NoHello, ReZygisk, Shamiko, Zygisk Assistant, ZygiskNext-UM/DE
 # otherwise leave default. this is if you need unmount.
 MOUNT_DEVICE_NAME="overlay"
 
@@ -46,6 +46,7 @@ MOUNT_DEVICE_NAME="overlay"
 # 0 = disable
 # 1 = susfs4ksu
 # 2 = ksud kernel umount (ksu 22106+)
+# NOTE: if you have a zygisk provider, you do NOT need this
 mountify_custom_umount=0
 
 # WARNING!
