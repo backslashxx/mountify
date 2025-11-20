@@ -7,6 +7,7 @@
 
 # so other modules can identify
 # mind you mountify restores magic mount folder hierarchy!
+export KSU_HAS_METAMODULE="true"
 export KSU_METAMODULE="mountify"
 export MOUNTIFY="true"
 
