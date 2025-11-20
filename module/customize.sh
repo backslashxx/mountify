@@ -116,7 +116,7 @@ chmod +x "$MODPATH/whiteout_gen.sh"
 # while this is supported (half-assed), this is not a recommended configuration
 if { [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ] &&  [ "$KSU_VER_CODE" -lt 22098 ]; } || { [ "$APATCH" = true ] && [ ! "$APATCH_BIND_MOUNT" = true ]; }; then
 	printf "\n\n"
-	echo "[!] ERROR: Root manager is NOT on magic mount."
+	echo "[!] ERROR: Root manager is on sparse-backed overlayfs!"
 	echo "[!] This setup can cause issues and is NOT recommended."
 	echo "[!] modify customize.sh to force installation!"
 	abort "[!] Installation aborted!"
