@@ -49,7 +49,7 @@
         "type": "ext4",
         "require": [{"enable_lkm_nuke": 0}],
         "option": [0, 1],
-        "description": "Spoof sparse as an apex mount.\nGoes well with a custom MOUNT_DEVICE_NAME.\nNOTE: when this is enabled, LKM nuking is disabled."
+        "description": "Spoof sparse as an apex mount.\nGoes well with a custom MOUNT_DEVICE_NAME.\nNOTE: when this is enabled, nuking is disabled."
     },
     "FAKE_APEX_NAME": {
         "type": "ext4",

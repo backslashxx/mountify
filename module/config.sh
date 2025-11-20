@@ -68,7 +68,7 @@ use_ext4_sparse=0
 
 # Spoof sparse as an apex mount.
 # Goes well with a custom MOUNT_DEVICE_NAME.
-# NOTE: when this is enabled, LKM nuking is disabled.
+# NOTE: when this is enabled, nuking is disabled.
 # 0 to disable
 # 1 to enable
 spoof_sparse=0
