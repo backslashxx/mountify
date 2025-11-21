@@ -87,7 +87,7 @@ mountify_whiteouts
 - `[ -f /data/adb/modules/module_name/skip_mountify ]`
 
 ## Translations
-If you want to contribute to the translation of WebUI, please refer to [i18.md](i18.md)
+If you want to contribute to the translation of WebUI, please refer to [i18n.md](i18n.md)
 
 
 ## Limitations / Recommendations
