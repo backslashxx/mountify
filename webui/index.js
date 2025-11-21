@@ -436,8 +436,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }).catch(() => {});
     });
 
-    initSwitch('/data/adb/ksu/.nomount', 'nomount');
-    initSwitch('/data/adb/ksu/.notmpfs', 'notmpfs');
     initSwitch('/data/adb/.litemode_enable', 'litemode');
 
     document.querySelectorAll('[unresolved]').forEach(el => el.removeAttribute('unresolved'));
