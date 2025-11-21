@@ -1,0 +1,145 @@
+{
+  "app": {
+    "name": "mountify",
+    "version": "版本"
+  },
+  "tabs": {
+    "general": "一般",
+    "ext4": "Ext4",
+    "advanced": "進階"
+  },
+  "actions": {
+    "reboot": "重新啟動",
+    "save": "儲存",
+    "cancel": "取消",
+    "close": "關閉",
+    "confirm": "確認"
+  },
+  "dialogs": {
+    "reboot": {
+      "title": "重新啟動",
+      "message": "立即重新啟動？"
+    },
+    "moduleSelector": {
+      "title": "選擇模組"
+    }
+  },
+  "settings": {
+    "showAdvanced": "顯示進階選項",
+    "enableUpdate": "啟用 mountify 更新",
+    "enableLitemode": "啟用輕量模式",
+    "litemodeWarning": "輕量模式在 APatch v11024 及以上版本中引入"
+  },
+  "categories": {
+    "apatch": "APatch",
+    "kernelsu": "KernelSU"
+  },
+  "messages": {
+    "failedToLoad": "載入配置失敗",
+    "failedToSave": "儲存失敗",
+    "failedToReboot": "重新啟動失敗",
+    "failedToToggle": "切換失敗",
+    "errorSaving": "儲存配置錯誤"
+  },
+  "configKeys": {
+    "mountify_mounts": "掛載方式",
+    "FAKE_MOUNT_NAME": "偽裝掛載名稱"
+  },
+  "common": {
+    "description": "描述",
+    "options": "選項",
+    "value": "值",
+    "name": "名稱",
+    "enabled": "已啟用",
+    "disabled": "已停用"
+  },
+  "language": {
+    "select": "選擇語言",
+    "current": "目前語言"
+  },
+  "config": {
+    "mountify_mounts": {
+      "type": "general",
+      "option": [0, 1, 2],
+      "description": "模組掛載配置。\n0 - 停用\n1 - 手動模式（掛載 modules.txt 中列出的模組）\n2 - 自動模式（掛載所有包含 system 資料夾的模組）"
+    },
+    "FAKE_MOUNT_NAME": {
+      "type": "general",
+      "description": "掛載資料夾名稱。"
+    },
+    "test_decoy_mount": {
+      "type": "general",
+      "option": [0, 1],
+      "description": "測試誘餌掛載。\n此功能用於 tmpfs 模式。\n0 - 停用\n1 - 啟用"
+    },
+    "mountify_stop_start": {
+      "type": "general",
+      "option": [0, 1],
+      "description": "在服務啟動時重新啟動 Android，某些模組可能需要此功能。\n這是針對開機動畫和 GPU 驅動等競態模組的解決方法。\n⚠️ 如果沒有問題，則不需要啟用\n\n0 - 停用\n1 - 啟用"
+    },
+    "FS_TYPE_ALIAS": {
+      "type": "general",
+      "advanced": true,
+      "option": ["allow-other", "overlay"],
+      "description": "如果你有使用其他別名註冊的自訂 overlayfs 驅動，請修改此項。"
+    },
+    "MOUNT_DEVICE_NAME": {
+      "type": "general",
+      "option": ["allow-other", "overlay", "KSU", "APatch", "magisk"],
+      "description": "你可以在此處填寫 'APatch'、'KSU'、'magisk'，以便 zygisk 提供者可以卸載。\n\n範例：NeoZygisk、NoHello、ReZygisk、Zygisk Assistant、ZygiskNext-UM/DE"
+    },
+    "mountify_custom_umount": {
+      "type": "general",
+      "option": [0, 1, 2],
+      "description": "在此啟用內核卸載方法。\n0 - 停用\n1 - susfs4ksu\n2 - ksud 內核卸載（22106+）\n\n⚠️ 如果你有 zygisk 提供者，則不需要此功能"
+    },
+    "mountify_expert_mode": {
+      "type": "general",
+      "advanced": true,
+      "option": [0, 1],
+      "description": "🚨 警告！\n ⚠️ 這會停用安全檢查。\n主要用於開發和除錯目的。\n0 - 停用\n1 - 啟用"
+    },
+    "use_ext4_sparse": {
+      "type": "ext4",
+      "option": [0, 1],
+      "description": "ext4 稀疏模式覆蓋。\n適用於支援 xattr 的 tmpfs 設定，更傾向於使用 ext4 稀疏映像來掛載。\n0 - 停用\n1 - 啟用"
+    },
+    "spoof_sparse": {
+      "type": "ext4",
+      "require": [{"enable_lkm_nuke": 0}],
+      "option": [0, 1],
+      "description": "將稀疏檔案偽裝為 apex 掛載。\n與自訂 MOUNT_DEVICE_NAME 配合使用效果更好。\n注意：啟用此功能後，nuke 功能將被停用。"
+    },
+    "FAKE_APEX_NAME": {
+      "type": "ext4",
+      "require": [{"spoof_sparse": 1}],
+      "option": ["allow-other", "com.android.mntservice"],
+      "description": "自訂偽裝的 apex 掛載名稱。\n雖然效果有限，但這會嘗試使其看起來更真實。"
+    },
+    "sparse_size": {
+      "type": "ext4",
+      "option": ["allow-other", "512", "1024", "2048", "4096"],
+      "description": "設定自訂稀疏檔案大小。\n可修改為任何無符號數字。\n- 稀疏檔案大小（MB）。"
+    },
+    "enable_lkm_nuke": {
+      "type": "ext4",
+      "require": [{"spoof_sparse": 0}],
+      "option": [0, 1],
+      "description": "🚨 警告！\n⚠️ 實驗性功能。不要期望 100% 成功率。\n載入一個一次性 LKM，用於註銷 ext4 sysfs 節點。\n0 - 停用\n1 - 啟用\n\n注意：在 KernelSU 22105+ 上，此功能由 ksud 處理"
+    },
+    "lkm_filename": {
+      "type": "ext4",
+      "require": [{"enable_lkm_nuke": 1}],
+      "option": [
+        "nuke-android12-5.10.ko",
+        "nuke-android13-5.10.ko",
+        "nuke-android13-5.15.ko",
+        "nuke-android14-5.15.ko",
+        "nuke-android14-6.1.ko",
+        "nuke-android15-6.6.ko",
+        "nuke-android-4.14.ko"
+      ],
+      "description": "僅正式支援 GKI 5.10+。\n選擇你的 Android KMI。"
+    }
+  }
+}

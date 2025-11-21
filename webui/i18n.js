@@ -18,7 +18,10 @@ export async function init(locale = null) {
 
 export function getAvailableLocales() {
     return [
-        { code: 'en', name: 'English' }
+        { code: 'en', name: 'English' },
+        { code: 'zh-CN', name: '简体中文' },
+        { code: 'zh-TW', name: '繁體中文（台灣）' },
+        { code: 'zh-HK', name: '繁體中文（香港）' }
     ];
 }
 
