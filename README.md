@@ -86,6 +86,10 @@ mountify_whiteouts
 - mountify checks this on /data/adb/modules/module_name
 - `[ -f /data/adb/modules/module_name/skip_mountify ]`
 
+## Translations
+If you want to contribute to the translation of WebUI, please refer to [i18.md](i18.md)
+
+
 ## Limitations / Recommendations
 - fails with [De-Bloater](https://github.com/sunilpaulmathew/De-Bloater), as it [uses dummy text, NOT proper whiteouts](https://github.com/sunilpaulmathew/De-Bloater/blob/cadd523f0ad8208eab31e7db51f855b89ed56ffe/app/src/main/java/com/sunilpaulmathew/debloater/utils/Utils.java#L112)
 - I recommend [System App Nuker](https://github.com/ChiseWaguri/systemapp_nuker/releases) instead. It uses proper whiteouts.

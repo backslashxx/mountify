@@ -1,5 +1,6 @@
 import { exec, spawn, toast } from 'kernelsu-alt';
-import { config } from './index.js'
+import { config } from './index.js';
+import { t } from './i18n.js';
 
 const moddir = '/data/adb/modules/mountify';
 
@@ -39,7 +40,7 @@ export async function loadConfig() {
             ln -s "$CONFIG" "${moddir}/webroot/config.sh"
         `).then((result) => {
             if (result.errno !== 0) {
-                toast("Failed to load config");
+                toast(t('messages.failedToLoad'));
                 return;
             }
             window.location.reload();
@@ -48,23 +49,14 @@ export async function loadConfig() {
 }
 
 export async function loadConfigMetadata() {
-    try {
-        const response = await fetch('./config_mountify.json');
-        if (!response.ok) {
-            toast('Failed to load config_mountify.json');
-            return {};
-        }
-        return await response.json();
-    } catch (e) {
-        toast('Failed to load config_mountify.json: ' + e);
-        return {};
-    }
+    // Config metadata is now loaded from i18n translations
+    return null;
 }
 
 export async function writeConfig() {
     const oldConfig = await loadConfig();
     if (!oldConfig) {
-        toast('Failed to save config!');
+        toast(t('messages.failedToSave'));
         return;
     }
 
@@ -94,7 +86,7 @@ export async function writeConfig() {
         });
         result.on('exit', (code) => {
             if (code !== 0) {
-                toast('Error saving config: ' + stderr.join(' '));
+                toast(t('messages.errorSaving') + ': ' + stderr.join(' '));
             }
         });
     }

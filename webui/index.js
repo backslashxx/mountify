@@ -1,10 +1,16 @@
 import { exec, toast } from 'kernelsu-alt';
 import '@material/web/all.js';
 import * as file from './file.js';
+import { init as initI18n, t, updatePageText, setLocale, getAvailableLocales, getLocale, getConfigMetadata } from './i18n.js';
 
 const moddir = '/data/adb/modules/mountify';
 export let config = {};
 let configMetadata = {};
+
+function getLocalizedDescription(description) {
+    // Description is already localized from i18n
+    return description || '';
+}
 
 function showDescription(title, description) {
     const dialog = document.getElementById('description-dialog');
@@ -41,7 +47,8 @@ function appendInputGroup() {
                         </md-icon-button>
                     `;
                     textField.querySelector('md-icon-button').onclick = () => {
-                        showDescription(header, metadata.description);
+                        const desc = getLocalizedDescription(metadata.description);
+                        showDescription(header, desc);
                     }
                     div.appendChild(textField);
 
@@ -111,7 +118,8 @@ function appendInputGroup() {
                     `;
                     select.querySelector('md-icon-button').addEventListener('click', (e) => {
                         e.stopPropagation();
-                        showDescription(header, metadata.description);
+                        const desc = getLocalizedDescription(metadata.description);
+                        showDescription(header, desc);
                     });
 
                     const options = metadata.option;
@@ -145,7 +153,8 @@ function appendInputGroup() {
                     </md-icon-button>
                 `;
                 textField.querySelector('md-icon-button').onclick = () => {
-                    showDescription(header, metadata.description);
+                    const desc = getLocalizedDescription(metadata.description);
+                    showDescription(header, desc);
                 }
                 textField.addEventListener('input', (event) => {
                     const newValue = event.target.value;
@@ -272,7 +281,7 @@ async function showModuleSelector() {
         
         exec(`echo "${selectedModules.join('\n').trim()}" > /data/adb/mountify/modules.txt`).then((result) => {
             if (result.errno !== 0) {
-                toast('Failed to save: ' + result.stderr);
+                toast(t('messages.failedToSave') + ': ' + result.stderr);
             }
         }).catch(() => {});
     }
@@ -281,6 +290,36 @@ async function showModuleSelector() {
         saveConfig();
         dialog.close();
     };
+    window.onscroll = () => dialog.close();
+}
+
+async function showLanguageSelector() {
+    const dialog = document.getElementById('language-dialog');
+    const list = document.getElementById('language-list');
+    const currentLocale = getLocale();
+    
+    list.innerHTML = '';
+    const locales = getAvailableLocales();
+    
+    list.innerHTML = locales.map(locale => {
+        const isSelected = locale.code === currentLocale;
+        return `
+            <md-list-item data-locale="${locale.code}">
+                <div slot="headline">${locale.name}</div>
+                <md-radio slot="end" name="language" ${isSelected ? 'checked' : ''}></md-radio>
+            </md-list-item>
+        `;
+    }).join('');
+    
+    list.querySelectorAll('md-list-item').forEach(item => {
+        item.addEventListener('click', async () => {
+            const locale = item.dataset.locale;
+            await setLocale(locale);
+            dialog.close();
+        });
+    });
+    
+    dialog.show();
     window.onscroll = () => dialog.close();
 }
 
@@ -325,7 +364,7 @@ function initSwitch(path, id) {
     element.addEventListener('change', () => {
         const cmd = element.selected ? 'echo "mountify" >' : 'rm -f';
         exec(`${cmd} ${path}`).then((result) => {
-            if (result.errno !== 0) toast('Failed to toggle ' + path + ': ' + result.stderr);
+            if (result.errno !== 0) toast(t('messages.failedToToggle') + ' ' + path + ': ' + result.stderr);
         });
     });
 }
@@ -381,7 +420,11 @@ document.querySelectorAll('md-dialog').forEach(dialog => {
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
-    [config, configMetadata] = await Promise.all([file.loadConfig(), file.loadConfigMetadata()]);
+    // Initialize i18n first
+    await initI18n();
+    
+    config = await file.loadConfig();
+    configMetadata = getConfigMetadata();
     const advanced = document.getElementById('advanced');
     advanced.selected = localStorage.getItem('advanced') === 'true';
     advanced.addEventListener('change', () => {
@@ -414,12 +457,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 confirmationDialog.close();
                 if (btn.value === 'reboot') {
                     exec('/system/bin/reboot').then((result) => {
-                        if (result.errno !== 0) toast('Failed to reboot: ' + result.stderr);
+                        if (result.errno !== 0) toast(t('messages.failedToReboot') + ': ' + result.stderr);
                     }).catch(() => {});
                 }
             }
         });
     }
+
+    document.getElementById('language-selector').onclick = showLanguageSelector;
 
     const updateSwitch = document.getElementById('update');
     function checkUpdateState() {
@@ -432,11 +477,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         const cmd = updateSwitch.selected ? `"s/updateLink/updateJson/g"` : `"s/updateJson/updateLink/g"`;
         exec(`sed -i ${cmd} ${moddir}/module.prop`).then((result) => {
             checkUpdateState();
-            if (result.errno !== 0) toast('Failed to toggle update: ' + result.stderr);
+            if (result.errno !== 0) toast(t('messages.failedToToggle') + ' update: ' + result.stderr);
         }).catch(() => {});
     });
 
     initSwitch('/data/adb/.litemode_enable', 'litemode');
+
+    // Listen for locale changes to update dynamic content
+    window.addEventListener('localeChanged', () => {
+        configMetadata = getConfigMetadata();
+        if (config) {
+            // Re-render input groups with new translations
+            document.querySelectorAll('.content-container.content').forEach(container => {
+                container.innerHTML = '';
+            });
+            appendInputGroup();
+            toggleAdvanced(advanced.selected);
+        }
+    });
 
     document.querySelectorAll('[unresolved]').forEach(el => el.removeAttribute('unresolved'));
 });

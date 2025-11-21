@@ -12,19 +12,20 @@
         <div class="header">
             <div class="top-bar" slot="headline">
                 <span>mountify</span><span id="version"></span>
+                <md-icon-button id="language-selector"><md-icon>language</md-icon></md-icon-button>
                 <md-icon-button id="reboot"><md-icon>power_settings_new</md-icon></md-icon-button>
             </div>
             <md-tabs>
-                <md-primary-tab id="general-tab" aria-controls="content-general" active>General</md-primary-tab>
-                <md-primary-tab id="ext4-tab" aria-controls="content-ext4">Ext4</md-primary-tab>
-                <md-primary-tab id="advanced-tab" aria-controls="content-advanced">Advanced</md-primary-tab>
+                <md-primary-tab id="general-tab" aria-controls="content-general" active data-i18n="tabs.general">General</md-primary-tab>
+                <md-primary-tab id="ext4-tab" aria-controls="content-ext4" data-i18n="tabs.ext4">Ext4</md-primary-tab>
+                <md-primary-tab id="advanced-tab" aria-controls="content-advanced" data-i18n="tabs.advanced">Advanced</md-primary-tab>
             </md-tabs>
         </div>
         <div class="content-container content" id="content-general" role="tabpanel" aria-labelledby="general-tab"></div>
         <div class="content-container content" id="content-ext4" role="tabpanel" aria-labelledby="ext4-tab" hidden></div>
         <div class="content-container" id="content-advanced" role="tabpanel" aria-labelledby="advanced-tab" hidden>
-            <label class="content">Show advanced option<md-switch id="advanced"></md-switch><md-ripple></md-ripple></label>
-            <label class="content">Enable mountify update<md-switch id="update"></md-switch><md-ripple></md-ripple></label>
+            <label class="content"><span data-i18n="settings.showAdvanced">Show advanced option</span><md-switch id="advanced"></md-switch><md-ripple></md-ripple></label>
+            <label class="content"><span data-i18n="settings.enableUpdate">Enable mountify update</span><md-switch id="update"></md-switch><md-ripple></md-ripple></label>
 
             <!-- <p class="title content">KernelSU</p> -->
             <!-- /data/adb/ksu/.nomount -->
@@ -33,21 +34,21 @@
             <!-- <label class="content">Enable notmpfs<md-switch id="notmpfs"></md-switch><md-ripple></md-ripple></label> -->
             <!-- <p class="warning content">These options require KernelSU support. Known supported versions include mKSU and its derivative forks.</p> -->
 
-            <p class="title content">APatch</p>
+            <p class="title content" data-i18n="categories.apatch">APatch</p>
             <!-- /data/adb/.litemode_enable -->
-            <label class="content">Enable litemode<md-switch id="litemode"></md-switch><md-ripple></md-ripple></label>
-            <p class="warning content">Litemode is introduced in APatch since v11024</p>
+            <label class="content"><span data-i18n="settings.enableLitemode">Enable litemode</span><md-switch id="litemode"></md-switch><md-ripple></md-ripple></label>
+            <p class="warning content" data-i18n="settings.litemodeWarning">Litemode is introduced in APatch since v11024</p>
         </div>
         <div class="keyboard-inset"></div>
     </div>
 
     <div class="dialog-wrapper" unresolved>
         <md-dialog id="confirm-reboot-dialog">
-            <div slot="headline">Reboot</div>
-            <div slot="content">Reboot now?</div>
+            <div slot="headline" data-i18n="dialogs.reboot.title">Reboot</div>
+            <div slot="content" data-i18n="dialogs.reboot.message">Reboot now?</div>
             <div slot="actions">
-                <md-text-button value="cancel">Cancel</md-text-button>
-                <md-text-button value="reboot">Reboot</md-text-button>
+                <md-text-button value="cancel" data-i18n="actions.cancel">Cancel</md-text-button>
+                <md-text-button value="reboot" data-i18n="actions.reboot">Reboot</md-text-button>
             </div>
         </md-dialog>
     </div>
@@ -57,19 +58,31 @@
             <div slot="headline"></div>
             <div slot="content"></div>
             <div slot="actions">
-                <md-text-button form="description-dialog" value="close">Close</md-text-button>
+                <md-text-button form="description-dialog" value="close" data-i18n="actions.close">Close</md-text-button>
             </div>
         </md-dialog>
     </div>
 
     <div class="dialog-wrapper" unresolved>
         <md-dialog id="module-selector-dialog">
-            <div slot="headline">Select Modules</div>
+            <div slot="headline" data-i18n="dialogs.moduleSelector.title">Select Modules</div>
             <div slot="content">
                 <md-list id="module-list"></md-list>
             </div>
             <div slot="actions">
-                <md-text-button form="module-selector-dialog" value="close">Save</md-text-button>
+                <md-text-button form="module-selector-dialog" value="close" data-i18n="actions.save">Save</md-text-button>
+            </div>
+        </md-dialog>
+    </div>
+
+    <div class="dialog-wrapper" unresolved>
+        <md-dialog id="language-dialog">
+            <div slot="headline" data-i18n="language.select">Select Language</div>
+            <div slot="content">
+                <md-list id="language-list"></md-list>
+            </div>
+            <div slot="actions">
+                <md-text-button form="language-dialog" value="close" data-i18n="actions.close">Close</md-text-button>
             </div>
         </md-dialog>
     </div>
