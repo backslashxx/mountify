@@ -6,6 +6,9 @@
 # This is free software; you can redistribute it and/or modify it under the terms of The Unlicense.
 PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
 
+# warn adventurous people
+WARNING_STRING="WARNING: this file is part of mountify's autoconfiguration! DO NOT DELETE."
+
 # some bullshit just to use clear
 if [ "$MMRL" = "true" ] || { [ "$KSU" = "true" ] && [ "$KSU_VER_CODE" -ge 11998 ]; } || 
 	{ [ "$KSU_NEXT" = "true" ] && [ "$KSU_VER_CODE" -ge 12144 ]; } ||
@@ -71,7 +74,7 @@ else
 	# check for tools
 	if [ -f "/system/bin/mkfs.ext4" ] && [ -f "/system/bin/resize2fs" ]; then		
 		test_ext4_image
-		busybox touch "$MODPATH/no_tmpfs_xattr"
+		echo "$WARNING_STRING" > "$MODPATH/no_tmpfs_xattr"
 		echo "[+] ext4 sparse fallback mode enabled"
 	else
 		abort "[!] tools not found, bail out."
@@ -143,7 +146,7 @@ fi
 
 # since even mm ksud can have this feature, we check this and add a flag that we can check
 if [ "$KSU" = true ] && /data/adb/ksud kernel 2>&1 | grep -q "nuke-ext4-sysfs" >/dev/null 2>&1; then
-	touch "$MODPATH/ksud_has_nuke_ext4"
+	echo "$WARNING_STRING" > "$MODPATH/ksud_has_nuke_ext4"
 fi
 
 # EOF
