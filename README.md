@@ -2,9 +2,8 @@
 
 #### Globally mounted modules via OverlayFS.
 
-- mostly meant for [MKSU .nomount](https://github.com/5ec1cff/KernelSU/commit/76bfccd11f4c8953b35e1342a2461f45b7d21c22)
+- acts as a KernelSU [metamodule](https://kernelsu.org/guide/metamodule.html)
 - works on APatch and Magisk too
-- can also act as a KernelSU metamodule
 - **CONFIG_OVERLAY_FS=y** is required 
 - **CONFIG_TMPFS_XATTR=y** is highly encouraged
 - tries to mimic an OEM mount, like /mnt/vendor/my_bigball
