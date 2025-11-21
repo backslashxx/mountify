@@ -1,7 +1,7 @@
 import { exec, toast } from 'kernelsu-alt';
 import '@material/web/all.js';
 import * as file from './file.js';
-import { init as initI18n, t, updatePageText, setLocale, getAvailableLocales, getLocale, getConfigMetadata } from './i18n.js';
+import { init as initI18n, t, updatePageText, setLocale, getAvailableLocales, getLocale, getConfigMetadata, preloadLocales } from './i18n.js';
 
 const moddir = '/data/adb/modules/mountify';
 export let config = {};
@@ -420,8 +420,14 @@ document.querySelectorAll('md-dialog').forEach(dialog => {
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // Remove unresolved attribute immediately for faster visual feedback
+    document.querySelectorAll('[unresolved]').forEach(el => el.removeAttribute('unresolved'));
+    
     // Initialize i18n first
     await initI18n();
+    
+    // Preload other locales in background
+    setTimeout(() => preloadLocales(), 1000);
     
     config = await file.loadConfig();
     configMetadata = getConfigMetadata();
@@ -432,8 +438,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (config) toggleAdvanced(advanced.selected);
     });
     if (config) {
-        appendInputGroup();
-        toggleAdvanced(advanced.selected);
+        // Defer UI rendering to next frame
+        requestAnimationFrame(() => {
+            appendInputGroup();
+            toggleAdvanced(advanced.selected);
+        });
     }
     file.loadVersion();
 
@@ -487,14 +496,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.addEventListener('localeChanged', () => {
         configMetadata = getConfigMetadata();
         if (config) {
-            // Re-render input groups with new translations
-            document.querySelectorAll('.content-container.content').forEach(container => {
-                container.innerHTML = '';
+            // Re-render input groups with new translations (deferred)
+            requestAnimationFrame(() => {
+                document.querySelectorAll('.content-container.content').forEach(container => {
+                    container.innerHTML = '';
+                });
+                appendInputGroup();
+                toggleAdvanced(advanced.selected);
             });
-            appendInputGroup();
-            toggleAdvanced(advanced.selected);
         }
     });
-
-    document.querySelectorAll('[unresolved]').forEach(el => el.removeAttribute('unresolved'));
 });

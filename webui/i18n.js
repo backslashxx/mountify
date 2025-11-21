@@ -1,6 +1,7 @@
 let currentLocale = 'en';
 let translations = {};
 let fallbackLocale = 'en';
+let translationsCache = {};
 
 
 export async function init(locale = null) {
@@ -13,7 +14,8 @@ export async function init(locale = null) {
     currentLocale = normalizeLocale(currentLocale);
     
     await loadTranslations(currentLocale);
-    updatePageText();
+    // Defer updatePageText to allow faster initial render
+    requestAnimationFrame(() => updatePageText());
 }
 
 export function getAvailableLocales() {
@@ -40,6 +42,14 @@ function normalizeLocale(locale) {
 
 
 async function loadTranslations(locale) {
+    // Check cache first
+    if (translationsCache[locale]) {
+        translations = translationsCache[locale];
+        currentLocale = locale;
+        localStorage.setItem('locale', locale);
+        return;
+    }
+    
     try {
         const response = await fetch(`./locales/${locale}.json`);
         if (!response.ok) {
@@ -47,11 +57,13 @@ async function loadTranslations(locale) {
             if (locale !== fallbackLocale) {
                 const fallbackResponse = await fetch(`./locales/${fallbackLocale}.json`);
                 translations = await fallbackResponse.json();
+                translationsCache[fallbackLocale] = translations;
                 currentLocale = fallbackLocale;
             }
             return;
         }
         translations = await response.json();
+        translationsCache[locale] = translations;
         localStorage.setItem('locale', locale);
     } catch (e) {
         console.error('Failed to load translations:', e);
@@ -103,37 +115,60 @@ export function getConfigMetadata() {
     return translations.config || {};
 }
 
+// Preload common locales
+export function preloadLocales() {
+    const commonLocales = ['en', 'zh-CN'];
+    commonLocales.forEach(locale => {
+        if (locale !== currentLocale && !translationsCache[locale]) {
+            fetch(`./locales/${locale}.json`)
+                .then(res => res.json())
+                .then(data => {
+                    translationsCache[locale] = data;
+                })
+                .catch(() => {});
+        }
+    });
+}
+
 
 
 
 
 export function updatePageText() {
-    document.querySelectorAll('[data-i18n]').forEach(element => {
-        const key = element.getAttribute('data-i18n');
-        if (key) {
-            element.textContent = t(key);
-        }
-    });
-    
-    document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
-        const key = element.getAttribute('data-i18n-placeholder');
-        if (key) {
-            element.setAttribute('placeholder', t(key));
-        }
-    });
-    
-    document.querySelectorAll('[data-i18n-title]').forEach(element => {
-        const key = element.getAttribute('data-i18n-title');
-        if (key) {
-            element.setAttribute('title', t(key));
-        }
-    });
-    
-    document.querySelectorAll('[data-i18n-label]').forEach(element => {
-        const key = element.getAttribute('data-i18n-label');
-        if (key) {
-            element.setAttribute('label', t(key));
-        }
+    // Use requestAnimationFrame for better performance
+    requestAnimationFrame(() => {
+        const i18nElements = document.querySelectorAll('[data-i18n]');
+        const placeholderElements = document.querySelectorAll('[data-i18n-placeholder]');
+        const titleElements = document.querySelectorAll('[data-i18n-title]');
+        const labelElements = document.querySelectorAll('[data-i18n-label]');
+        
+        i18nElements.forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            if (key) {
+                element.textContent = t(key);
+            }
+        });
+        
+        placeholderElements.forEach(element => {
+            const key = element.getAttribute('data-i18n-placeholder');
+            if (key) {
+                element.setAttribute('placeholder', t(key));
+            }
+        });
+        
+        titleElements.forEach(element => {
+            const key = element.getAttribute('data-i18n-title');
+            if (key) {
+                element.setAttribute('title', t(key));
+            }
+        });
+        
+        labelElements.forEach(element => {
+            const key = element.getAttribute('data-i18n-label');
+            if (key) {
+                element.setAttribute('label', t(key));
+            }
+        });
     });
 }
 
