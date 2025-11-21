@@ -175,7 +175,7 @@ mountify_copy() {
 		echo "$DMESG_PREFIX: module with name $MODULE_ID is blacklisted" >> /dev/kmsg
 		return
 	fi
-	
+
 	# test for various stuff
 	# you dont want to global mount hosts file
 	TARGET_DIR="/data/adb/modules/$MODULE_ID"
@@ -185,6 +185,14 @@ mountify_copy() {
 		return
 	fi
 
+	# lets just add another clause for ksu metamodule mode
+	# this way its easier to maintain
+	# on metamodule mode, we can actually respect skip_mount
+	if [ -f "$MODDIR/metamount.sh" ] && [ -f "$TARGET_DIR/skip_mount" ]; then
+		echo "$DMESG_PREFIX: module with name $MODULE_ID has skip_mount" >> /dev/kmsg
+		return	
+	fi
+
 	echo "$DMESG_PREFIX: processing $MODULE_ID" >> /dev/kmsg
 
 	# skip_mount is not needed on .nomount MKSU - 5ec1cff/KernelSU/commit/76bfccd
@@ -192,7 +200,12 @@ mountify_copy() {
 	if { [ "$KSU_MAGIC_MOUNT" = "true" ] && [ -f /data/adb/ksu/.nomount ]; } || 
 		{ [ "$APATCH_BIND_MOUNT" = "true" ] && [ -f /data/adb/.litemode_enable ]; } || 
 		[ -f "$MODDIR/metamount.sh" ]; then 
-		# we can delete skip_mount if nomount / litemode / metamodule mode
+		
+		# ^ HACK: the metamodule check is here just so it wont create a skip_mount flag.
+		# we do NOT have 'goto' in shell so we to keep it this way.
+		# since we already check it above, it should NOT be here!
+
+		# we can delete skip_mount if nomount / litemode
 		[ -f "$TARGET_DIR/skip_mount" ] && rm "$TARGET_DIR/skip_mount"
 		[ -f "$PERSISTENT_DIR/skipped_modules" ] && rm "$PERSISTENT_DIR/skipped_modules"
 	else
