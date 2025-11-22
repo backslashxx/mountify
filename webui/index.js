@@ -1,6 +1,7 @@
 import { exec, toast } from 'kernelsu-alt';
 import '@material/web/all.js';
 import * as file from './file.js';
+import { loadTranslations, translations } from './language.js';
 
 const moddir = '/data/adb/modules/mountify';
 export let config = {};
@@ -41,7 +42,7 @@ function appendInputGroup() {
                         </md-icon-button>
                     `;
                     textField.querySelector('md-icon-button').onclick = () => {
-                        showDescription(header, metadata.description);
+                        showDescription(header, translations['desc_' + key]);
                     }
                     div.appendChild(textField);
 
@@ -111,7 +112,7 @@ function appendInputGroup() {
                     `;
                     select.querySelector('md-icon-button').addEventListener('click', (e) => {
                         e.stopPropagation();
-                        showDescription(header, metadata.description);
+                        showDescription(header, translations['desc_' + key]);
                     });
 
                     const options = metadata.option;
@@ -145,7 +146,7 @@ function appendInputGroup() {
                     </md-icon-button>
                 `;
                 textField.querySelector('md-icon-button').onclick = () => {
-                    showDescription(header, metadata.description);
+                    showDescription(header, translations['desc_' + key]);
                 }
                 textField.addEventListener('input', (event) => {
                     const newValue = event.target.value;
@@ -269,7 +270,7 @@ async function showModuleSelector() {
         const selectedModules = Array.from(list.querySelectorAll('md-checkbox'))
             .filter(checkbox => checkbox.checked)
             .map(checkbox => checkbox.dataset.moduleName);
-        
+
         exec(`echo "${selectedModules.join('\n').trim()}" > /data/adb/mountify/modules.txt`).then((result) => {
             if (result.errno !== 0) {
                 toast('Failed to save: ' + result.stderr);
@@ -380,7 +381,56 @@ document.querySelectorAll('md-dialog').forEach(dialog => {
     };
 });
 
+function initUpdateSwitch() {
+    const updateSwitch = document.getElementById('update');
+    function checkUpdateState() {
+        exec(`grep -q "^updateJson=" ${moddir}/module.prop`).then((result) => {
+            updateSwitch.selected = result.errno === 0;
+        });
+    }
+    checkUpdateState();
+    updateSwitch.addEventListener('change', () => {
+        const cmd = updateSwitch.selected ? `"s/updateLink/updateJson/g"` : `"s/updateJson/updateLink/g"`;
+        exec(`sed -i ${cmd} ${moddir}/module.prop`).then((result) => {
+            checkUpdateState();
+            if (result.errno !== 0) toast('Failed to toggle update: ' + result.stderr);
+        }).catch(() => {});
+    });
+}
+
+function initRebootButton() {
+    document.getElementById('reboot').onclick = () => {
+        const confirmationDialog = document.getElementById('confirm-reboot-dialog');
+        confirmationDialog.show();
+        window.onscroll = () => confirmationDialog.close();
+        confirmationDialog.querySelectorAll('md-text-button').forEach(btn => {
+            btn.onclick = () => {
+                confirmationDialog.close();
+                if (btn.value === 'reboot') {
+                    exec('/system/bin/reboot').then((result) => {
+                        if (result.errno !== 0) toast('Failed to reboot: ' + result.stderr);
+                    }).catch(() => {});
+                }
+            }
+        });
+    }
+}
+
+function initLanguageButton() {
+    const langaugeDialog = document.getElementById('language-dialog');
+    document.getElementById('language').onclick = () => {
+        langaugeDialog.show();
+        window.onscroll = () => langaugeDialog.close();
+        langaugeDialog.querySelectorAll('label, md-text-button').forEach(el => {
+            el.onclick = () => langaugeDialog.close();
+        });
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
+    await loadTranslations();
+    document.querySelectorAll('[unresolved]').forEach(el => el.removeAttribute('unresolved'));
+
     [config, configMetadata] = await Promise.all([file.loadConfig(), file.loadConfigMetadata()]);
     const advanced = document.getElementById('advanced');
     advanced.selected = localStorage.getItem('advanced') === 'true';
@@ -405,38 +455,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
-    document.getElementById('reboot').onclick = () => {
-        const confirmationDialog = document.getElementById('confirm-reboot-dialog');
-        confirmationDialog.show();
-        window.onscroll = () => confirmationDialog.close();
-        confirmationDialog.querySelectorAll('md-text-button').forEach(btn => {
-            btn.onclick = () => {
-                confirmationDialog.close();
-                if (btn.value === 'reboot') {
-                    exec('/system/bin/reboot').then((result) => {
-                        if (result.errno !== 0) toast('Failed to reboot: ' + result.stderr);
-                    }).catch(() => {});
-                }
-            }
-        });
-    }
-
-    const updateSwitch = document.getElementById('update');
-    function checkUpdateState() {
-        exec(`grep -q "^updateJson=" ${moddir}/module.prop`).then((result) => {
-            updateSwitch.selected = result.errno === 0;
-        });
-    }
-    checkUpdateState();
-    updateSwitch.addEventListener('change', () => {
-        const cmd = updateSwitch.selected ? `"s/updateLink/updateJson/g"` : `"s/updateJson/updateLink/g"`;
-        exec(`sed -i ${cmd} ${moddir}/module.prop`).then((result) => {
-            checkUpdateState();
-            if (result.errno !== 0) toast('Failed to toggle update: ' + result.stderr);
-        }).catch(() => {});
-    });
+    initLanguageButton();
+    initRebootButton();
+    initUpdateSwitch();
 
     initSwitch('/data/adb/.litemode_enable', 'litemode');
-
-    document.querySelectorAll('[unresolved]').forEach(el => el.removeAttribute('unresolved'));
 });

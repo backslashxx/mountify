@@ -1,85 +1,71 @@
 {
     "mountify_mounts": {
         "type": "general",
-        "option": [0, 1, 2],
-        "description": "Module mounting config.\n0 - disable\n1 - manual mode (mount modules that found on modules.txt)\n2 - auto mode (mount all modules with system folder)"
+        "option": [0, 1, 2]
     },
     "FAKE_MOUNT_NAME": {
-        "type": "general",
-        "description": "Mount folder name."
+        "type": "general"
     },
     "test_decoy_mount": {
         "type": "general",
-        "option": [0, 1],
-        "description": "Test for decoy mounting.\nThis is meant for tmpfs mode.\n0 - disable\n1 - enable"
+        "option": [0, 1]
     },
     "mountify_stop_start": {
         "type": "general",
-        "option": [0, 1],
-        "description": "Restarts android at service, certain modules might need this.\nThis is a workaround for 'racey' modules such as bootanimations and gpu drivers.\n⚠️ if you do NOT have a problem, you do NOT need this\n\n0 - disable\n1 - enable"
+        "option": [0, 1]
     },
     "FS_TYPE_ALIAS": {
         "type": "general",
         "advanced": true,
-        "option": ["allow-other", "overlay"],
-        "description": "Change this if you have a customized overlayfs driver registered with another alias."
+        "option": ["allow-other", "overlay"]
     },
     "MOUNT_DEVICE_NAME": {
         "type": "general",
-        "option": ["allow-other", "overlay", "KSU", "APatch", "magisk"],
-        "description": "You can put 'APatch', 'KSU', 'magisk' here so a zygisk provider can umount.\n\nExamples: NeoZygisk, NoHello, ReZygisk, Zygisk Assistant, ZygiskNext-UM/DE"
+        "option": ["allow-other", "overlay", "KSU", "APatch", "magisk"]
     },
     "mountify_custom_umount": {
         "type": "general",
-        "option": [0, 1, 2],
-        "description": "Enable in-kernel umount methods here.\n0 - disable\n1 - susfs4ksu\n2 - ksud kernel umount (22106+)\n\n⚠️ if you have a zygisk provider, you do NOT need this"
+        "option": [0, 1, 2]
     },
     "mountify_expert_mode": {
         "type": "general",
         "advanced": true,
-        "option": [0, 1],
-        "description": "🚨 WARNING!\n ⚠️ This disables safety checks.\nMostly for development and debugging purposes.\n0 - disable\n1 - enable"
+        "option": [0, 1]
     },
     "use_ext4_sparse": {
         "type": "ext4",
-        "option": [0, 1],
-        "description": "ext4 sparse mode override.\nFor tmpfs xattr capable setups that prefers using an ext4 sparse image to mount.\n0 - disable\n1 - enable"
+        "option": [0, 1]
     },
     "spoof_sparse": {
         "type": "ext4",
         "require": [{"enable_lkm_nuke": 0}],
-        "option": [0, 1],
-        "description": "Spoof sparse as an apex mount.\nGoes well with a custom MOUNT_DEVICE_NAME.\nNOTE: when this is enabled, nuking is disabled."
+        "option": [0, 1]
     },
     "FAKE_APEX_NAME": {
         "type": "ext4",
         "require": [{"spoof_sparse": 1}],
-        "option": ["allow-other", "com.android.mntservice"],
-        "description": "Customize spoofed apex mount name.\nWhile futile, this tries to make it look legit."
+        "option": ["allow-other", "com.android.mntservice"]
     },
     "sparse_size": {
         "type": "ext4",
-        "option": ["allow-other", "512", "1024", "2048", "4096"],
-        "description": "Set a custom sparse size.\nModify this to any unsigned number.\n- sparse size in MB."
+        "option": ["allow-other", "512", "1024", "2048", "4096"]
     },
     "enable_lkm_nuke": {
         "type": "ext4",
         "require": [{"spoof_sparse": 0}],
-        "option": [0, 1],
-        "description": "🚨 WARNING!\n⚠️ Experimental feature. Don't expect 100% success rate.\nLoads a oneshot LKM that unregisters ext4 sysfs nodes. \n0 - disable\n1 - enable\n\nNOTE: on KernelSU 22105+ this is handled on ksud"
+        "option": [0, 1]
     },
     "lkm_filename": {
         "type": "ext4",
         "require": [{"enable_lkm_nuke": 1}],
         "option": [
             "nuke-android12-5.10.ko",
-        	"nuke-android13-5.10.ko",
-        	"nuke-android13-5.15.ko",
-        	"nuke-android14-5.15.ko",
-        	"nuke-android14-6.1.ko",
-        	"nuke-android15-6.6.ko",
-        	"nuke-android-4.14.ko"
-        ],
-        "description": "Only GKI 5.10+ are properly supported.\nSelect your Android KMI."
+            "nuke-android13-5.10.ko",
+            "nuke-android13-5.15.ko",
+            "nuke-android14-5.15.ko",
+            "nuke-android14-6.1.ko",
+            "nuke-android15-6.6.ko",
+            "nuke-android-4.14.ko"
+        ]
     }
 }

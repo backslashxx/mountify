@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tab_general">General</string>
+    <string name="tab_ext4">Ext4</string>
+    <string name="tab_advanced">Advanced</string>
+    <string name="show_advanced_option">Show advanced option</string>
+    <string name="enable_mountify_update">Enable mountify update</string>
+    <string name="enable_litemode">Enable litemode</string>
+    <string name="warning_litemode">Litemode is introduced in APatch since v11024</string>
+    <string name="reboot_title">Reboot</string>
+    <string name="reboot_message">Reboot now?</string>
+    <string name="reboot">Reboot</string>
+    <string name="select_modules">Select Modules</string>
+    <string name="system_default">System Default</string>
+    <string name="select_language">Select Language</string>
+
+    <!-- Functional button -->
+    <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
+    <string name="save">Save</string>
+
+    <!-- Config Descriptions -->
+    <string name="desc_mountify_mounts">Module mounting config.\n0 - disable\n1 - manual mode (mount modules that found on modules.txt)\n2 - auto mode (mount all modules with system folder)</string>
+    <string name="desc_FAKE_MOUNT_NAME">Mount folder name.</string>
+    <string name="desc_test_decoy_mount">Test for decoy mounting.\nThis is meant for tmpfs mode.\n0 - disable\n1 - enable</string>
+    <string name="desc_mountify_stop_start">Restarts android at service, certain modules might need this.\nThis is a workaround for 'racey' modules such as bootanimations and gpu drivers.\n⚠️ if you do NOT have a problem, you do NOT need this\n\n0 - disable\n1 - enable</string>
+    <string name="desc_FS_TYPE_ALIAS">Change this if you have a customized overlayfs driver registered with another alias.</string>
+    <string name="desc_MOUNT_DEVICE_NAME">You can put 'APatch', 'KSU', 'magisk' here so a zygisk provider can umount.\n\nExamples: NeoZygisk, NoHello, ReZygisk, Zygisk Assistant, ZygiskNext-UM/DE</string>
+    <string name="desc_mountify_custom_umount">Enable in-kernel umount methods here.\n0 - disable\n1 - susfs4ksu\n2 - ksud kernel umount (22106+)\n\n⚠️ if you have a zygisk provider, you do NOT need this</string>
+    <string name="desc_mountify_expert_mode">🚨 WARNING!\n ⚠️ This disables safety checks.\nMostly for development and debugging purposes.\n0 - disable\n1 - enable</string>
+    <string name="desc_use_ext4_sparse">ext4 sparse mode override.\nFor tmpfs xattr capable setups that prefers using an ext4 sparse image to mount.\n0 - disable\n1 - enable</string>
+    <string name="desc_spoof_sparse">Spoof sparse as an apex mount.\nGoes well with a custom MOUNT_DEVICE_NAME.\nNOTE: when this is enabled, nuking is disabled.</string>
+    <string name="desc_FAKE_APEX_NAME">Customize spoofed apex mount name.\nWhile futile, this tries to make it look legit.</string>
+    <string name="desc_sparse_size">Set a custom sparse size.\nModify this to any unsigned number.\n- sparse size in MB.</string>
+    <string name="desc_enable_lkm_nuke">🚨 WARNING!\n⚠️ Experimental feature. Don't expect 100% success rate.\nLoads a oneshot LKM that unregisters ext4 sysfs nodes. \n0 - disable\n1 - enable\n\nNOTE: on KernelSU 22105+ this is handled on ksud</string>
+    <string name="desc_lkm_filename">Only GKI 5.10+ are properly supported.\nSelect your Android KMI.</string>
+</resources>

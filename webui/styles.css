@@ -98,7 +98,7 @@ md-list {
     user-select: none;
 }
 
-label {
+label.content {
     position: relative;
     padding: 16px !important;
     font-size: 1.1em;
@@ -139,4 +139,12 @@ label {
 [unresolved] {
     opacity: 0;
     overflow: hidden;
+}
+
+.language-option {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    gap: 16px;
+    user-select: none;
 }

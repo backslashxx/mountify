@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tab_general">常规</string>
+    <string name="tab_ext4">Ext4</string>
+    <string name="tab_advanced">高级</string>
+    <string name="show_advanced_option">显示高级选项</string>
+    <string name="enable_mountify_update">启用 mountify 更新</string>
+    <string name="enable_litemode">启用 litemode</string>
+    <string name="warning_litemode">Litemode 自 APatch v11024 起引入</string>
+    <string name="reboot_title">重启</string>
+    <string name="reboot_message">立即重启？</string>
+    <string name="reboot">重启</string>
+    <string name="select_modules">选择模块</string>
+    <string name="system_default">系统默认</string>
+    <string name="select_language">选择语言</string>
+
+    <!-- Functional button -->
+    <string name="cancel">取消</string>
+    <string name="close">关闭</string>
+    <string name="save">保存</string>
+
+    <!-- Config descriptions -->
+    <string name="desc_mountify_mounts">模块挂载配置。\n0 - 禁用\n1 - 手动模式 (挂载 modules.txt 中发现的模块)\n2 - 自动模式 (挂载所有包含 system 文件夹的模块)</string>
+    <string name="desc_FAKE_MOUNT_NAME">挂载文件夹名称。</string>
+    <string name="desc_test_decoy_mount">诱饵挂载测试。\n这是为 tmpfs 模式设计的。\n0 - 禁用\n1 - 启用</string>
+    <string name="desc_mountify_stop_start">在服务处重启 Android，某些模块可能需要此操作。\n这是针对开机动画和 GPU 驱动等“竞争性”模块的变通方法。\n⚠️ 如果你没有遇到问题，则不需要此选项\n\n0 - 禁用\n1 - 启用</string>
+    <string name="desc_FS_TYPE_ALIAS">如果你有注册了其他别名的自定义 overlayfs 驱动，请更改此项。</string>
+    <string name="desc_MOUNT_DEVICE_NAME">你可以在这里填入 'APatch', 'KSU', 'magisk' 以便 zygisk 卸载。\n\n示例: NeoZygisk, NoHello, ReZygisk, Zygisk Assistant, ZygiskNext-UM/DE</string>
+    <string name="desc_mountify_custom_umount">在此处启用内核内卸载方法。\n0 - 禁用\n1 - susfs4ksu\n2 - ksud 内核卸载 (22106+)\n\n⚠️ 如果你有使用 zygisk，则不需要此选项</string>
+    <string name="desc_mountify_expert_mode">🚨 警告！\n ⚠️ 这将禁用安全检查。\n主要用于开发和调试目的。\n0 - 禁用\n1 - 启用</string>
+    <string name="desc_use_ext4_sparse">ext4 稀疏模式覆盖。\n适用于偏好使用 ext4 稀疏镜像进行挂载的 tmpfs xattr 兼容设置。\n0 - 禁用\n1 - 启用</string>
+    <string name="desc_spoof_sparse">将稀疏镜像伪装为 apex 挂载。\n与自定义 MOUNT_DEVICE_NAME 配合使用效果更佳。\n注意：启用此选项时，nuking 将被禁用。</string>
+    <string name="desc_FAKE_APEX_NAME">自定义伪装的 apex 挂载名称。\n虽然徒劳，但这试图让它看起来合法。</string>
+    <string name="desc_sparse_size">设置自定义稀疏大小。\n修改为任何无符号数字。\n- 稀疏大小 (MB)。</string>
+    <string name="desc_enable_lkm_nuke">🚨 警告！\n⚠️ 实验性功能。不要指望 100% 成功率。\n加载一个一次性 LKM 来注销 ext4 sysfs 节点。\n0 - 禁用\n1 - 启用\n\n注意：在 KernelSU 22105+ 上，这由 ksud 处理</string>
+    <string name="desc_lkm_filename">仅正确支持 GKI 5.10+。\n选择你的 Android KMI。</string>
+</resources>
