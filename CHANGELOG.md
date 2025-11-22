@@ -2,7 +2,8 @@
 Globally mounted modules and whiteouts via OverlayFS.
 
 ## Changelog
-## 175
+## 176
+- webui: localization support
 - tweak and add more partition support
 
 ## 174
