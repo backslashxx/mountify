@@ -79,6 +79,7 @@ targets="odm
 product
 system_ext
 vendor
+apex
 mi_ext
 my_bigball
 my_carrier
@@ -90,7 +91,10 @@ my_preload
 my_product
 my_region
 my_reserve
-my_stock"
+my_stock
+oem
+optics
+prism"
 
 decoy_folder_candidates="/oem
 /second_stage_resources
