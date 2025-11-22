@@ -27,8 +27,29 @@ handle_partition() {
 	echo 0 > /dev/null ; true
 }
 
+# give symlink
+# mountify does NOT need this but, some modules still assume
+# access to these folders on $MODDIR root
+mountify_handle_partition() {
+	partition="$1"
+	
+	if [ ! -d "$MODPATH/system/$partition" ]; then
+		return
+	fi
+	
+	if [ -L "/system/$partition" ] && [ -d "/$partition" ]; then
+		ui_print "- Handle partition /$partition"
+		ln -sf "./system/$partition" "$MODPATH/$partition"
+	fi
+}
+
 # call install function, this is important!
 install_module
+
+mountify_handle_partition system_ext
+mountify_handle_partition vendor
+mountify_handle_partition product
+mountify_handle_partition odm
 
 # EOF
 
