@@ -25,6 +25,9 @@
     },
     "mountify_custom_umount": {
         "type": "general",
+        "require": [
+            { "JavaScript": { "isKsu": true } }
+        ],
         "option": [0, 1, 2]
     },
     "mountify_expert_mode": {

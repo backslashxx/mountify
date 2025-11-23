@@ -6,6 +6,35 @@ import { loadTranslations, translations } from './language.js';
 const moddir = '/data/adb/modules/mountify';
 export let config = {};
 let configMetadata = {};
+const functions = { isKsu };
+
+async function checkReq(req) {
+    for (const [reqKey, reqValue] of Object.entries(req)) {
+        if (reqKey === "JavaScript") {
+            if (typeof reqValue !== 'object') continue;
+            for (const [funcName, expected] of Object.entries(reqValue)) {
+                if (typeof functions[funcName] !== 'function') {
+                    toast(`invalid function ${funcName}`);
+                    return false;
+                }
+                try {
+                    const result = await functions[funcName]();
+                    if (result !== expected) {
+                        return false;
+                    }
+                } catch (e) {
+                    console.error(e);
+                    return false;
+                }
+            }
+        } else {
+            if (config[reqKey] !== reqValue) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
 function showDescription(title, description) {
     const dialog = document.getElementById('description-dialog');
@@ -19,7 +48,7 @@ function showDescription(title, description) {
     dialog.show();
 }
 
-function appendInputGroup() {
+async function appendInputGroup() {
     for (const key in config) {
         if (Object.prototype.hasOwnProperty.call(config, key)) {
             const value = config[key];
@@ -170,10 +199,8 @@ function appendInputGroup() {
             const dependentInput = dependentGroup.querySelector('md-outlined-select, md-outlined-text-field');
             if (!dependentInput) continue;
 
-            const checkAndSetDisabled = () => {
-                const satisfied = metadata.require.every(req =>
-                    Object.entries(req).every(([reqKey, reqValue]) => config[reqKey] === reqValue)
-                );
+            const checkAndSetDisabled = async () => {
+                const satisfied = (await Promise.all(metadata.require.map(checkReq))).every(Boolean);
                 dependentInput.disabled = !satisfied;
             };
 
@@ -302,6 +329,18 @@ function setupKeyboard() {
                     keyboardInset.classList.remove('active');
                 }
             }, 100);
+        });
+    });
+}
+
+function isKsu() {
+    return new Promise((resolve) => {
+        // No su (sucompat disabled)
+        // ksud in PATH when running with su
+        exec('! command -v su || su -c "ksud -h"').then((result) => {
+            resolve(result.errno === 0);
+        }).catch(() => {
+            resolve(false);
         });
     });
 }
@@ -439,7 +478,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (config) toggleAdvanced(advanced.selected);
     });
     if (config) {
-        appendInputGroup();
+        await appendInputGroup();
         toggleAdvanced(advanced.selected);
     }
     file.loadVersion();
