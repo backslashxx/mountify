@@ -60,7 +60,23 @@ IFS="
 targets="odm
 product
 system_ext
-vendor"
+vendor
+apex
+mi_ext
+my_bigball
+my_carrier
+my_company
+my_engineering
+my_heytap
+my_manifest
+my_preload
+my_product
+my_region
+my_reserve
+my_stock
+oem
+optics
+prism"
 
 # this assumes magic mount
 for dir in $targets; do 
