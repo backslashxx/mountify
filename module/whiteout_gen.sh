@@ -9,13 +9,14 @@ PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
 MODDIR="/data/adb/modules/mountify"
 MODULE_UPDATES_DIR="/data/adb/modules_update/mountify_whiteouts"
 MODULE_DIR="/data/adb/modules/mountify_whiteouts"
+PERSISTENT_DIR="/data/adb/mountify"
 
 echo "[+] mountify's whiteout generator"
 
 if [ -z $1 ] || [ ! -f $1 ]; then
 	echo "[!] list missing or not specified!"
 	echo "[!] using whiteouts.txt"
-	TEXTFILE="$MODDIR/whiteouts.txt"
+	TEXTFILE="$PERSISTENT_DIR/whiteouts.txt"
 	if [ ! -f $TEXTFILE ]; then
 		echo "[!] whiteouts.txt not found!"
 		exit 1
