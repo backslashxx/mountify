@@ -52,7 +52,7 @@ BOOTCOUNT=0
 
 BOOTCOUNT=$(( BOOTCOUNT + 1))
 
-if [ $BOOTCOUNT -gt 1 ]; then
+if [ ! -f "$PERSISTENT_DIR/explicit_I_want_a_bootloop" ] && [ $BOOTCOUNT -gt 1 ]; then
 	touch $MODDIR/disable
 	rm "$MODDIR/count.sh"
 	string="description=anti-bootloop triggered. module disabled. enable to activate."
