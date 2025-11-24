@@ -23,6 +23,45 @@ if [ $mountify_stop_start = 1 ]; then
 	stop; start
 fi
 
+# handle kernel umount
+[ -w /mnt ] && MNT_FOLDER=/mnt && LOG_FOLDER=/mnt/mountify_logs
+[ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor && LOG_FOLDER=/mnt/vendor/mountify_logs
+
+# requires susfs add_try_umount
+do_susfs_umount() {
+for mount in $(cat "$LOG_FOLDER/mountify_mount_list") ; do 
+	# workaround for oplus devices
+	if echo "$mount" | grep -q "/my_" ; then
+		/data/adb/ksu/bin/ksu_susfs add_try_umount "/mnt/vendor$mount" 1
+	fi
+	/data/adb/ksu/bin/ksu_susfs add_try_umount "$mount" 1
+done
+}
+
+# requires ksu 22105+
+do_ksud_umount() {
+for mount in $(cat "$LOG_FOLDER/mountify_mount_list"); do
+	/data/adb/ksud kernel umount add $mount --flags 2 > /dev/null 2>&1
+	# now inform ksud so that the kernel unlocks the feature
+	/data/adb/ksud kernel notify-module-mounted >/dev/null 2>&1
+done
+}
+
+if [ "$mountify_custom_umount" = 1 ]; then
+	do_susfs_umount
+fi
+
+if [ "$mountify_custom_umount" = 2 ]; then
+	do_ksud_umount
+fi
+
+# cleanup
+# prep logs for status
+busybox diff "$LOG_FOLDER/before" "$LOG_FOLDER/after" | grep " $FS_TYPE_ALIAS " > "$MODDIR/mount_diff"
+
+# clean log folder
+[ -d "$LOG_FOLDER" ] && rm -rf "$LOG_FOLDER"
+
 # handle operating mode
 case $mountify_mounts in
 	1) mode="manual 🤓" ;;
