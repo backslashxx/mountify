@@ -95,11 +95,11 @@ for file in $configs; do
 	fi
 done
 
-# warn on OverlayFS managers
-if { [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ]; } || { [ "$APATCH" = true ] && [ ! "$APATCH_BIND_MOUNT" = true ]; }; then
-	printf "\n\n"
-	echo "[!] WARNING: Root manager is NOT on magic mount."
-	echo "[!] This setup can cause issues and is NOT recommended."
+# workaround for awry versioning on KernelSU forks
+# we cannot rely on just ksu vercode
+if [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ] &&  [ "$KSU_VER_CODE" -ge 22098 ]; then
+	echo "[+] mountify will be installed in metamodule mode!"
+	mv "$MODPATH/post-fs-data.sh" "$MODPATH/metamount.sh"
 fi
 
 # EOF
