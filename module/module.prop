@@ -5,3 +5,4 @@ versionCode=100
 author=xx
 description=Globally mounted modules via symlinks + OverlayFS.
 updateJson=https://raw.githubusercontent.com/backslashxx/mountify/symlink/update.json
+metamodule=true
