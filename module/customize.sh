@@ -139,19 +139,10 @@ fi
 
 # workaround for awry versioning on KernelSU forks
 # we cannot rely on just ksu vercode
-METAMODULE_LINK="/data/adb/metamodule"
-META_MM_DIR="/data/adb/modules/org.zrlab.magic_mount"
-if [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ] && [ "$KSU_VER_CODE" -ge 22098 ]; then
-	if [ -L "/data/adb/metamodule" ] && [ "$(realpath /data/adb/metamodule)" = "$META_MM_DIR" ] && [ -d "$META_MM_DIR" ] ; then
-		echo "[!] meta-mm found"
-		echo "[+] mountify will be installed in bastard mode"
-	else
-		echo "[+] mountify will be installed in metamodule mode!"
-		mv "$MODPATH/post-fs-data.sh" "$MODPATH/metamount.sh"
-		echo "metamodule=true" >> "$MODPATH/module.prop"
-		rm -f "$METAMODULE_LINK" > /dev/null 2>&1
-		ln -sf "/data/adb/modules/mountify" "$METAMODULE_LINK"
-	fi
+if [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ] && [ "$KSU_VER_CODE" -ge 22098 ] && 
+	( grep -q "metamodule=true" $MODPATH/module.prop >/dev/null 2>&1 || grep -q "metamodule=1" $MODPATH/module.prop >/dev/null 2>&1 ); then
+	echo "[+] mountify will be installed in metamodule mode!"
+	mv "$MODPATH/post-fs-data.sh" "$MODPATH/metamount.sh"
 fi
 
 # since even mm ksud can have this feature, we check this and add a flag that we can check
