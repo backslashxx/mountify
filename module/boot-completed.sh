@@ -24,9 +24,7 @@ for mount in $(cat "$LOG_FOLDER/mountify_mount_list") ; do
 done
 }
 
-# requires modded ksud+driver with add-try-umount
-# umount via zygisk umount provider is still better.
-# this is here for reference purposes and as a second choice
+# requires ksu 22105+
 do_ksud_umount() {
 for mount in $(cat "$LOG_FOLDER/mountify_mount_list"); do
 	/data/adb/ksud kernel umount add $mount --flags 2 > /dev/null 2>&1
