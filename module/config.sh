@@ -19,16 +19,7 @@ mountify_mounts=2
 # since all module files will now be unified to a single folder
 # you can use shit like my_bigball, mi_ext, preload_common, special_preload
 # you just make this shit up
-#
-# this is ignored on symlink version
 FAKE_MOUNT_NAME="mountify"
-
-# toggle to use susfs
-# this is not really required as of 250211
-# it seems recent susfs will just omit mounts done within ksu domain (100000+ mount id)
-# and no detector detects mountify mounting method yet, so no need to enforce/require
-# just set to 1 to enable
-mountify_use_susfs=0
 
 # stop; start at service
 # certain modules might need this
