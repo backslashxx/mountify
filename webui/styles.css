@@ -1,8 +1,8 @@
 @import "./theme.css";
 
 body {
-    background-color: var(--md-sys-color-background);
-    color: var(--md-sys-color-on-background);
+    background-color: var(--md-sys-color-surface);
+    color: var(--md-sys-color-on-surface);
     padding-top: var(--top-inset);
     padding-bottom: calc(var(--bottom-inset) + 80px);
     margin: 0;
