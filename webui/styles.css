@@ -32,7 +32,6 @@ body {
 
 .top-bar {
     font-size: 1.4em;
-    color: var(--md-sys-color-on-surface-variant);
     height: 64px;
     width: 100%;
     display: flex;
