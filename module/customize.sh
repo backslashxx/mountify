@@ -139,7 +139,8 @@ fi
 
 # workaround for awry versioning on KernelSU forks
 # we cannot rely on just ksu vercode
-if [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ] &&  [ "$KSU_VER_CODE" -ge 22098 ]; then
+if [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ] && [ "$KSU_VER_CODE" -ge 22098 ] && 
+	( grep -q "metamodule=true" $MODPATH/module.prop >/dev/null 2>&1 || grep -q "metamodule=1" $MODPATH/module.prop >/dev/null 2>&1 ); then
 	echo "[+] mountify will be installed in metamodule mode!"
 	mv "$MODPATH/post-fs-data.sh" "$MODPATH/metamount.sh"
 fi
