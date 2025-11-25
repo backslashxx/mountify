@@ -51,7 +51,23 @@ IFS="
 targets="odm
 product
 system_ext
-vendor"
+vendor
+apex
+mi_ext
+my_bigball
+my_carrier
+my_company
+my_engineering
+my_heytap
+my_manifest
+my_preload
+my_product
+my_region
+my_reserve
+my_stock
+oem
+optics
+prism"
 
 # check if fake alias exists, if fail use overlay
 if ! grep "nodev" /proc/filesystems | grep -q "$FS_TYPE_ALIAS" > /dev/null 2>&1; then
