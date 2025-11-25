@@ -5,6 +5,7 @@
 # No rights reserved.
 # This is free software; you can redistribute it and/or modify it under the terms of The Unlicense.
 PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
+PERSISTENT_DIR="/data/adb/mountify"
 
 # some bullshit just to use clear
 if [ "$MMRL" = "true" ] || { [ "$KSU" = "true" ] && [ "$KSU_VER_CODE" -ge 11998 ]; } || 
@@ -87,12 +88,13 @@ fi
 [ -d "$TEST_FOLDER" ] && rm -rf "$TEST_FOLDER"
 
 # migrate config
-configs="modules.txt whiteouts.txt config.sh skipped_modules"
+configs="modules.txt whiteouts.txt config.sh"
 for file in $configs; do
-	if [ -f "/data/adb/modules/mountify/$file" ]; then
-		echo "[+] migrating $file"
-		cat "/data/adb/modules/mountify/$file" > "$MODPATH/$file"
+	if [ ! -f "$PERSISTENT_DIR/$file" ]; then
+		echo "[+] creating fresh $file"
+		cat "$MODPATH/$file" > "$PERSISTENT_DIR/$file"
 	fi
+	rm $file > /dev/null 2>&1
 done
 
 # workaround for awry versioning on KernelSU forks
