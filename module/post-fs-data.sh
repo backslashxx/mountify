@@ -13,8 +13,9 @@ mountify_mounts=1
 MOUNT_DEVICE_NAME="overlay"
 FS_TYPE_ALIAS="overlay"
 FAKE_MOUNT_NAME="mountify"
+PERSISTENT_DIR="/data/adb/mountify"
 # read config
-. $MODDIR/config.sh
+. $PERSISTENT_DIR/config.sh
 # exit if disabled
 if [ $mountify_mounts = 0 ]; then
 	exit 0
@@ -151,12 +152,21 @@ mkdir -p "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 # create our own tmpfs
 mount -t tmpfs tmpfs "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 
-# manual mode
-for line in $( sed '/#/d' "$MODDIR/modules.txt" ); do
-	module_id=$( echo $line | awk {'print $1'} )
-	mount_name=$( echo $line | awk {'print $2'} )
-	mountify_symlink "$module_id" "$mount_name"
-done
+count=0
+if [ $mountify_mounts = 1 ] && grep -qv "#" "$PERSISTENT_DIR/modules.txt" >/dev/null 2>&1 ; then
+	for line in $( sed '/#/d' "$PERSISTENT_DIR/modules.txt" ); do
+		module_id=$( echo $line | awk {'print $1'} )
+		mountify_symlink "$module_id" "0000$count"
+		count=$(( count + 1 ))
+	done
+else
+	# auto mode
+	for module in /data/adb/modules/*/system; do 
+		module_id="$(echo $module | cut -d / -f 5 )"
+		mountify_symlink "$module_id" "0000$count"
+		count=$(( count + 1 ))
+	done
+fi
 
 # unmout our own tmpfs
 umount -l "$MNT_FOLDER/$FAKE_MOUNT_NAME"
