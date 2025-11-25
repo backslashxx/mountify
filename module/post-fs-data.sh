@@ -94,14 +94,17 @@ if [ -z "$1" ] || [ -z "$2" ]; then
 	return
 fi
 
-if [ -f "/data/adb/modules/$1/disable" ] || [ -f "/data/adb/modules/$1/remove" ] || [ ! -d "/data/adb/modules/$1/system" ] ||
-	[ -f "/data/adb/modules/$1/skip_mountify" ] || [ -f "/data/adb/modules/$1/system/etc/hosts" ]; then
+TARGET_DIR="/data/adb/modules/$1"
+
+if [ -f "$TARGET_DIR/disable" ] || [ -f "$TARGET_DIR/remove" ] || [ ! -d "$TARGET_DIR/system" ] ||
+	[ -f "$TARGET_DIR/skip_mountify" ] || [ -f "$TARGET_DIR/system/etc/hosts" ]; then
 	echo "mountify/post-fs-data: $1 not meant to be mounted" >> /dev/kmsg
 	return	
 fi
 
-if [ -f "/data/adb/modules/$1/skip_mount" ] && [ -f "$MODDIR/metamount.sh" ]; then
+if [ -f "$TARGET_DIR/skip_mount" ] && [ -f "$MODDIR/metamount.sh" ]; then
 	echo "mountify/post-fs-data: $1 has skip_mount" >> /dev/kmsg
+	return
 fi
 
 echo "mountify/post-fs-data: processing $1" >> /dev/kmsg
@@ -116,18 +119,18 @@ if { [ "$KSU_MAGIC_MOUNT" = "true" ] && [ -f /data/adb/ksu/.nomount ]; } ||
 	# we do NOT have 'goto' in shell so we to keep it this way.
 	# since we already check it above, it should NOT be here!
 
-	[ -f "/data/adb/modules/$1/skip_mount" ] && rm "/data/adb/modules/$1/skip_mount"
+	[ -f "$TARGET_DIR/skip_mount" ] && rm "$TARGET_DIR/skip_mount"
 	[ -f "$MODDIR/skipped_modules" ] && rm "$MODDIR/skipped_modules"
 else
 	if [ ! -f "$TARGET_DIR/skip_mount" ]; then
-		touch "/data/adb/modules/$1/skip_mount"
+		touch "$TARGET_DIR/skip_mount"
 		# log modules that got skip_mounted
 		# we can likely clean those at uninstall
 		echo "$1" >> $MODDIR/skipped_modules
 	fi
 fi
 
-MODULE_BASEDIR="/data/adb/modules/$1/system"
+MODULE_BASEDIR="$TARGET_DIR/system"
 SUBFOLDER_NAME="$2"
 	
 # here we create the symlink
@@ -158,10 +161,10 @@ echo "$1" >> "$LOG_FOLDER/modules"
 
 } # mountify_symlink
 
-# I dont think auto mode is possible right away
+# I dont think chaining is possible right away
 # logic seems hard as we have to /mnt/vendor/module1/system/app:/mnt/vendor/module2/system/app
 # PR welcome if somebody sees a way to do it easily.
-# so ye manual for now
+# so just spam it for now
 
 mkdir -p "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 
