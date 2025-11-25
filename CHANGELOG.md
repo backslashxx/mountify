@@ -2,7 +2,7 @@
 Globally mounted modules and whiteouts via OverlayFS.
 
 ## Changelog
-## 179
+## 180
 - webui/css: use surface for background color
 - scripts: move kernel umount routines to service
 - webui: bump deps
