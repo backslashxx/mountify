@@ -59,9 +59,6 @@ fi
 # prep logs for status
 busybox diff "$LOG_FOLDER/before" "$LOG_FOLDER/after" | grep " $FS_TYPE_ALIAS " > "$MODDIR/mount_diff"
 
-# clean log folder
-[ -d "$LOG_FOLDER" ] && rm -rf "$LOG_FOLDER"
-
 # handle operating mode
 case $mountify_mounts in
 	1) mode="manual 🤓" ;;
@@ -93,6 +90,9 @@ if [ -f $LOG_FOLDER/modules ]; then
 	string="description=mode: $mode | modules: $( for module in $(cat "$LOG_FOLDER/modules" ) ; do printf "$module " ; done ) "
 fi
 sed -i "s/^description=.*/$string/g" $MODDIR/module.prop
+
+# clean log folder
+[ -d "$LOG_FOLDER" ] && rm -rf "$LOG_FOLDER"
 
 # wait for boot-complete
 until [ "$(getprop sys.boot_completed)" = "1" ]; do
