@@ -80,10 +80,6 @@ if [ "$APATCH_BIND_MOUNT" = "true" ] && [ -f /data/adb/.litemode_enable ]; then
 	mode="$mode | litemode: ✅"
 fi
 
-# find logging folder
-[ -w /mnt ] && LOG_FOLDER=/mnt/mountify_logs
-[ -w /mnt/vendor ] && LOG_FOLDER=/mnt/vendor/mountify_logs
-
 # update description accrdingly
 string="description=mode: $mode | no modules mounted"
 if [ -f $LOG_FOLDER/modules ]; then
