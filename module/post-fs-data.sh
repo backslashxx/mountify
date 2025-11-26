@@ -70,6 +70,14 @@ oem
 optics
 prism"
 
+# set prefix
+# this is to handle it properly on kernelsu's metamodule mode
+# we move this as metamount.sh on customize
+DMESG_PREFIX="mountify/post-fs-data"
+if [ -f "$MODDIR/metamount.sh" ]; then
+	DMESG_PREFIX="mountify/metamount"
+fi
+
 # check if fake alias exists, if fail use overlay
 if ! grep "nodev" /proc/filesystems | grep -q "$FS_TYPE_ALIAS" > /dev/null 2>&1; then
 	FS_TYPE_ALIAS="overlay"
@@ -91,7 +99,7 @@ single_depth() {
 
 mountify_symlink() {
 if [ -z "$1" ] || [ -z "$2" ]; then
-	echo "mountify/post-fs-data: missing arguments, fuck off" >> /dev/kmsg
+	echo "$DMESG_PREFIX: missing arguments, fuck off" >> /dev/kmsg
 	return
 fi
 
@@ -99,16 +107,16 @@ TARGET_DIR="/data/adb/modules/$1"
 
 if [ -f "$TARGET_DIR/disable" ] || [ -f "$TARGET_DIR/remove" ] || [ ! -d "$TARGET_DIR/system" ] ||
 	[ -f "$TARGET_DIR/skip_mountify" ] || [ -f "$TARGET_DIR/system/etc/hosts" ]; then
-	echo "mountify/post-fs-data: $1 not meant to be mounted" >> /dev/kmsg
+	echo "$DMESG_PREFIX: $1 not meant to be mounted" >> /dev/kmsg
 	return	
 fi
 
 if [ -f "$TARGET_DIR/skip_mount" ] && [ -f "$MODDIR/metamount.sh" ]; then
-	echo "mountify/post-fs-data: $1 has skip_mount" >> /dev/kmsg
+	echo "$DMESG_PREFIX: $1 has skip_mount" >> /dev/kmsg
 	return
 fi
 
-echo "mountify/post-fs-data: processing $1" >> /dev/kmsg
+echo "$DMESG_PREFIX: processing $1" >> /dev/kmsg
 	
 # skip_mount is not needed on .nomount MKSU - 5ec1cff/KernelSU/commit/76bfccd
 # skip_mount is also not needed for litemode APatch - bmax121/APatch/commit/7760519
@@ -169,7 +177,7 @@ echo "$1" >> "$LOG_FOLDER/modules"
 
 # prevent this fuckup since on expert mode this isnt checked
 if [ "$FAKE_MOUNT_NAME" = "persist" ]; then
-	echo "mountify/post-fs-data: folder name named $FAKE_MOUNT_NAME is not allowed!" >> /dev/kmsg
+	echo "$DMESG_PREFIX: folder name named $FAKE_MOUNT_NAME is not allowed!" >> /dev/kmsg
 	exit 1
 fi
 
@@ -178,7 +186,7 @@ if [ ! "$mountify_expert_mode" = 1 ] && [ -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; t
 	# anti fuckup
 	# this is important as someone might actually use legit folder names
 	# and same shit exists on MNT_FOLDER, prevent this issue.
-	echo "mountify/post-fs-data: exiting since fake folder name $FAKE_MOUNT_NAME already exists!" >> /dev/kmsg
+	echo "$DMESG_PREFIX: exiting since fake folder name $FAKE_MOUNT_NAME already exists!" >> /dev/kmsg
 	exit 1
 fi
 
@@ -208,6 +216,6 @@ umount -l "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 
 # log after
 cat /proc/mounts > "$LOG_FOLDER/after"
-echo "mountify/post-fs-data: finished!" >> /dev/kmsg
+echo "$DMESG_PREFIX: finished!" >> /dev/kmsg
 
 # EOF
