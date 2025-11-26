@@ -216,6 +216,7 @@ umount -l "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 
 # log after
 cat /proc/mounts > "$LOG_FOLDER/after"
+touch "$LOG_FOLDER/mountify_symlink"
 echo "$DMESG_PREFIX: finished!" >> /dev/kmsg
 
 # EOF
