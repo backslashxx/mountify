@@ -66,7 +66,9 @@ case $mountify_mounts in
 	*) mode="disabled 💀" ;; # ??
 esac
 
-if [ "$use_ext4_sparse" = "1" ] || [ -f "$MODDIR/no_tmpfs_xattr" ]; then
+if [ -f "$LOG_FOLDER/mountify_symlink" ]; then
+	mode="$mode | ???: symlink 🔗"
+elif [ "$use_ext4_sparse" = "1" ] || [ -f "$MODDIR/no_tmpfs_xattr" ]; then
 	mode="$mode | fstype: ext4 🛠️"
 else
 	mode="$mode | fstype: tmpfs 🦾"
