@@ -5,7 +5,6 @@
 # No rights reserved.
 # This is free software; you can redistribute it and/or modify it under the terms of The Unlicense.
 PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
-SUSFS_BIN="/data/adb/ksu/bin/ksu_susfs"
 MODDIR="/data/adb/modules/mountify"
 
 # config
@@ -86,15 +85,19 @@ fi
 # functions
 controlled_depth() {
 	if [ -z "$1" ] || [ -z "$2" ]; then return ; fi
+	mount_success=0
 	for DIR in $(ls -d $1/*/ | sed 's/.$//' ); do
-		busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$(pwd)/$DIR:$2$DIR" "$MOUNT_DEVICE_NAME" "$2$DIR"
+		busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$(pwd)/$DIR:$2$DIR" "$MOUNT_DEVICE_NAME" "$2$DIR" && mount_success=1
 	done
+	[ "$mount_success" = 1 ] && echo "$2$DIR" >> "$LOG_FOLDER/mountify_mount_list"
 }
 
 single_depth() {
+	mount_success=0
 	for DIR in $( ls -d */ | sed 's/.$//'  | grep -vE "^(odm|product|system_ext|vendor)$" 2>/dev/null ); do
-		busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$(pwd)/$DIR:/system/$DIR" "$MOUNT_DEVICE_NAME" /system/$DIR
+		busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$(pwd)/$DIR:/system/$DIR" "$MOUNT_DEVICE_NAME" "/system/$DIR" && mount_success=1
 	done
+	[ "$mount_success" = 1 ] && echo "/system/$DIR" >> "$LOG_FOLDER/mountify_mount_list"
 }
 
 mountify_symlink() {
