@@ -9,7 +9,8 @@ SUSFS_BIN="/data/adb/ksu/bin/ksu_susfs"
 MODDIR="/data/adb/modules/mountify"
 
 # config
-mountify_mounts=1
+mountify_mounts=2
+mountify_expert_mode=0
 MOUNT_DEVICE_NAME="overlay"
 FS_TYPE_ALIAS="overlay"
 FAKE_MOUNT_NAME="mountify"
@@ -165,6 +166,21 @@ echo "$1" >> "$LOG_FOLDER/modules"
 # logic seems hard as we have to /mnt/vendor/module1/system/app:/mnt/vendor/module2/system/app
 # PR welcome if somebody sees a way to do it easily.
 # so just spam it for now
+
+# prevent this fuckup since on expert mode this isnt checked
+if [ "$FAKE_MOUNT_NAME" = "persist" ]; then
+	echo "mountify/post-fs-data: folder name named $FAKE_MOUNT_NAME is not allowed!" >> /dev/kmsg
+	exit 1
+fi
+
+# make sure its not there
+if [ ! "$mountify_expert_mode" = 1 ] && [ -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; then
+	# anti fuckup
+	# this is important as someone might actually use legit folder names
+	# and same shit exists on MNT_FOLDER, prevent this issue.
+	echo "mountify/post-fs-data: exiting since fake folder name $FAKE_MOUNT_NAME already exists!" >> /dev/kmsg
+	exit 1
+fi
 
 mkdir -p "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 
