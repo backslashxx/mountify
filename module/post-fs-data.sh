@@ -253,6 +253,13 @@ mountify_copy() {
 	echo "$MODULE_ID" >> "$LOG_FOLDER/modules"
 }
 
+# this way only sparse mode on ksu gets the rule
+handle_ksu_sepolicy() {
+	echo "allow kernel su file *;" > "$LOG_FOLDER/ksu_sparse_sepolicy"
+	/data/adb/ksud sepolicy apply "$LOG_FOLDER/ksu_sparse_sepolicy"
+	busybox chcon "u:r:su:s0" "$MNT_FOLDER/mountify-ext4"
+}
+
 # prevent this fuckup since on expert mode this isnt checked
 if [ "$FAKE_MOUNT_NAME" = "persist" ]; then
 	echo "$DMESG_PREFIX: folder name named $FAKE_MOUNT_NAME is not allowed!" >> /dev/kmsg
@@ -288,14 +295,13 @@ if [ "$decoy_mount_enabled" = "1" ] && [ -d "$DECOY_MOUNT_FOLDER" ] && [ "$(ls -
 	mount -t tmpfs tmpfs "$DECOY_MOUNT_FOLDER"
 fi
 
-
 if [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; then
 	# create 2GB sparse
 	busybox dd if=/dev/zero of="$MNT_FOLDER/mountify-ext4" bs=1M count=0 seek="$sparse_size"
 	/system/bin/mkfs.ext4 -O ^has_journal "$MNT_FOLDER/mountify-ext4"
 
 	# https://github.com/tiann/KernelSU/pull/3019
-	[ -f "$MODDIR/sepolicy.rule" ] && busybox chcon "u:r:su:s0" "$MNT_FOLDER/mountify-ext4"
+	[ "$KSU" = "true" ] && handle_ksu_sepolicy
 
 	busybox mount -o loop,rw "$MNT_FOLDER/mountify-ext4" "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 fi

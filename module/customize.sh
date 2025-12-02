@@ -139,12 +139,6 @@ if [ -f "$PERSISTENT_DIR/explicit_I_want_symlink" ]; then
 	cat "$MODPATH/symlink/mountify-symlink.sh" > "$MODPATH/post-fs-data.sh"
 fi
 
-# add sepolicy for ksu
-# https://github.com/tiann/KernelSU/pull/3019
-if [ "$KSU" = "true" ]; then
-	echo "allow kernel su file *;" > "$MODPATH/sepolicy.rule"
-fi
-
 # workaround for awry versioning on KernelSU forks
 # we cannot rely on just ksu vercode
 if [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ] && [ "$KSU_VER_CODE" -ge 22098 ] && 
