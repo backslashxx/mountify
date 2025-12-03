@@ -89,9 +89,6 @@ if [ -f $LOG_FOLDER/modules ]; then
 fi
 sed -i "s/^description=.*/$string/g" $MODDIR/module.prop
 
-# clean log folder
-[ -d "$LOG_FOLDER" ] && rm -rf "$LOG_FOLDER"
-
 # wait for boot-complete
 until [ "$(getprop sys.boot_completed)" = "1" ]; do
 	sleep 1
@@ -110,5 +107,8 @@ if [ -f "$MOUNTIFY_LOCK" ]; then
 	echo "mountify/service: lifting single instance lock" >> /dev/kmsg
 	rm "$MOUNTIFY_LOCK"
 fi
+
+# clean log folder
+[ -d "$LOG_FOLDER" ] && rm -rf "$LOG_FOLDER"
 
 # EOF
