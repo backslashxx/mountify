@@ -253,11 +253,6 @@ mountify_copy() {
 	echo "$MODULE_ID" >> "$LOG_FOLDER/modules"
 }
 
-# this way only sparse mode on ksu gets the rule
-handle_ksu_sepolicy() {
-	busybox chcon "u:object_r:ksu_file:s0" "$MNT_FOLDER/mountify-ext4"
-}
-
 # prevent this fuckup since on expert mode this isnt checked
 if [ "$FAKE_MOUNT_NAME" = "persist" ]; then
 	echo "$DMESG_PREFIX: folder name named $FAKE_MOUNT_NAME is not allowed!" >> /dev/kmsg
@@ -299,7 +294,8 @@ if [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; then
 	/system/bin/mkfs.ext4 -O ^has_journal "$MNT_FOLDER/mountify-ext4"
 
 	# https://github.com/tiann/KernelSU/pull/3019
-	[ "$KSU" = "true" ] && handle_ksu_sepolicy
+	# this way only sparse mode on ksu gets the rule
+	[ "$KSU" = "true" ] && busybox chcon "u:object_r:ksu_file:s0" "$MNT_FOLDER/mountify-ext4"
 
 	busybox mount -o loop,rw "$MNT_FOLDER/mountify-ext4" "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 fi

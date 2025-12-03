@@ -36,6 +36,10 @@ test_ext4_image() {
 	mkdir -p "$MNT_FOLDER/mountify-mount-test"
 	busybox dd if=/dev/zero of="$MNT_FOLDER/mountify-ext4-test" bs=1M count=0 seek=8 >/dev/null 2>&1 || ext4_fail=1
 	/system/bin/mkfs.ext4 -O ^has_journal "$MNT_FOLDER/mountify-ext4-test" >/dev/null 2>&1 || ext4_fail=1
+	
+	# https://github.com/tiann/KernelSU/pull/3019
+	[ "$KSU" = "true" ] && busybox chcon "u:object_r:ksu_file:s0" "$MNT_FOLDER/mountify-ext4-test"
+
 	busybox mount -o loop,rw "$MNT_FOLDER/mountify-ext4-test" "$MNT_FOLDER/mountify-mount-test" >/dev/null 2>&1 || ext4_fail=1
 	busybox umount -l "$MNT_FOLDER/mountify-mount-test" || ext4_fail=1
 
