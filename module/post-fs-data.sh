@@ -255,9 +255,7 @@ mountify_copy() {
 
 # this way only sparse mode on ksu gets the rule
 handle_ksu_sepolicy() {
-	echo "allow kernel su file *;" > "$LOG_FOLDER/ksu_sparse_sepolicy"
-	/data/adb/ksud sepolicy apply "$LOG_FOLDER/ksu_sparse_sepolicy"
-	busybox chcon "u:r:su:s0" "$MNT_FOLDER/mountify-ext4"
+	busybox chcon "u:object_r:ksu_file:s0" "$MNT_FOLDER/mountify-ext4"
 }
 
 # prevent this fuckup since on expert mode this isnt checked
