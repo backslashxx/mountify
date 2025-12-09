@@ -234,13 +234,13 @@ mountify_copy() {
 
 	# make sure to mirror selinux context
 	# else we get "u:object_r:tmpfs:s0"
-	for file in $( find -L $BASE_DIR | sed "s|$BASE_DIR||g" ) ; do 
+	for file in $( busybox find -L $BASE_DIR | sed "s|$BASE_DIR||g" ) ; do 
 		# echo "mountify_debug chcorn $BASE_DIR$file to $MNT_FOLDER/$FAKE_MOUNT_NAME$file" >> /dev/kmsg
 		busybox chcon --reference="$BASE_DIR$file" "$MNT_FOLDER/$FAKE_MOUNT_NAME$file"
 	done
 
 	# catch opaque dirs, requires getfattr
-	for dir in $( find -L $BASE_DIR -type d ) ; do
+	for dir in $( busybox find -L $BASE_DIR -type d ) ; do
 		if getfattr -d "$dir" | grep -q "trusted.overlay.opaque" ; then
 			# echo "mountify_debug: opaque dir $dir found!" >> /dev/kmsg
 			opaque_dir=$(echo "$dir" | sed "s|$BASE_DIR|.|")
