@@ -53,6 +53,7 @@ async function appendInputGroup() {
         if (Object.prototype.hasOwnProperty.call(config, key)) {
             const value = config[key];
             const metadata = configMetadata[key] || false;
+            const options = metadata?.option || [];
             const header = key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
             const container = document.getElementById(`content-${metadata.type}`);
             const div = document.createElement('div');
@@ -60,137 +61,20 @@ async function appendInputGroup() {
             div.dataset.key = key;
 
             if (!metadata) continue;
-            if (metadata.option) { // Fixed options
+            if (metadata.option) {
                 if (metadata.option[0] === 'allow-other') { // Fixed options + custom input
-                    const textField = document.createElement('md-outlined-text-field');
-                    textField.label = key;
-                    textField.value = value;
-                    textField.innerHTML = `
-                        <md-icon-button slot="trailing-icon">
-                            <md-icon>info</md-icon>
-                        </md-icon-button>
-                    `;
-                    textField.querySelector('md-icon-button').onclick = () => {
-                        showDescription(header, translations['desc_' + key]);
-                    }
-                    div.appendChild(textField);
-
-                    const menu = document.createElement('md-menu');
-                    menu.defaultFocus = '';
-                    menu.skipRestoreFocus = true;
-                    menu.anchorCorner = 'start-start';
-                    menu.menuCorner = 'end-start';
-                    menu.anchorElement = textField;
-                    div.appendChild(menu);
-
-                    const options = metadata.option.slice(1);
-                    // append all options once and toggle visibility with style.display on filter
-                    options.forEach(opt => {
-                        const menuItem = document.createElement('md-menu-item');
-                        menuItem.dataset.option = opt;
-                        menuItem.innerHTML = `<div slot="headline">${opt}</div>`;
-                        menuItem.addEventListener('click', () => {
-                            textField.value = opt;
-                            if (typeof config[key] === 'number') {
-                                config[key] = parseInt(opt, 10) || 0;
-                            } else {
-                                config[key] = opt;
-                            }
-                            menu.close();
-                        });
-                        menu.appendChild(menuItem);
-                    });
-
-                    const filterMenuItems = (value) => {
-                        const newValue = String(value || '');
-                        if (typeof config[key] === 'number') {
-                            config[key] = parseInt(newValue, 10) || 0;
-                        } else {
-                            config[key] = newValue;
-                        }
-
-                        const needle = newValue.toLowerCase();
-                        let visible = 0;
-                        menu.querySelectorAll('md-menu-item').forEach(mi => {
-                            const opt = (mi.dataset.option || '').toLowerCase();
-                            const show = opt.includes(needle) && opt !== needle;
-                            mi.style.display = show ? '' : 'none';
-                            if (show) visible++;
-                        });
-
-                        if (visible > 0) {
-                            menu.show();
-                        } else {
-                            menu.close();
-                        }
-                    }
-
-                    textField.addEventListener('input', (event) => filterMenuItems(event.target.value));
-                    textField.addEventListener('focus', (event) => {
-                        setTimeout(() => {
-                            if (document.activeElement === textField) filterMenuItems(event.target.value);
-                        }, 100);
-                    });
+                    appendTextField(key, value, div, options, header);
                 } else { // Fixed options only
-                    const select = document.createElement('md-outlined-select');
-                    select.label = key;
-                    select.innerHTML = `
-                        <md-icon-button slot="trailing-icon">
-                            <md-icon>info</md-icon>
-                        </md-icon-button>
-                    `;
-                    select.querySelector('md-icon-button').addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        showDescription(header, translations['desc_' + key]);
-                    });
-
-                    const options = metadata.option;
-
-                    options.forEach(opt => {
-                        const option = document.createElement('md-select-option');
-                        option.value = opt;
-                        option.innerHTML = `<div slot="headline">${opt}</div>`;
-                        if (opt == value) option.selected = true;
-                        select.appendChild(option);
-                    });
-
-                    select.addEventListener('change', (event) => {
-                        const newValue = event.target.value;
-                        if (typeof config[key] === 'number') {
-                            config[key] = parseInt(newValue, 10) || 0;
-                        } else {
-                            config[key] = newValue;
-                        }
-                        file.writeConfig();
-                    });
-                    div.appendChild(select);
+                    appendSelect(key, value, div, options, header);
                 }
             } else { // Raw text field
-                const textField = document.createElement('md-outlined-text-field');
-                textField.label = key;
-                textField.value = value;
-                textField.innerHTML = `
-                    <md-icon-button slot="trailing-icon">
-                        <md-icon>info</md-icon>
-                    </md-icon-button>
-                `;
-                textField.querySelector('md-icon-button').onclick = () => {
-                    showDescription(header, translations['desc_' + key]);
-                }
-                textField.addEventListener('input', (event) => {
-                    const newValue = event.target.value;
-                    if (typeof config[key] === 'number') {
-                        config[key] = parseInt(newValue, 10) || 0;
-                    } else {
-                        config[key] = newValue;
-                    }
-                });
-                div.appendChild(textField);
+                appendTextField(key, value, div, null, header);
             }
             container.appendChild(div);
         }
     }
 
+    // Requirement
     for (const key in configMetadata) {
         const metadata = configMetadata[key];
         if (metadata.require) {
@@ -224,7 +108,141 @@ async function appendInputGroup() {
     appendExtras();
 }
 
-function appendExtras() {
+/**
+ * Append text field with options or raw text field if no option provided
+ * @param {string} key - config name
+ * @param {string} value - config value
+ * @param {HTMLElement} el - Parent element to append
+ * @param {string[]} options - options to show
+ * @param {string} header - Help menu header
+ * @returns {void}
+ */
+function appendTextField(key, value, el, options, header) {
+    const textField = document.createElement('md-outlined-text-field');
+    textField.label = key;
+    textField.value = value;
+    textField.innerHTML = `
+        <md-icon-button slot="trailing-icon">
+            <md-icon>info</md-icon>
+        </md-icon-button>
+    `;
+    textField.querySelector('md-icon-button').onclick = () => {
+        showDescription(header, translations['desc_' + key]);
+    }
+    el.appendChild(textField);
+
+    if (!options) { // Raw text field
+        textField.addEventListener('input', (event) => {
+            const newValue = event.target.value;
+            if (typeof value === 'number') {
+                value = parseInt(newValue) || 0;
+            } else {
+                value = newValue;
+            }
+        });
+        return;
+    }
+
+    const menu = document.createElement('md-menu');
+    menu.defaultFocus = '';
+    menu.skipRestoreFocus = true;
+    menu.anchorCorner = 'start-start';
+    menu.menuCorner = 'end-start';
+    menu.anchorElement = textField;
+    el.appendChild(menu);
+
+    // append all options once and toggle visibility with style.display on filter
+    options.slice(1).forEach(opt => {
+        const menuItem = document.createElement('md-menu-item');
+        menuItem.dataset.option = opt;
+        menuItem.innerHTML = `<div slot="headline">${opt}</div>`;
+        menuItem.addEventListener('click', () => {
+            textField.value = opt;
+            if (typeof value === 'number') {
+                value = parseInt(opt) || 0;
+            } else {
+                value = opt;
+            }
+            menu.close();
+        });
+        menu.appendChild(menuItem);
+    });
+
+    const filterMenuItems = (value) => {
+        const newValue = String(value || '');
+        if (typeof value === 'number') {
+            value = parseInt(newValue) || 0;
+        } else {
+            value = newValue;
+        }
+
+        const needle = newValue.toLowerCase();
+        let visible = 0;
+        menu.querySelectorAll('md-menu-item').forEach(mi => {
+            const opt = (mi.dataset.option || '').toLowerCase();
+            const show = opt.includes(needle) && opt !== needle;
+            mi.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+
+        if (visible > 0) {
+            menu.show();
+        } else {
+            menu.close();
+        }
+    }
+
+    textField.addEventListener('input', (event) => filterMenuItems(event.target.value));
+    textField.addEventListener('focus', (event) => {
+        setTimeout(() => {
+            if (document.activeElement === textField) filterMenuItems(event.target.value);
+        }, 100);
+    });
+}
+
+/**
+ * Append select options
+ * @param {string} key - config name
+ * @param {string} value - config value
+ * @param {HTMLElement} el - Parent element to append
+ * @param {string[]} options - options to show
+ * @param {string} header - Help menu header
+ * @returns {void}
+ */
+function appendSelect(key, value, el, options, header) {
+    const select = document.createElement('md-outlined-select');
+    select.label = key;
+    select.innerHTML = `
+        <md-icon-button slot="trailing-icon">
+            <md-icon>info</md-icon>
+        </md-icon-button>
+    `;
+    select.querySelector('md-icon-button').addEventListener('click', (e) => {
+        e.stopPropagation();
+        showDescription(header, translations['desc_' + key]);
+    });
+
+    options.forEach(opt => {
+        const option = document.createElement('md-select-option');
+        option.value = opt;
+        option.innerHTML = `<div slot="headline">${opt}</div>`;
+        if (opt == value) option.selected = true;
+        select.appendChild(option);
+    });
+
+    select.addEventListener('change', (event) => {
+        const newValue = event.target.value;
+        if (typeof value === 'number') {
+            value = parseInt(newValue) || 0;
+        } else {
+            value = newValue;
+        }
+        file.writeConfig();
+    });
+    el.appendChild(select);
+}
+
+function appendExtras(value) {
     document.querySelectorAll('.input-group').forEach(group => {
         const key = group.dataset.key;
         if (!key) return;
@@ -240,7 +258,7 @@ function appendExtras() {
 
             select.addEventListener('change', (event) => {
                 const newValue = event.target.value;
-                config[key] = parseInt(newValue, 10) || 0;
+                config[key] = parseInt(newValue) || 0;
                 file.writeConfig();
                 toggleButton();
             });
