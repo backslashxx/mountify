@@ -490,9 +490,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     [config, configMetadata] = await Promise.all([file.loadConfig(), file.loadConfigMetadata()]);
     const advanced = document.getElementById('advanced');
-    advanced.selected = localStorage.getItem('advanced') === 'true';
+    advanced.selected = localStorage.getItem('mountify_advanced') === 'true';
     advanced.addEventListener('change', () => {
-        localStorage.setItem('advanced', advanced.selected ? 'true' : 'false');
+        localStorage.setItem('mountify_advanced', advanced.selected ? 'true' : 'false');
         if (config) toggleAdvanced(advanced.selected);
     });
     if (config) {
