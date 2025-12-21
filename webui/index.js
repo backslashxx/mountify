@@ -134,10 +134,10 @@ function appendTextField(key, value, el, options, header) {
     if (!options) { // Raw text field
         textField.addEventListener('input', (event) => {
             const newValue = event.target.value;
-            if (typeof value === 'number') {
-                value = parseInt(newValue) || 0;
+            if (typeof config[key] === 'number') {
+                config[key] = parseInt(newValue) || 0;
             } else {
-                value = newValue;
+                config[key] = newValue;
             }
         });
         return;
@@ -158,10 +158,10 @@ function appendTextField(key, value, el, options, header) {
         menuItem.innerHTML = `<div slot="headline">${opt}</div>`;
         menuItem.addEventListener('click', () => {
             textField.value = opt;
-            if (typeof value === 'number') {
-                value = parseInt(opt) || 0;
+            if (typeof config[key] === 'number') {
+                config[key] = parseInt(opt) || 0;
             } else {
-                value = opt;
+                config[key] = opt;
             }
             menu.close();
         });
@@ -170,10 +170,10 @@ function appendTextField(key, value, el, options, header) {
 
     const filterMenuItems = (value) => {
         const newValue = String(value || '');
-        if (typeof value === 'number') {
-            value = parseInt(newValue) || 0;
+        if (typeof config[key] === 'number') {
+            config[key] = parseInt(newValue) || 0;
         } else {
-            value = newValue;
+            config[key] = newValue;
         }
 
         const needle = newValue.toLowerCase();
@@ -232,10 +232,10 @@ function appendSelect(key, value, el, options, header) {
 
     select.addEventListener('change', (event) => {
         const newValue = event.target.value;
-        if (typeof value === 'number') {
-            value = parseInt(newValue) || 0;
+        if (typeof config[key] === 'number') {
+            config[key] = parseInt(newValue) || 0;
         } else {
-            value = newValue;
+            config[key] = newValue;
         }
         file.writeConfig();
     });
