@@ -375,11 +375,6 @@ if [ "$decoy_mount_enabled" = "1" ] && [ -d "$DECOY_MOUNT_FOLDER" ]; then
 	busybox umount -l "$DECOY_MOUNT_FOLDER"
 fi
 
-if [ ! -f "$MODDIR/no_tmpfs_xattr" ] && [ ! "$use_ext4_sparse" = "1" ]; then
-	echo "$DMESG_PREFIX: stage2/tmpfs: unmounting $(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")" >> /dev/kmsg
-	busybox umount -l "$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")"
-fi
-
 # insmod compat - system provided insmod most of the times is betterer
 if command -v /system/bin/insmod > /dev/null 2>&1; then
 	insmod() { /system/bin/insmod "$@"; }
@@ -398,12 +393,9 @@ if [ ! -f "$MODDIR/ksud_has_nuke_ext4" ] && [ $enable_lkm_nuke = 1 ] && [ -f "$M
 	kptr_set=$(cat /proc/sys/kernel/kptr_restrict)
 	echo 1 > /proc/sys/kernel/kptr_restrict
 	ptr_address=$(grep " ext4_unregister_sysfs$" /proc/kallsyms | awk {'print "0x"$1'})
-	echo "$DMESG_PREFIX: loading LKM with mount_point=$mnt symaddr=$ptr_address" >> /dev/kmsg
+	echo "$DMESG_PREFIX: stage2/ext4: loading LKM with mount_point=$mnt symaddr=$ptr_address" >> /dev/kmsg
 	insmod "$MODDIR/lkm/$lkm_filename" mount_point="$mnt" symaddr="$ptr_address" > /dev/null 2>&1
 	echo $kptr_set > /proc/sys/kernel/kptr_restrict
-
-	echo "$DMESG_PREFIX: stage2/ext4: unmounting $(realpath "$mnt")" >> /dev/kmsg
-	busybox umount -l "$mnt"
 
 fi
 
@@ -413,12 +405,16 @@ if [ -f "$MODDIR/ksud_has_nuke_ext4" ] && [ "$spoof_sparse" = "0" ] &&
 	{ [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; }; then
 
 	mnt="$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")"
-	echo "$DMESG_PREFIX: ksud kernel nuke-ext4-sysfs $mnt" >> /dev/kmsg
+	echo "$DMESG_PREFIX: stage2/ext4: ksud kernel nuke-ext4-sysfs $mnt" >> /dev/kmsg
 	/data/adb/ksud kernel nuke-ext4-sysfs "$mnt"
 
-	echo "$DMESG_PREFIX: stage2/ext4: unmounting $(realpath "$mnt")" >> /dev/kmsg
-	busybox umount -l "$mnt"
+fi
 
+# we can commonize umount instead
+# its the same for tmpfs and ext4 anyway
+if [ -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ] && [ "$spoof_sparse" = "0" ] ; then
+	echo "$DMESG_PREFIX: stage2: unmounting $(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")" >> /dev/kmsg
+	busybox umount -l "$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")"
 fi
 
 # delete the sparse
