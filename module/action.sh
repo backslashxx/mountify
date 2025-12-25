@@ -13,10 +13,6 @@ echo "[+] mountify"
 echo "[+] extended status"
 printf "\n\n"
 
-# hunt logging floder
-[ -w /mnt ] && LOG_FOLDER=/mnt/mountify_logs
-[ -w /mnt/vendor ] && LOG_FOLDER=/mnt/vendor/mountify_logs
-
 # check if fake alias exists, if fail use overlay
 if ! grep "nodev" /proc/filesystems | grep -q "$FS_TYPE_ALIAS" > /dev/null 2>&1; then
 	FS_TYPE_ALIAS="overlay"

@@ -66,8 +66,9 @@ fi
 echo "$DMESG_PREFIX: start!" >> /dev/kmsg
 
 # find and create logging folder
-[ -w /mnt ] && LOG_FOLDER=/mnt/mountify_logs
-[ -w /mnt/vendor ] && LOG_FOLDER=/mnt/vendor/mountify_logs
+[ -w "/mnt" ] && MNT_FOLDER="/mnt"
+[ -w "/mnt/vendor" ] && ! busybox grep -q " /mnt/vendor " "/proc/mounts" && MNT_FOLDER="/mnt/vendor"
+LOG_FOLDER="$MNT_FOLDER/mountify_logs"
 mkdir -p "$LOG_FOLDER"
 # log before 
 cat /proc/mounts > "$LOG_FOLDER/before"
@@ -104,9 +105,6 @@ decoy_folder_candidates="/oem
 /oem_dlkm
 /acct
 "
-
-[ -w /mnt ] && MNT_FOLDER="/mnt"
-[ -w /mnt/vendor ] && MNT_FOLDER="/mnt/vendor"
 
 # check if fake alias exists, if fail use overlay
 if ! grep "nodev" /proc/filesystems | grep -q "$FS_TYPE_ALIAS" > /dev/null 2>&1; then

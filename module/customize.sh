@@ -29,8 +29,8 @@ else
 fi
 
 # routine start
-[ -w /mnt ] && MNT_FOLDER=/mnt
-[ -w /mnt/vendor ] && MNT_FOLDER=/mnt/vendor
+[ -w "/mnt" ] && MNT_FOLDER="/mnt"
+[ -w "/mnt/vendor" ] && ! busybox grep -q " /mnt/vendor " "/proc/mounts" && MNT_FOLDER="/mnt/vendor"
 
 test_ext4_image() {
 	mkdir -p "$MNT_FOLDER/mountify-mount-test"
