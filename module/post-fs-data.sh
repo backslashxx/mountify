@@ -68,7 +68,7 @@ echo "$DMESG_PREFIX: start!" >> /dev/kmsg
 # find and create logging folder
 [ -w "/mnt" ] && MNT_FOLDER="/mnt"
 [ -w "/mnt/vendor" ] && ! busybox grep -q " /mnt/vendor " "/proc/mounts" && MNT_FOLDER="/mnt/vendor"
-LOG_FOLDER="$MNT_FOLDER/mountify_logs"
+LOG_FOLDER="/dev/mountify_logs"
 mkdir -p "$LOG_FOLDER"
 # log before 
 cat /proc/mounts > "$LOG_FOLDER/before"
@@ -266,10 +266,25 @@ if [ ! "$mountify_expert_mode" = 1 ] && [ -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ]; t
 	exit 1
 fi
 
+# lets also mount our own /mnt folder
+# so hierarchy becomes
+# stage1 /mnt or /mnt/vendor always tmpfs
+# stage2 /mnt/fake_folder_name or /mnt/vendor/fake_folder_name is either tmpfs or ext4
+if [ -d "$MNT_FOLDER" ]; then
+	echo "$DMESG_PREFIX: stage1: mounting $(realpath "$MNT_FOLDER")" >> /dev/kmsg
+
+	# mount and test, if it fails fuck it, we bail
+	if ! busybox mount -t tmpfs tmpfs "$(realpath "$MNT_FOLDER")"; then
+		echo "$DMESG_PREFIX: mounting $MNT_FOLDER fail! bail out!" >> /dev/kmsg
+		exit 1
+	fi
+
+fi
+
 # create it
 mkdir -p "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 if [ ! -f "$MODDIR/no_tmpfs_xattr" ] && [ ! "$use_ext4_sparse" = "1" ]; then
-	echo "$DMESG_PREFIX: mounting $(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")" >> /dev/kmsg
+	echo "$DMESG_PREFIX: stage2/tmpfs: mounting $(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")" >> /dev/kmsg
 	busybox mount -t tmpfs tmpfs "$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")"
 fi
 touch "$MNT_FOLDER/$FAKE_MOUNT_NAME/placeholder"
@@ -295,6 +310,7 @@ if [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; then
 	# this way only sparse mode on ksu gets the rule
 	[ "$KSU" = "true" ] && busybox chcon "u:object_r:ksu_file:s0" "$MNT_FOLDER/mountify-ext4"
 
+	echo "$DMESG_PREFIX: stage2/ext4: mounting $(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")" >> /dev/kmsg
 	busybox mount -o loop,rw "$MNT_FOLDER/mountify-ext4" "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 fi
 
@@ -318,7 +334,9 @@ if [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; then
 	busybox umount -l "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 	busybox sync
 	/system/bin/resize2fs -M "$MNT_FOLDER/mountify-ext4"
-	
+
+	echo "$DMESG_PREFIX: stage2/ext4: remounting $(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")" >> /dev/kmsg	
+
 	if [ "$spoof_sparse" = "1" ] && [ -w "/apex" ] && [ ! -e "/apex/$FAKE_APEX_NAME" ]; then
 		# here we copy how android does it
 		mkdir -p "/apex/$FAKE_APEX_NAME@1"
@@ -358,7 +376,7 @@ if [ "$decoy_mount_enabled" = "1" ] && [ -d "$DECOY_MOUNT_FOLDER" ]; then
 fi
 
 if [ ! -f "$MODDIR/no_tmpfs_xattr" ] && [ ! "$use_ext4_sparse" = "1" ]; then
-	echo "$DMESG_PREFIX: unmounting $(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")" >> /dev/kmsg
+	echo "$DMESG_PREFIX: stage2/tmpfs: unmounting $(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")" >> /dev/kmsg
 	busybox umount -l "$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")"
 fi
 
@@ -383,7 +401,8 @@ if [ ! -f "$MODDIR/ksud_has_nuke_ext4" ] && [ $enable_lkm_nuke = 1 ] && [ -f "$M
 	echo "$DMESG_PREFIX: loading LKM with mount_point=$mnt symaddr=$ptr_address" >> /dev/kmsg
 	insmod "$MODDIR/lkm/$lkm_filename" mount_point="$mnt" symaddr="$ptr_address" > /dev/null 2>&1
 	echo $kptr_set > /proc/sys/kernel/kptr_restrict
-	echo "$DMESG_PREFIX: unmounting $mnt" >> /dev/kmsg
+
+	echo "$DMESG_PREFIX: stage2/ext4: unmounting $(realpath "$mnt")" >> /dev/kmsg
 	busybox umount -l "$mnt"
 
 fi
@@ -396,7 +415,8 @@ if [ -f "$MODDIR/ksud_has_nuke_ext4" ] && [ "$spoof_sparse" = "0" ] &&
 	mnt="$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")"
 	echo "$DMESG_PREFIX: ksud kernel nuke-ext4-sysfs $mnt" >> /dev/kmsg
 	/data/adb/ksud kernel nuke-ext4-sysfs "$mnt"
-	echo "$DMESG_PREFIX: unmounting $mnt" >> /dev/kmsg
+
+	echo "$DMESG_PREFIX: stage2/ext4: unmounting $(realpath "$mnt")" >> /dev/kmsg
 	busybox umount -l "$mnt"
 
 fi
@@ -404,6 +424,11 @@ fi
 # delete the sparse
 if [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; then
 	[ -f "$MNT_FOLDER/mountify-ext4" ] && rm "$MNT_FOLDER/mountify-ext4"
+fi
+
+if [ -d "$MNT_FOLDER" ]; then
+	echo "$DMESG_PREFIX: stage1: unmounting $(realpath "$MNT_FOLDER")" >> /dev/kmsg
+	busybox umount -l "$MNT_FOLDER"
 fi
 
 # log after
