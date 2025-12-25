@@ -412,7 +412,7 @@ fi
 
 # we can commonize umount instead
 # its the same for tmpfs and ext4 anyway
-if [ -d "$MNT_FOLDER/$FAKE_MOUNT_NAME" ] && [ "$spoof_sparse" = "0" ] ; then
+if [ "$spoof_sparse" = "0" ]; then
 	echo "$DMESG_PREFIX: stage2: unmounting $(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")" >> /dev/kmsg
 	busybox umount -l "$(realpath "$MNT_FOLDER/$FAKE_MOUNT_NAME")"
 fi
@@ -422,10 +422,9 @@ if [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; then
 	[ -f "$MNT_FOLDER/mountify-ext4" ] && rm "$MNT_FOLDER/mountify-ext4"
 fi
 
-if [ -d "$MNT_FOLDER" ]; then
-	echo "$DMESG_PREFIX: stage1: unmounting $(realpath "$MNT_FOLDER")" >> /dev/kmsg
-	busybox umount -l "$MNT_FOLDER"
-fi
+# unmount stage1
+echo "$DMESG_PREFIX: stage1: unmounting $(realpath "$MNT_FOLDER")" >> /dev/kmsg
+busybox umount -l "$MNT_FOLDER"
 
 # log after
 cat /proc/mounts > "$LOG_FOLDER/after"
