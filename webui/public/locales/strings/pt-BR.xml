@@ -14,10 +14,12 @@
     <string name="system_default">Padrão do Sistema</string>
     <string name="select_language">Selecionar Idioma</string>
 
+    <!-- Functional button -->
     <string name="cancel">Cancelar</string>
     <string name="close">Fechar</string>
     <string name="save">Salvar</string>
 
+    <!-- Config descriptions -->
     <string name="desc_mountify_mounts">Configuração de montagem de módulos.\n0 - desativar\n1 - modo manual (monta módulos encontrados no modules.txt)\n2 - modo automático (monta todos os módulos com a pasta system)</string>
     <string name="desc_FAKE_MOUNT_NAME">Nome da pasta de montagem.</string>
     <string name="desc_test_decoy_mount">Teste para montagem falsa (decoy).\nDestinado ao modo tmpfs.\n0 - desativar\n1 - ativar</string>

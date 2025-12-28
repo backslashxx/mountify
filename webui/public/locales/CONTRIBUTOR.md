@@ -11,5 +11,5 @@
 - [KOWX712](https://github.com/KOWX712)
 
 ## Portuguese (Brazil)
-- [brutw](https://github.com/brutw)
 
+- [brutw](https://github.com/brutw)
