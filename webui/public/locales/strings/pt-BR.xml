@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tab_general">Geral</string>
+    <string name="tab_ext4">Ext4</string>
+    <string name="tab_advanced">Avançado</string>
+    <string name="show_advanced_option">Mostrar opções avançadas</string>
+    <string name="enable_mountify_update">Ativar atualização do Mountify</string>
+    <string name="enable_litemode">Ativar modo leve (Litemode)</string>
+    <string name="warning_litemode">O Litemode foi introduzido no APatch a partir da v11024</string>
+    <string name="reboot_title">Reiniciar</string>
+    <string name="reboot_message">Reiniciar agora?</string>
+    <string name="reboot">Reiniciar</string>
+    <string name="select_modules">Selecionar Módulos</string>
+    <string name="system_default">Padrão do Sistema</string>
+    <string name="select_language">Selecionar Idioma</string>
+
+    <!-- Functional button -->
+    <string name="cancel">Cancelar</string>
+    <string name="close">Fechar</string>
+    <string name="save">Salvar</string>
+
+    <!-- Config descriptions -->
+    <string name="desc_mountify_mounts">Configuração de montagem de módulos.\n0 - desativar\n1 - modo manual (monta módulos encontrados no modules.txt)\n2 - modo automático (monta todos os módulos com a pasta system)</string>
+    <string name="desc_FAKE_MOUNT_NAME">Nome da pasta de montagem.</string>
+    <string name="desc_test_decoy_mount">Teste para montagem falsa (decoy).\nDestinado ao modo tmpfs.\n0 - desativar\n1 - ativar</string>
+    <string name="desc_mountify_stop_start">Reinicia o Android no serviço; alguns módulos podem precisar disso.\nEsta é uma solução para módulos com problemas de tempo de execução (racey), como animações de boot e drivers de GPU.\n⚠️ Se você NÃO tem problemas, NÃO precisa disso.\n\n0 - desativar\n1 - ativar</string>
+    <string name="desc_FS_TYPE_ALIAS">Altere isto se você tiver um driver overlayfs personalizado registrado com outro alias.</string>
+    <string name="desc_MOUNT_DEVICE_NAME">Você pode inserir \'APatch\', \'KSU\' ou \'magisk\' aqui para que um provedor zygisk possa desmontar.\n\nExemplos: NeoZygisk, NoHello, ReZygisk, Zygisk Assistant, ZygiskNext-UM/DE</string>
+    <string name="desc_mountify_custom_umount">Ativa métodos de desmontagem (umount) no kernel.\n0 - desativar\n1 - susfs4ksu\n2 - ksud kernel umount (22106+)\n\n⚠️ Se você usa um provedor zygisk, NÃO precisa disso.</string>
+    <string name="desc_mountify_expert_mode">🚨 AVISO!\n ⚠️ Isso desativa as verificações de segurança.\nPrincipalmente para fins de desenvolvimento e depuração.\n0 - desativar\n1 - ativar</string>
+    <string name="desc_use_ext4_sparse">Substituição do modo ext4 sparse.\nPara configurações compatíveis com tmpfs xattr que preferem usar uma imagem ext4 sparse para montagem.\n0 - desativar\n1 - ativar</string>
+    <string name="desc_spoof_sparse">Simular (spoof) sparse como uma montagem apex.\nFunciona bem com um MOUNT_DEVICE_NAME personalizado.\nNOTA: quando ativado, a função nuke é desativada.</string>
+    <string name="desc_FAKE_APEX_NAME">Personalizar o nome da montagem apex simulada.\nEmbora possa ser inútil, tenta fazer com que pareça legítimo.</string>
+    <string name="desc_sparse_size">Definir um tamanho sparse personalizado.\nModifique para qualquer número inteiro positivo.\n- tamanho em MB.</string>
+    <string name="desc_enable_lkm_nuke">🚨 AVISO!\n⚠️ Recurso experimental. Não espere 100% de sucesso.\nCarrega um LKM de execução única que desregistra nós sysfs ext4. \n0 - desativar\n1 - ativar\n\nNOTA: no KernelSU 22105+ isso é tratado pelo ksud</string>
+    <string name="desc_lkm_filename">Apenas GKI 5.10+ são devidamente suportados.\nSelecione o seu Android KMI.</string>
+</resources>
