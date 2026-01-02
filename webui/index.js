@@ -57,7 +57,7 @@ async function appendInputGroup() {
             const header = key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
             const container = document.getElementById(`content-${metadata.type}`);
             const div = document.createElement('div');
-            div.className = 'input-group';
+            div.className = 'input-group content';
             div.dataset.key = key;
 
             if (!metadata) continue;
@@ -309,7 +309,7 @@ async function showModuleSelector() {
                 </md-list-item>
             `;
         }).join('');
-    }).catch(() => {});
+    }).catch(() => { });
 
     const saveConfig = () => {
         const selectedModules = Array.from(list.querySelectorAll('md-checkbox'))
@@ -320,7 +320,7 @@ async function showModuleSelector() {
             if (result.errno !== 0) {
                 toast('Failed to save: ' + result.stderr);
             }
-        }).catch(() => {});
+        }).catch(() => { });
     }
 
     saveBtn.onclick = () => {
@@ -406,8 +406,8 @@ document.querySelectorAll('md-dialog').forEach(dialog => {
         ];
         customAnim.scrim = [
             [
-                [{'opacity': 0}, {'opacity': 0.32}],
-                {duration: 300, easing: 'linear'},
+                [{ 'opacity': 0 }, { 'opacity': 0.32 }],
+                { duration: 300, easing: 'linear' },
             ],
         ];
         customAnim.container = [];
@@ -428,8 +428,8 @@ document.querySelectorAll('md-dialog').forEach(dialog => {
         ];
         customAnim.scrim = [
             [
-                [{'opacity': 0.32}, {'opacity': 0}],
-                {duration: 300, easing: 'linear'},
+                [{ 'opacity': 0.32 }, { 'opacity': 0 }],
+                { duration: 300, easing: 'linear' },
             ],
         ];
         customAnim.container = [];
@@ -437,6 +437,37 @@ document.querySelectorAll('md-dialog').forEach(dialog => {
         return customAnim;
     };
 });
+
+function initTab() {
+    const mdTab = document.querySelector('md-tabs');
+    const contentContainers = document.querySelectorAll('.content-container');
+
+    const updateTabPositions = () => {
+        const activeTab = mdTab.querySelector('md-primary-tab[active]');
+        if (!activeTab) return;
+
+        const tabIndex = Array.from(mdTab.querySelectorAll('md-primary-tab')).indexOf(activeTab);
+        contentContainers.forEach((container, index) => {
+            const translateX = (index - tabIndex) * 100;
+            container.style.transform = `translateX(${translateX}%)`;
+            setTimeout(() => {
+                container.style.transition = 'transform 0.3s ease';
+                container.classList.remove('unresolved');
+            }, 10);
+        });
+    };
+
+    contentContainers.forEach((container, index) => {
+        const translateX = index * 100;
+        container.style.transform = `translateX(${translateX}%)`;
+    });
+
+    updateTabPositions();
+    mdTab.addEventListener('change', async () => {
+        await Promise.resolve();
+        updateTabPositions();
+    });
+}
 
 function initUpdateSwitch() {
     const updateSwitch = document.getElementById('update');
@@ -451,7 +482,7 @@ function initUpdateSwitch() {
         exec(`sed -i ${cmd} ${moddir}/module.prop`).then((result) => {
             checkUpdateState();
             if (result.errno !== 0) toast('Failed to toggle update: ' + result.stderr);
-        }).catch(() => {});
+        }).catch(() => { });
     });
 }
 
@@ -466,7 +497,7 @@ function initRebootButton() {
                 if (btn.value === 'reboot') {
                     exec('/system/bin/reboot').then((result) => {
                         if (result.errno !== 0) toast('Failed to reboot: ' + result.stderr);
-                    }).catch(() => {});
+                    }).catch(() => { });
                 }
             }
         });
@@ -501,16 +532,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     file.loadVersion();
 
-    const controller = document.querySelector('md-tabs');
-    controller.addEventListener('change', async () => {
-        await Promise.resolve();
-        controller.querySelectorAll('md-primary-tab').forEach(tab => {
-            const panelId = tab.getAttribute('aria-controls');
-            const isActive = tab.hasAttribute('active');
-            const panel = document.getElementById(panelId);
-            isActive ? panel.removeAttribute('hidden') : panel.setAttribute('hidden', '');
-        });
-    });
+    initTab();
 
     initLanguageButton();
     initRebootButton();

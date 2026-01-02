@@ -21,19 +21,20 @@
                 <md-primary-tab id="advanced-tab" aria-controls="content-advanced" data-i18n="tab_advanced">Advanced</md-primary-tab>
             </md-tabs>
         </div>
-        <div class="content-container content" id="content-general" role="tabpanel" aria-labelledby="general-tab"></div>
-        <div class="content-container content" id="content-ext4" role="tabpanel" aria-labelledby="ext4-tab" hidden></div>
-        <div class="content-container" id="content-advanced" role="tabpanel" aria-labelledby="advanced-tab" hidden>
-            <label class="content">
-                <span data-i18n="show_advanced_option">Show advanced option</span>
-                <md-switch id="advanced"></md-switch>
-                <md-ripple></md-ripple>
-            </label>
-            <label class="content">
-                <span data-i18n="enable_mountify_update">Enable mountify update</span>
-                <md-switch id="update"></md-switch>
-                <md-ripple></md-ripple>
-            </label>
+        <div class="horizontal-pager">
+            <div class="content-container unresolved" id="content-general" role="tabpanel" aria-labelledby="general-tab"></div>
+            <div class="content-container unresolved" id="content-ext4" role="tabpanel" aria-labelledby="ext4-tab"></div>
+            <div class="content-container unresolved" id="content-advanced" role="tabpanel" aria-labelledby="advanced-tab">
+                <label class="content">
+                    <span data-i18n="show_advanced_option">Show advanced option</span>
+                    <md-switch id="advanced"></md-switch>
+                    <md-ripple></md-ripple>
+                </label>
+                <label class="content">
+                    <span data-i18n="enable_mountify_update">Enable mountify update</span>
+                    <md-switch id="update"></md-switch>
+                    <md-ripple></md-ripple>
+                </label>
 
             <!-- <p class="title content">KernelSU</p> -->
             <!-- /data/adb/ksu/.nomount -->
@@ -42,14 +43,15 @@
             <!-- <label class="content">Enable notmpfs<md-switch id="notmpfs"></md-switch><md-ripple></md-ripple></label> -->
             <!-- <p class="warning content">These options require KernelSU support. Known supported versions include mKSU and its derivative forks.</p> -->
 
-            <p class="title content">APatch</p>
-            <!-- /data/adb/.litemode_enable -->
-            <label class="content">
-                <span data-i18n="enable_litemode">Enable litemode</span>
-                <md-switch id="litemode"></md-switch>
-                <md-ripple></md-ripple>
-            </label>
-            <p class="warning content" data-i18n="warning_litemode">Litemode is introduced in APatch since v11024</p>
+                <p class="title content">APatch</p>
+                <!-- /data/adb/.litemode_enable -->
+                <label class="content">
+                    <span data-i18n="enable_litemode">Enable litemode</span>
+                    <md-switch id="litemode"></md-switch>
+                    <md-ripple></md-ripple>
+                </label>
+                <p class="warning content" data-i18n="warning_litemode">Litemode is introduced in APatch since v11024</p>
+            </div>
         </div>
         <div class="keyboard-inset"></div>
     </div>

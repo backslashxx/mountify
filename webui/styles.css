@@ -3,31 +3,26 @@
 body {
     background-color: var(--md-sys-color-surface);
     color: var(--md-sys-color-on-surface);
-    padding-top: var(--top-inset);
-    padding-bottom: calc(var(--bottom-inset) + 80px);
     margin: 0;
     font-size: 16px;
+    height: 100vh;
+    overflow: hidden;
 }
 
 .root_layout {
     width: 100%;
-    max-width: 768px;
     height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    margin: 0 auto;
-    transition: opacity 0.2s;
 }
 
 .header {
-    width: 100vw;
-    position: fixed;
+    width: 100%;
+    position: relative;
     padding-top: var(--top-inset);
-    top: 0;
-    left: 0;
     z-index: 2;
     background-color: var(--md-sys-color-surface);
+    flex-shrink: 0;
 }
 
 .top-bar {
@@ -51,15 +46,36 @@ md-tabs {
     width: 100%
 }
 
-.content-container {
+.horizontal-pager {
+    position: relative;
     width: 100%;
-    max-width: 100%;
-    margin-top: 128px;
+    flex-grow: 1;
+    height: 0;
+    overflow: hidden;
+}
+
+.content-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    padding-top: 16px;
+    padding-bottom: calc(var(--bottom-inset) + 64px);
+    box-sizing: border-box;
+}
+
+.content-container.unresolved {
+    opacity: 0;
 }
 
 .content {
-    padding: 0 16px;
-    box-sizing: border-box;
+    width: 100%;
+    max-width: min(768px, calc(100% - 32px));
 }
 
 .input-group {
@@ -72,7 +88,8 @@ md-tabs {
     position: relative;
 }
 
-md-outlined-text-field, md-outlined-select {
+md-outlined-text-field,
+md-outlined-select {
     flex-grow: 1;
     min-width: 0;
 }
