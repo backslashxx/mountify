@@ -30,6 +30,7 @@ fi
 
 # routine start
 [ -w "/mnt" ] && MNT_FOLDER="/mnt"
+# keep the (/mnt/vendor is mounted) check here! we dont want to write shit on it if its mounted!
 [ -w "/mnt/vendor" ] && ! busybox grep -q " /mnt/vendor " "/proc/mounts" && MNT_FOLDER="/mnt/vendor"
 
 test_ext4_image() {

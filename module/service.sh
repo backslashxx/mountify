@@ -24,9 +24,7 @@ if [ $mountify_stop_start = 1 ]; then
 fi
 
 # handle kernel umount
-[ -w "/mnt" ] && MNT_FOLDER="/mnt"
-[ -w "/mnt/vendor" ] && ! busybox grep -q " /mnt/vendor " "/proc/mounts" && MNT_FOLDER="/mnt/vendor"
-LOG_FOLDER="$MNT_FOLDER/mountify_logs"
+LOG_FOLDER="/dev/mountify_logs"
 
 # requires susfs add_try_umount
 do_susfs_umount() {

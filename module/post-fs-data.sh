@@ -65,10 +65,12 @@ fi
 # grab start time
 echo "$DMESG_PREFIX: start!" >> /dev/kmsg
 
-# find and create logging folder
+# find MNT_FOLDER
 [ -w "/mnt" ] && MNT_FOLDER="/mnt"
 [ -w "/mnt/vendor" ] && ! busybox grep -q " /mnt/vendor " "/proc/mounts" && MNT_FOLDER="/mnt/vendor"
-LOG_FOLDER="$MNT_FOLDER/mountify_logs"
+
+# create logging folder
+LOG_FOLDER="/dev/mountify_logs"
 mkdir -p "$LOG_FOLDER"
 # log before 
 cat /proc/mounts > "$LOG_FOLDER/before"
