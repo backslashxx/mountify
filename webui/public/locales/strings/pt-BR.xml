@@ -5,8 +5,6 @@
     <string name="tab_advanced">Avançado</string>
     <string name="show_advanced_option">Mostrar opções avançadas</string>
     <string name="enable_mountify_update">Ativar atualização do Mountify</string>
-    <string name="enable_litemode">Ativar modo leve (Litemode)</string>
-    <string name="warning_litemode">O modo leve (Litemode) foi introduzido no APatch a partir da versão v11024</string>
     <string name="reboot_title">Reiniciar</string>
     <string name="reboot_message">Reiniciar agora?</string>
     <string name="reboot">Reiniciar</string>

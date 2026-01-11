@@ -5,8 +5,6 @@
     <string name="tab_advanced">Advanced</string>
     <string name="show_advanced_option">Show advanced option</string>
     <string name="enable_mountify_update">Enable mountify update</string>
-    <string name="enable_litemode">Enable litemode</string>
-    <string name="warning_litemode">Litemode is introduced in APatch since v11024</string>
     <string name="reboot_title">Reboot</string>
     <string name="reboot_message">Reboot now?</string>
     <string name="reboot">Reboot</string>

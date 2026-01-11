@@ -5,8 +5,6 @@
     <string name="tab_advanced">高级</string>
     <string name="show_advanced_option">显示高级选项</string>
     <string name="enable_mountify_update">启用 mountify 更新</string>
-    <string name="enable_litemode">启用 litemode</string>
-    <string name="warning_litemode">Litemode 自 APatch v11024 起引入</string>
     <string name="reboot_title">重启</string>
     <string name="reboot_message">立即重启？</string>
     <string name="reboot">重启</string>

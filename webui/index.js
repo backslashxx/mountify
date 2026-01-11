@@ -374,20 +374,6 @@ function toggleAdvanced(advanced) {
     });
 }
 
-function initSwitch(path, id) {
-    const element = document.getElementById(id);
-    if (!element) return;
-    exec(`test -f ${path}`).then((result) => {
-        if (result.errno === 0) element.selected = true;
-    });
-    element.addEventListener('change', () => {
-        const cmd = element.selected ? 'echo "mountify" >' : 'rm -f';
-        exec(`${cmd} ${path}`).then((result) => {
-            if (result.errno !== 0) toast('Failed to toggle ' + path + ': ' + result.stderr);
-        });
-    });
-}
-
 // Overwrite default dialog animation
 document.querySelectorAll('md-dialog').forEach(dialog => {
     const defaulfOpenAnim = dialog.getOpenAnimation;
@@ -537,6 +523,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     initLanguageButton();
     initRebootButton();
     initUpdateSwitch();
-
-    initSwitch('/data/adb/.litemode_enable', 'litemode');
 });
