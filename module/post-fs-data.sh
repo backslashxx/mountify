@@ -65,11 +65,9 @@ fi
 # grab start time
 echo "$DMESG_PREFIX: start!" >> /dev/kmsg
 
-# find MNT_FOLDER
-[ -d "/mnt" ] && MNT_FOLDER="/mnt"
-[ -d "/mnt/vendor" ] && MNT_FOLDER="/mnt/vendor"
-
-# and create logging folder
+# find and create logging folder
+[ -w "/mnt" ] && MNT_FOLDER="/mnt"
+[ -w "/mnt/vendor" ] && MNT_FOLDER="/mnt/vendor"
 LOG_FOLDER="/dev/mountify_logs"
 mkdir -p "$LOG_FOLDER"
 # log before 
@@ -272,12 +270,15 @@ fi
 # so hierarchy becomes
 # stage1 /mnt or /mnt/vendor always tmpfs
 # stage2 /mnt/fake_folder_name or /mnt/vendor/fake_folder_name is either tmpfs or ext4
-echo "$DMESG_PREFIX: stage1: mounting $(realpath "$MNT_FOLDER")" >> /dev/kmsg
+if [ -d "$MNT_FOLDER" ]; then
+	echo "$DMESG_PREFIX: stage1: mounting $(realpath "$MNT_FOLDER")" >> /dev/kmsg
 
-# mount and test, if it fails fuck it, we bail
-if ! busybox mount -t tmpfs tmpfs "$(realpath "$MNT_FOLDER")"; then
-	echo "$DMESG_PREFIX: mounting $MNT_FOLDER fail! bail out!" >> /dev/kmsg
-	exit 1
+	# mount and test, if it fails fuck it, we bail
+	if ! busybox mount -t tmpfs tmpfs "$(realpath "$MNT_FOLDER")"; then
+		echo "$DMESG_PREFIX: mounting $MNT_FOLDER fail! bail out!" >> /dev/kmsg
+		exit 1
+	fi
+
 fi
 
 # create it
