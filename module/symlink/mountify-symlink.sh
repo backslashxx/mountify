@@ -41,7 +41,7 @@ fi
 # these tends to be always available
 [ -w "/mnt" ] && MNT_FOLDER="/mnt"
 [ -w "/mnt/vendor" ] && ! busybox grep -q " /mnt/vendor " "/proc/mounts" && MNT_FOLDER="/mnt/vendor"
-LOG_FOLDER="/dev/mountify_logs"
+LOG_FOLDER="$MNT_FOLDER/mountify_logs"
 mkdir -p "$LOG_FOLDER"
 # log before 
 cat /proc/mounts > "$LOG_FOLDER/before"
