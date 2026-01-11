@@ -191,7 +191,7 @@ mountify_copy() {
 		return
 	fi
 
-	# lets just add another clause for ksu metamodule mode
+	# lets just add another clause for ksu/ap metamodule mode
 	# this way its easier to maintain
 	# on metamodule mode, we can actually respect skip_mount
 	if [ -f "$MODDIR/metamount.sh" ] && [ -f "$TARGET_DIR/skip_mount" ]; then
