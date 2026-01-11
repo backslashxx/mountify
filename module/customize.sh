@@ -118,7 +118,8 @@ chmod +x "$MODPATH/whiteout_gen.sh"
 
 # warn on OverlayFS managers
 # while this is supported (half-assed), this is not a recommended configuration
-if { [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ] &&  [ "$KSU_VER_CODE" -lt 22098 ]; } || { [ "$APATCH" = true ] && [ ! "$APATCH_BIND_MOUNT" = true ]; }; then
+if { [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ] &&  [ "$KSU_VER_CODE" -lt 22098 ]; } || 
+	{ [ "$APATCH" = true ] && [ ! "$APATCH_BIND_MOUNT" = true ] && [ "$APATCH_VER_CODE" -lt 11170 ]; }; then
 	printf "\n\n"
 	echo "[!] ERROR: Root manager is on sparse-backed overlayfs!"
 	echo "[!] This setup can cause issues and is NOT recommended."
@@ -146,10 +147,11 @@ fi
 
 # workaround for awry versioning on KernelSU forks
 # we cannot rely on just ksu vercode
-if [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ] && [ "$KSU_VER_CODE" -ge 22098 ] && 
-	( grep -q "metamodule=true" $MODPATH/module.prop >/dev/null 2>&1 || grep -q "metamodule=1" $MODPATH/module.prop >/dev/null 2>&1 ); then
-	echo "[+] mountify will be installed in metamodule mode!"
-	mv "$MODPATH/post-fs-data.sh" "$MODPATH/metamount.sh"
+if ( grep -q "metamodule=true" $MODPATH/module.prop >/dev/null 2>&1 || grep -q "metamodule=1" $MODPATH/module.prop >/dev/null 2>&1 ); then
+	if { [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ] && [ "$KSU_VER_CODE" -ge 22098 ]; } || { [ "$APATCH" = true ] && [ "$APATCH_VER_CODE" -ge 11170 ]; }; then
+		echo "[+] mountify will be installed in metamodule mode!"
+		mv "$MODPATH/post-fs-data.sh" "$MODPATH/metamount.sh"
+	fi
 fi
 
 # since even mm ksud can have this feature, we check this and add a flag that we can check
