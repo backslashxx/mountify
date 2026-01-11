@@ -129,7 +129,7 @@ if { [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ] &&  [ "$KSU_VER_CODE" 
 fi
 
 SUSFS_BIN="/data/adb/ksu/bin/ksu_susfs"
-SUSFS_VERSION="$( ${SUSFS_BIN} show version | head -n1 | sed 's/v//; s/\.//g' )"
+SUSFS_VERSION="$( ${SUSFS_BIN} show version | head -n1 | sed 's/v//; s/\.//g' 2> /dev/null )"
 if [ "$KSU" = true ] && [ -f ${SUSFS_BIN} ] && { [ "$SUSFS_VERSION" -eq 1510 ] || [ "$SUSFS_VERSION" -eq 1511 ]; }; then
 	printf "\n\n"
 	echo "[!] ERROR: Mountify causes conflicts with this susfs version."
@@ -139,19 +139,27 @@ if [ "$KSU" = true ] && [ -f ${SUSFS_BIN} ] && { [ "$SUSFS_VERSION" -eq 1510 ] |
 	# ^ just change abort to echo or something
 fi
 
-# ahemm
+# this is for "symlink mode", meant for Legacy.
+# I do NOT offer support this anymore but you can likely use it on 4.14 and older
+# Ultra Legacy has no issues especially on ext4 /data
+# if you can read shell, you know how to ;)
 if [ -f "$PERSISTENT_DIR/explicit_I_want_symlink" ]; then
 	echo "[!] forcing symlink script as post-fs-data!"
 	cat "$MODPATH/symlink/mountify-symlink.sh" > "$MODPATH/post-fs-data.sh"
 fi
 
-# workaround for awry versioning on KernelSU forks
-# we cannot rely on just ksu vercode
-if ( grep -q "metamodule=true" $MODPATH/module.prop >/dev/null 2>&1 || grep -q "metamodule=1" $MODPATH/module.prop >/dev/null 2>&1 ); then
-	if { [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ] && [ "$KSU_VER_CODE" -ge 22098 ]; } || { [ "$APATCH" = true ] && [ "$APATCH_VER_CODE" -ge 11170 ]; }; then
+# you can remove 'metamodule=true' or 'metamodule=1' on module.prop and mountify will NOT be on metamodule mode.
+if ( grep -q "metamodule=true" "$MODPATH/module.prop" >/dev/null 2>&1 || grep -q "metamodule=1" "$MODPATH/module.prop" >/dev/null 2>&1 ); then
+
+	# we install as metamodule on supported managers
+	# ksu 22098+
+	# ap 11170+
+	if { [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ] && [ "$KSU_VER_CODE" -ge 22098 ]; } || 
+		{ [ "$APATCH" = true ] && [ "$APATCH_VER_CODE" -ge 11170 ]; }; then
 		echo "[+] mountify will be installed in metamodule mode!"
 		mv "$MODPATH/post-fs-data.sh" "$MODPATH/metamount.sh"
 	fi
+
 fi
 
 # since even mm ksud can have this feature, we check this and add a flag that we can check
