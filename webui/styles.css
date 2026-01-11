@@ -79,8 +79,7 @@ md-tabs {
 }
 
 .input-group {
-    margin-top: 16px;
-    margin-bottom: 32px;
+    margin: 16px 0;
     width: 100%;
     display: flex;
     align-items: center;
