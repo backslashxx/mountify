@@ -40,7 +40,7 @@ fi
 # this is a fast lookup for a writable dir
 # these tends to be always available
 [ -w "/mnt" ] && MNT_FOLDER="/mnt"
-[ -w "/mnt/vendor" ] && MNT_FOLDER="/mnt/vendor"
+[ -w "/mnt/vendor" ] && ! busybox grep -q " /mnt/vendor " "/proc/mounts" && MNT_FOLDER="/mnt/vendor"
 LOG_FOLDER="/dev/mountify_logs"
 mkdir -p "$LOG_FOLDER"
 # log before 
