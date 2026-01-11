@@ -2,6 +2,10 @@
 Globally mounted modules and whiteouts via OverlayFS.
 
 ## Changelog
+## 189
+- scripts: revert 2-stage mounting routine
+- scripts: move logging folder to /dev
+
 ## 188
 - scripts: support APatch metamodule mode
 - webui: update to APatch changes
