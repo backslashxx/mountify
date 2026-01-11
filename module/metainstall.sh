@@ -7,8 +7,16 @@
 
 # so other modules can identify
 # mind you mountify restores magic mount folder hierarchy!
-export KSU_HAS_METAMODULE="true"
-export KSU_METAMODULE="mountify"
+if [ "$KSU" = true ]; then
+	export KSU_HAS_METAMODULE="true"
+	export KSU_METAMODULE="mountify"
+fi
+
+if [ "$APATCH" = true ]; then
+	export APATCH_HAS_METAMODULE="true"
+	export APATCH_METAMODULE="mountify"
+fi
+
 export MOUNTIFY="true"
 
 # restore REPLACE
