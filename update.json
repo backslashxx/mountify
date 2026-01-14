@@ -1,6 +1,6 @@
 {
-  "version": "v1.8.9",
-  "versionCode": 189,
+  "version": "v1.9.0",
+  "versionCode": 190,
   "zipUrl": "https://github.com/backslashxx/mountify/releases/latest/download/mountify.zip",
   "changelog": "https://raw.githubusercontent.com/backslashxx/mountify/refs/heads/master/CHANGELOG.md"
 }
