@@ -40,7 +40,7 @@ done
 # requires ksu 22105+
 do_ksud_umount() {
 for mount in $(cat "$LOG_FOLDER/mountify_mount_list"); do
-	/data/adb/ksud kernel umount add $mount --flags 2 > /dev/null 2>&1
+	/data/adb/ksud kernel umount add "$mount" --flags 2 > /dev/null 2>&1
 	# now inform ksud so that the kernel unlocks the feature
 	/data/adb/ksud kernel notify-module-mounted >/dev/null 2>&1
 done
@@ -84,7 +84,8 @@ fi
 # update description accrdingly
 string="description=mode: $mode | no modules mounted"
 if [ -f $LOG_FOLDER/modules ]; then
-	string="description=mode: $mode | modules: $( for module in $(cat "$LOG_FOLDER/modules" ) ; do printf "$module " ; done ) "
+	module_list=$( for module in $(cat "$LOG_FOLDER/modules" ) ; do printf "$module " ; done )
+	string="description=mode: $mode | modules: $module_list "
 fi
 sed -i "s/^description=.*/$string/g" $MODDIR/module.prop
 
