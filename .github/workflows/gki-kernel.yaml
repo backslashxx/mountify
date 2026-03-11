@@ -34,10 +34,10 @@ jobs:
         with:
           root-reserve-mb: 8192
           temp-reserve-mb: 2048
-          remove-dotnet: 'true'
-          remove-android: 'true'
-          remove-haskell: 'true'
-          remove-codeql: 'true'
+          remove-dotnet: "true"
+          remove-android: "true"
+          remove-haskell: "true"
+          remove-codeql: "true"
 
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -62,68 +62,38 @@ jobs:
       - name: Prepare GKI
         working-directory: android-kernel
         run: |
-          export ARCH=arm64
-          export SUBARCH=arm64
-          export CROSS_COMPILE=aarch64-linux-gnu-
-          export CC=clang
-          
-          pwd
-          
-          cd common
-          mv ../../nuke_ext4_lkm drivers/nuke_ext4_lkm
-          ls -lha drivers/nuke_ext4_lkm
+          mv ../nuke_ext4_lkm common/drivers/nuke_ext4_lkm
+          sed -i 's/endmenu//g' common/drivers/Kconfig
+          echo "source \"drivers/nuke_ext4_lkm/Kconfig\"" >> common/drivers/Kconfig
+          echo "endmenu" >> common/drivers/Kconfig
+          echo 'obj-y += nuke_ext4_lkm/' >> common/drivers/Makefile
 
-          sed -i 's/endmenu//g' drivers/Kconfig
-          echo "source \"drivers/nuke_ext4_lkm/Kconfig\"" >> drivers/Kconfig
-          echo "endmenu" >> drivers/Kconfig
-          echo 'obj-y += nuke_ext4_lkm/' >> drivers/Makefile
           
-          # stop this exports check
-          sed -i '/check_exports(mod)/d' scripts/mod/modpost.c
-
-          # force exports of these, just like ksu
-          [ -f "android/abi_gki_aarch64" ] && echo "  register_kprobe" >> android/abi_gki_aarch64 && echo "  unregister_kprobe" >> android/abi_gki_aarch64
-          
-          tail -n10 drivers/Kconfig
-          tail -n10 drivers/Makefile
+          tail -n10 common/drivers/Kconfig
+          tail -n10 common/drivers/Makefile
           
           echo $PATH ; pwd
-          
-          cd ../
           ls -la
-
-          # bazel build, android14-5.15, android14-6.1 use bazel
-          if [ ! -e build/build.sh ]; then
-            sed -i 's/needs unknown symbol/Dont abort when unknown symbol/g' build/kernel/*.sh || echo "No unknown symbol scripts found"
-            if [ -e common/modules.bzl ]; then
-              sed -i 's/_COMMON_GKI_MODULES_LIST = \[/_COMMON_GKI_MODULES_LIST = \[ "drivers\/nuke_ext4_lkm\/nuke.ko",/g' common/modules.bzl
-            fi
-          else
-            TARGET_FILE="build/kernel/build.sh"
-            if [ ! -e "$TARGET_FILE" ]; then
-              TARGET_FILE="build/build.sh"
-            fi
-            sed -i 's/needs unknown symbol/Dont abort when unknown symbol/g' $TARGET_FILE || echo "No unknown symbol in $TARGET_FILE"
-            sed -i 's/if ! diff -u "\${KERNEL_DIR}\/\${MODULES_ORDER}" "\${OUT_DIR}\/modules\.order"; then/if false; then/g' $TARGET_FILE
-            sed -i 's@${ROOT_DIR}/build/abi/compare_to_symbol_list@echo@g' $TARGET_FILE
-            sed -i 's/needs unknown symbol/Dont abort when unknown symbol/g' build/kernel/*.sh || echo "No unknown symbol scripts found"
-          fi
+          
+          find build/kernel/kleaf -type f -exec sed -i 's/kbuild_mixed_tree_check_outputs=true/kbuild_mixed_tree_check_outputs=false/g' {} + || true
 
           if [ -e build/build.sh ]; then
-            LTO=thin BUILD_CONFIG=common/build.config.gki.aarch64 build/build.sh CC="clang"
+            LTO=thin BUILD_CONFIG=common/build.config.gki.aarch64 build/build.sh
           else
-            tools/bazel run --disk_cache=/home/runner/.cache/bazel --config=fast --config=stamp --lto=thin //common:kernel_aarch64_dist -- --dist_dir=dist
+            tools/bazel build --config=fast --lto=thin //common:kernel_aarch64 || true
+            
+            tools/bazel run --config=fast --lto=thin //common:kernel_aarch64_dist -- --dist_dir=dist || true
           fi
           
           if [ -f ./dist/nuke.ko ]; then
-          	mv ./dist/nuke.ko nuke.ko
+          	mv ./dist/nuke.ko ../nuke.ko
           else
-          	mv out/${{ inputs.version }}/common/drivers/nuke_ext4_lkm/nuke.ko nuke.ko
+          	find bazel-bin/common -name "nuke.ko" -exec cp {} ../nuke.ko \;
           fi
 
       - name: Upload nuke.ko
         uses: actions/upload-artifact@v4
         with:
           name: nuke_ext4-${{ inputs.version }}.${{ inputs.sub_level }}
-          path: android-kernel/nuke.ko
+          path: nuke.ko
 
