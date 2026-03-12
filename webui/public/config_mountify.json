@@ -68,6 +68,7 @@
             "nuke-android14-5.15.ko",
             "nuke-android14-6.1.ko",
             "nuke-android15-6.6.ko",
+            "nuke-android16-6.12.ko",
             "nuke-android-4.14.ko"
         ]
     }
