@@ -86,6 +86,14 @@ mountify_whiteouts
 - mountify checks this on /data/adb/modules/module_name
 - `[ -f /data/adb/modules/module_name/skip_mountify ]`
 
+### Advanced / Debugging
+- remove `metamodule=true` from module.prop before installing to force non-metamodule mode
+- create `/data/adb/mountify/explicit_I_want_a_bootloop` to disable anti-bootloop protection
+- set `mountify_expert_mode=1` to force expert mode (disables safety checks)
+- create `/data/adb/mountify/explicit_I_want_symlink` to force symlink mode before installing
+  - unsupported and deprecated, meant for legacy devices
+- sh whiteout_gen.sh to generate a whiteout module (deprecated but its still there)
+
 ## Limitations / Recommendations
 - fails with [De-Bloater](https://github.com/sunilpaulmathew/De-Bloater), as it [uses dummy text, NOT proper whiteouts](https://github.com/sunilpaulmathew/De-Bloater/blob/cadd523f0ad8208eab31e7db51f855b89ed56ffe/app/src/main/java/com/sunilpaulmathew/debloater/utils/Utils.java#L112)
 - I recommend [System App Nuker](https://github.com/ChiseWaguri/systemapp_nuker/releases) instead. It uses proper whiteouts.
