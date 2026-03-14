@@ -1,7 +1,7 @@
 id=mountify
 name=mountify
-version=v1.9.3
-versionCode=193
+version=v1.9.4
+versionCode=194
 author=xx, KOWX712
 metamodule=true
 description=Globally mounted modules via OverlayFS.
