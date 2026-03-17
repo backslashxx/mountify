@@ -34,6 +34,12 @@ fi
 [ -w "/mnt/vendor" ] && ! busybox grep -q " /mnt/vendor " "/proc/mounts" && MNT_FOLDER="/mnt/vendor"
 
 test_ext4_image() {
+	# actually for 4.x kernels and up we don't even have to check this
+	kver_major=$(busybox uname -r | cut -d . -f1)
+	if [ "$kver_major" -ge 4 ] && grep -q "ext4" /proc/filesystems > /dev/null 2>&1; then
+		return 0
+	fi
+
 	mkdir -p "$MNT_FOLDER/mountify-mount-test"
 	busybox dd if=/dev/zero of="$MNT_FOLDER/mountify-ext4-test" bs=1M count=0 seek=8 >/dev/null 2>&1 || ext4_fail=1
 	/system/bin/mkfs.ext4 -O ^has_journal "$MNT_FOLDER/mountify-ext4-test" >/dev/null 2>&1 || ext4_fail=1
