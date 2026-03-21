@@ -12,6 +12,7 @@
         <div class="header">
             <div class="top-bar" slot="headline">
                 <span>mountify</span><span id="version"></span>
+                <div class="spacer"></div>
                 <md-icon-button id="language"><md-icon>language</md-icon></md-icon-button>
                 <md-icon-button id="reboot"><md-icon>power_settings_new</md-icon></md-icon-button>
             </div>
@@ -25,16 +26,18 @@
             <div class="content-container unresolved" id="content-general" role="tabpanel" aria-labelledby="general-tab"></div>
             <div class="content-container unresolved" id="content-ext4" role="tabpanel" aria-labelledby="ext4-tab"></div>
             <div class="content-container unresolved" id="content-advanced" role="tabpanel" aria-labelledby="advanced-tab">
-                <label class="content">
-                    <span data-i18n="show_advanced_option">Show advanced option</span>
-                    <md-switch id="advanced"></md-switch>
-                    <md-ripple></md-ripple>
-                </label>
-                <label class="content">
-                    <span data-i18n="enable_mountify_update">Enable mountify update</span>
-                    <md-switch id="update"></md-switch>
-                    <md-ripple></md-ripple>
-                </label>
+                <div class="list-container content">
+                    <label class="list-item switch-item">
+                        <span data-i18n="show_advanced_option">Show advanced option</span>
+                        <md-switch id="advanced"></md-switch>
+                        <md-ripple></md-ripple>
+                    </label>
+                    <label class="list-item switch-item">
+                        <span data-i18n="enable_mountify_update">Enable mountify update</span>
+                        <md-switch id="update"></md-switch>
+                        <md-ripple></md-ripple>
+                    </label>
+                </div>
             </div>
         </div>
         <div class="keyboard-inset"></div>
@@ -71,7 +74,7 @@
         <md-dialog id="language-dialog">
             <div slot="headline" data-i18n="select_language">Select Language</div>
             <div slot="content">
-                <form id="language-form" method="dialog">
+                <form id="language-form" method="dialog" class="list-container">
                     <!-- Language options -->
                 </form>
             </div>

@@ -31,15 +31,10 @@ body {
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
     gap: 0.3em;
     width: 100%;
     padding: 0 16px;
     box-sizing: border-box;
-}
-
-#version {
-    flex-grow: 1;
 }
 
 md-tabs {
@@ -113,15 +108,35 @@ md-list {
     user-select: none;
 }
 
-label.content {
-    position: relative;
-    padding: 16px !important;
-    font-size: 1.1em;
+.list-container {
     width: 100%;
+    border-radius: 20px;
+    overflow: clip;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.list-item {
+    position: relative;
+    width: 100%;
+    background-color: var(--md-sys-color-tonal-surface);
+    border-radius: 4px;
+    transition: border-radius 0.2s ease;
+}
+
+.list-item:active {
+    border-radius: 20px;
+}
+
+label.switch-item {
+    padding: 16px;
+    font-size: 1.1em;
     display: flex;
     align-items: center;
     justify-content: space-between;
     user-select: none;
+    box-sizing: border-box;
 
     --md-focus-ring-color: transparent;
 }
@@ -151,6 +166,10 @@ label.content {
     height: 50vh;
 }
 
+.spacer {
+    flex: 1;
+}
+
 [unresolved] {
     opacity: 0;
     overflow: hidden;
@@ -162,4 +181,6 @@ label.content {
     padding: 12px;
     gap: 16px;
     user-select: none;
+    box-sizing: border-box;
+    background-color: var(--md-sys-color-surface);
 }

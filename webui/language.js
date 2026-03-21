@@ -147,10 +147,11 @@ async function generateLanguageMenu() {
 
     const createOption = (lang, name) => {
         const label = document.createElement('label');
-        label.className = 'language-option';
+        label.className = 'language-option list-item';
         label.innerHTML = `
             <md-radio name="language" value="${lang}"></md-radio>
             <span>${name}</span>
+            <md-ripple></md-ripple>
         `;
 
         const radio = label.querySelector('md-radio');

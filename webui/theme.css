@@ -23,6 +23,7 @@
     --md-sys-color-on-error-container: var(--onErrorContainer, #8C1D18);
     --md-sys-color-background: var(--background, #FEF7FF);
     --md-sys-color-on-background: var(--onBackground, #1D1B20);
+    --md-sys-color-tonal-surface: var(--tonalSurface, #ECE6F0);
     --md-sys-color-surface: var(--surface, #FEF7FF);
     --md-sys-color-on-surface: var(--onSurface, #1D1B20);
     --md-sys-color-surface-variant: var(--surfaceVariant, #E7E0EC);
@@ -62,6 +63,7 @@
         --md-sys-color-on-error-container: var(--onErrorContainer, #F9DEDC);
         --md-sys-color-background: var(--background, #141218);
         --md-sys-color-on-background: var(--onBackground, #E6E0E9);
+        --md-sys-color-tonal-surface: var(--tonalSurface, #2B2930);
         --md-sys-color-surface: var(--surface, #141218);
         --md-sys-color-on-surface: var(--onSurface, #E6E0E9);
         --md-sys-color-surface-variant: var(--surfaceVariant, #49454F);
