@@ -32,7 +32,7 @@ jobs:
           remove-codeql: 'true'
 
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install required packages
         run: |
@@ -83,7 +83,7 @@ jobs:
           ls -la out/drivers/nuke_ext4_lkm
 
       - name: Upload nuke.ko
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nuke_ext4-${{ inputs.version }}
           path: kernel/out/drivers/nuke_ext4_lkm/nuke.ko

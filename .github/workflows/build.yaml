@@ -19,12 +19,12 @@ jobs:
         fetch-depth: 2
 
     - name: Setup pnpm
-      uses: pnpm/action-setup@v4
+      uses: pnpm/action-setup@v5
       with:
         version: 'latest'
 
     - name: Setup Node
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: 'latest'
         cache: 'pnpm'
@@ -43,7 +43,7 @@ jobs:
         echo "ZIP_NAME=${{ env.MODULE_NAME }}_${VERSION}-${COMMIT_ID}" >> $GITHUB_ENV
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ env.ZIP_NAME }}
         path: 'module'

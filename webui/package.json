@@ -17,7 +17,7 @@
     "kernelsu-alt": "^3.1.1"
   },
   "devDependencies": {
-    "vite": "^7.3.1",
+    "vite": "^8.0.1",
     "vite-plugin-html": "^3.2.2"
   },
   "packageManager": "pnpm@10.28.2"
