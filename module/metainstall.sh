@@ -62,11 +62,6 @@ mountify_handle_partition odm
 
 mountify_hot_install() {
 
-	# ksu only for now, verify on apatch later
-	if [ ! "$KSU" = true ]; then
-		return
-	fi
-
 	if [ -z "$MODID" ]; then
 		return
 	fi
