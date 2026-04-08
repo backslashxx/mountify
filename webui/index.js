@@ -331,10 +331,9 @@ async function showModuleSelector() {
 }
 
 function setupKeyboard() {
-    const keyboardInset = document.querySelector('.keyboard-inset');
     document.querySelectorAll('md-outlined-text-field').forEach(input => {
         input.addEventListener('focus', () => {
-            keyboardInset.classList.add('active');
+            input.closest('.content-container').classList.add('keyboard-inset');
             setTimeout(() => {
                 input.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 300);
@@ -344,7 +343,7 @@ function setupKeyboard() {
             setTimeout(() => {
                 const activeEl = document.activeElement;
                 if (!activeEl || !['md-outlined-text-field', 'md-outlined-select'].includes(activeEl.tagName.toLowerCase())) {
-                    keyboardInset.classList.remove('active');
+                    input.closest('.content-container').classList.remove('keyboard-inset');
                 }
             }, 100);
         });
