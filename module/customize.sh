@@ -69,8 +69,16 @@ else
 	abort "[!] CONFIG_OVERLAY_FS is required for this module!"
 fi
 
-# test for tmpfs xattr
+# drop magisk sepolicy rule
+if [ ! "$KSU" = true ] && [ ! "$APATCH" = true ]; then
+	echo "allow kernel fs_type file { read write }" > "$MODPATH/sepolicy.rule"
+	echo "allow kernel dev_type file { read write }" >> "$MODPATH/sepolicy.rule"
+	echo "allow kernel file_type file { read write }" >> "$MODPATH/sepolicy.rule"
 
+	magiskpolicy --apply "$MODPATH/sepolicy.rule" > /dev/null 2>&1
+fi
+
+# test for tmpfs xattr
 testfile="$MNT_FOLDER/tmpfs_xattr_testfile"
 rm "$testfile" > /dev/null 2>&1 
 busybox mknod "$testfile" c 0 0 > /dev/null 2>&1 
