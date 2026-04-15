@@ -2,11 +2,13 @@
 Globally mounted modules and whiteouts via OverlayFS.
 
 ## Changelog
+## 198
+- sepolicy.rule fixes for magisk 30.7
+- webui: fix kb insets
+
 ## 197
 - webui: expressive switch
 - metainstall: test allow hot install on non-ksu
-
-## 196
 - webui: new list styling
 - initial support for hot install
 
