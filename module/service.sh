@@ -80,14 +80,6 @@ if [ "$APATCH_BIND_MOUNT" = "true" ] && [ -f /data/adb/.litemode_enable ]; then
 	mode="$mode | litemode: ✅"
 fi
 
-# update description accrdingly
-string="description=mode: $mode | no modules mounted"
-if [ -f $LOG_FOLDER/modules ]; then
-	module_list=$( for module in $(cat "$LOG_FOLDER/modules" ) ; do printf "$module " ; done )
-	string="description=mode: $mode | modules: $module_list "
-fi
-sed -i "s/^description=.*/$string/g" $MODDIR/module.prop
-
 # wait for boot-complete
 until [ "$(getprop sys.boot_completed)" = "1" ]; do
 	sleep 1
@@ -106,6 +98,16 @@ if [ -f "$MOUNTIFY_LOCK" ]; then
 	echo "mountify/service: lifting single instance lock" >> /dev/kmsg
 	rm "$MOUNTIFY_LOCK"
 fi
+
+# update description accrdingly
+string="description=mode: $mode | no modules mounted"
+if [ -f $LOG_FOLDER/modules ]; then
+	module_list=$( for module in $(cat "$LOG_FOLDER/modules" ) ; do printf "$module " ; done )
+	string="description=mode: $mode | modules: $module_list "
+fi
+cat "$MODDIR/module.prop" > "$LOG_FOLDER/module.prop"
+busybox sed -i "s/^description=.*/$string/g" "$LOG_FOLDER/module.prop"
+cat "$LOG_FOLDER/module.prop" > "$MODDIR/module.prop"
 
 # clean log folder
 [ -d "$LOG_FOLDER" ] && rm -rf "$LOG_FOLDER"
