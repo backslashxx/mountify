@@ -75,10 +75,7 @@ else
 	mode="$mode | fstype: tmpfs 🦾"
 fi
 
-# display if on nomount/litemode
-if [ "$KSU_MAGIC_MOUNT" = "true" ] && [ -f /data/adb/ksu/.nomount ]; then
-	mode="$mode | nomount: ✅"
-fi
+# display if on litemode
 if [ "$APATCH_BIND_MOUNT" = "true" ] && [ -f /data/adb/.litemode_enable ]; then 
 	mode="$mode | litemode: ✅"
 fi
