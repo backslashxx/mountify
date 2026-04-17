@@ -314,10 +314,11 @@ else
 fi
 
 if [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; then
-	# unmount, sync and remount ext4 image as ro
+	# unmount and remount ext4 image as ro
 	busybox umount -l "$MNT_FOLDER/$FAKE_MOUNT_NAME"
-	busybox sync
-	/system/bin/resize2fs -M "$MNT_FOLDER/mountify-ext4"
+
+	# busybox sync
+	# /system/bin/resize2fs -M "$MNT_FOLDER/mountify-ext4"
 	
 	if [ "$spoof_sparse" = "1" ] && [ -w "/apex" ] && [ ! -e "/apex/$FAKE_APEX_NAME" ]; then
 		# here we copy how android does it

@@ -25,7 +25,7 @@
 3. copies contents of `/data/adb/modules/module_id` to `/mnt/vendor/fake_folder_name`
 4. mirrors SELinux context of every file from `/data/adb/modules/module_id` to `/mnt/vendor/fake_folder_name`
 5. loops 3 and 4 for all modules
-6. unmounts, resizes and remounts sparse image to `/mnt/vendor/fake_folder_name`
+6. unmounts and remounts sparse image to `/mnt/vendor/fake_folder_name`
 7. overlays `/mnt/vendor/fake_folder_name/system/bin` to `/system/bin` and other folders
 
 ## Why?
