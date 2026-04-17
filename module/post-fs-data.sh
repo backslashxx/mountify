@@ -224,8 +224,9 @@ mountify_copy() {
 	# we can copy over contents of system folder only
 	BASE_DIR="/data/adb/modules/$MODULE_ID/system"
 	
-	# copy over our files: follow symlinks, recursive, force.
-	cd "$MNT_FOLDER" && cp -Lrf "$BASE_DIR"/* "$FAKE_MOUNT_NAME"
+	# copy over our files, archive
+	# we really dont need to dereference symlinks anymore.
+	cd "$MNT_FOLDER" && cp -af "$BASE_DIR"/* "$FAKE_MOUNT_NAME"
 
 	# go inside
 	cd "$MNT_FOLDER/$FAKE_MOUNT_NAME"
@@ -295,7 +296,7 @@ if [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; then
 	# this way only sparse mode on ksu gets the rule
 	[ "$KSU" = "true" ] && busybox chcon "u:object_r:ksu_file:s0" "$MNT_FOLDER/mountify-ext4"
 
-	busybox mount -o loop,rw "$MNT_FOLDER/mountify-ext4" "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+	busybox mount -o loop,rw,noatime,nodiratime "$MNT_FOLDER/mountify-ext4" "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 fi
 
 # if manual mode and modules.txt has contents
@@ -329,7 +330,7 @@ if [ -f "$MODDIR/no_tmpfs_xattr" ] || [ "$use_ext4_sparse" = "1" ]; then
 		rm -rf "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 		busybox ln -sf "/apex/$FAKE_APEX_NAME" "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 	else
-		busybox mount -o loop,ro "$MNT_FOLDER/mountify-ext4" "$MNT_FOLDER/$FAKE_MOUNT_NAME"
+		busybox mount -o loop,ro,noatime,nodiratime "$MNT_FOLDER/mountify-ext4" "$MNT_FOLDER/$FAKE_MOUNT_NAME"
 	fi
 
 	# or another bind mount ?? this creates another mount, but hey, it werks
