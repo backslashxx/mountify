@@ -105,9 +105,9 @@ if [ -f $LOG_FOLDER/modules ]; then
 	module_list=$( for module in $(cat "$LOG_FOLDER/modules" ) ; do printf "$module " ; done )
 	string="description=mode: $mode | modules: $module_list "
 fi
-cat "$MODDIR/module.prop" > "$LOG_FOLDER/module.prop"
-busybox sed -i "s/^description=.*/$string/g" "$LOG_FOLDER/module.prop"
-cat "$LOG_FOLDER/module.prop" > "$MODDIR/module.prop"
+cat "$MODDIR/module.prop" > "$MODDIR/module.prop.tmp"
+busybox sed -i "s/^description=.*/$string/g" "$MODDIR/module.prop.tmp"
+busybox mv -f "$MODDIR/module.prop.tmp" "$MODDIR/module.prop"
 
 # clean log folder
 [ -d "$LOG_FOLDER" ] && rm -rf "$LOG_FOLDER"
