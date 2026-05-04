@@ -18,7 +18,7 @@ echo "BOOTCOUNT=0" > "$MODDIR/count.sh"
 # remove mountify single instance lock
 MOUNTIFY_LOCK="/dev/mountify_single_instance"
 if [ -f "$MOUNTIFY_LOCK" ]; then
-	echo "mountify/service: lifting single instance lock" >> /dev/kmsg
+	echo "mountify/boot-completed: lifting single instance lock" >> /dev/kmsg
 	rm "$MOUNTIFY_LOCK"
 fi
 
