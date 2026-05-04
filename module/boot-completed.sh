@@ -10,6 +10,19 @@ MODDIR="/data/adb/modules/mountify"
 PERSISTENT_DIR="/data/adb/mountify"
 . $PERSISTENT_DIR/config.sh
 
-# unused
+LOG_FOLDER="/dev/mountify_logs"
+
+# reset bootcount (anti-bootloop routine)
+echo "BOOTCOUNT=0" > "$MODDIR/count.sh"
+
+# remove mountify single instance lock
+MOUNTIFY_LOCK="/dev/mountify_single_instance"
+if [ -f "$MOUNTIFY_LOCK" ]; then
+	echo "mountify/service: lifting single instance lock" >> /dev/kmsg
+	rm "$MOUNTIFY_LOCK"
+fi
+
+# clean log folder
+[ -d "$LOG_FOLDER" ] && rm -rf "$LOG_FOLDER"
 
 # EOF

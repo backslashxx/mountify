@@ -93,26 +93,11 @@ fi
 	busybox mv -f "$MODDIR/module.prop.tmp" "$MODDIR/module.prop"
 ) & # fork in background
 
-# wait for boot-complete
-until [ "$(getprop sys.boot_completed)" = "1" ]; do
-	sleep 1
-done
-
-# reset bootcount (anti-bootloop routine)
-echo "BOOTCOUNT=0" > "$MODDIR/count.sh"
-
 if [ ! "$APATCH" = true ] && [ ! "$KSU" = true ]; then
+	until [ "$(getprop sys.boot_completed)" = "1" ]; do
+		sleep 1
+	done
 	sh "$MODDIR/boot-completed.sh" &
 fi
-
-# remove mountify single instance lock
-MOUNTIFY_LOCK="/dev/mountify_single_instance"
-if [ -f "$MOUNTIFY_LOCK" ]; then
-	echo "mountify/service: lifting single instance lock" >> /dev/kmsg
-	rm "$MOUNTIFY_LOCK"
-fi
-
-# clean log folder
-[ -d "$LOG_FOLDER" ] && rm -rf "$LOG_FOLDER"
 
 # EOF
