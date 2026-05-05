@@ -447,14 +447,18 @@ if [ "$APATCH_BIND_MOUNT" = "true" ] && [ -f /data/adb/.litemode_enable ]; then
 	mode="$mode | litemode: ✅"
 fi
 
-# update description accrdingly
+# generate description accordingly
 string="description=mode: $mode | no modules mounted"
 if [ -f $LOG_FOLDER/modules ]; then
 	module_list=$( for module in $(cat "$LOG_FOLDER/modules" ) ; do printf "$module " ; done )
 	string="description=mode: $mode | modules: $module_list "
 fi
-sed -i "s/^description=.*/$string/g" "$MODDIR/module.prop"
 
+# only update when generated string is different
+desc_current=$(grep "^description=" "$MODDIR/module.prop")
+if [ "$desc_current" != "$string" ]; then
+	sed -i "s/^description=.*/$string/g" "$MODDIR/module.prop"
+fi
 
 # log after
 cat /proc/mounts > "$LOG_FOLDER/after"
