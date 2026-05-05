@@ -60,39 +60,6 @@ fi
 # prep logs for status
 busybox diff "$LOG_FOLDER/before" "$LOG_FOLDER/after" | grep " $FS_TYPE_ALIAS " > "$MODDIR/mount_diff"
 
-# handle operating mode
-case $mountify_mounts in
-	1) mode="manual 🤓" ;;
-	2) mode="auto 🤖" ;;
-	*) mode="disabled 💀" ;; # ??
-esac
-
-if [ -f "$LOG_FOLDER/mountify_symlink" ]; then
-	mode="$mode | ???: symlink 🔗"
-elif [ "$use_ext4_sparse" = "1" ] || [ -f "$MODDIR/no_tmpfs_xattr" ]; then
-	mode="$mode | fstype: ext4 🛠️"
-else
-	mode="$mode | fstype: tmpfs 🦾"
-fi
-
-# display if on litemode
-if [ "$APATCH_BIND_MOUNT" = "true" ] && [ -f /data/adb/.litemode_enable ]; then 
-	mode="$mode | litemode: ✅"
-fi
-
-# update description accrdingly
-string="description=mode: $mode | no modules mounted"
-if [ -f $LOG_FOLDER/modules ]; then
-	module_list=$( for module in $(cat "$LOG_FOLDER/modules" ) ; do printf "$module " ; done )
-	string="description=mode: $mode | modules: $module_list "
-fi
-
-( sleep 3;
-	cat "$MODDIR/module.prop" > "$MODDIR/module.prop.tmp" ;
-	busybox sed -i "s/^description=.*/$string/g" "$MODDIR/module.prop.tmp" ;
-	busybox mv -f "$MODDIR/module.prop.tmp" "$MODDIR/module.prop"
-) & # fork in background
-
 if [ ! "$APATCH" = true ] && [ ! "$KSU" = true ]; then
 	until [ "$(getprop sys.boot_completed)" = "1" ]; do
 		sleep 1

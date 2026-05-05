@@ -26,6 +26,8 @@ PERSISTENT_DIR="/data/adb/mountify"
 . $PERSISTENT_DIR/config.sh
 # exit if disabled
 if [ $mountify_mounts = 0 ]; then
+	string="description=mode: disabled 💀"
+	sed -i "s/^description=.*/$string/g" "$MODDIR/module.prop"
 	exit 0
 fi
 
@@ -427,6 +429,32 @@ fi
 # unmount stage1
 echo "$DMESG_PREFIX: stage1: unmounting $(realpath "$MNT_FOLDER")" >> /dev/kmsg
 busybox umount -l "$MNT_FOLDER"
+
+# handle operating mode
+case $mountify_mounts in
+	1) mode="manual 🤓" ;;
+	2) mode="auto 🤖" ;;
+esac
+
+if [ "$use_ext4_sparse" = "1" ] || [ -f "$MODDIR/no_tmpfs_xattr" ]; then
+	mode="$mode | fstype: ext4 🛠️"
+else
+	mode="$mode | fstype: tmpfs 🦾"
+fi
+
+# display if on litemode
+if [ "$APATCH_BIND_MOUNT" = "true" ] && [ -f /data/adb/.litemode_enable ]; then 
+	mode="$mode | litemode: ✅"
+fi
+
+# update description accrdingly
+string="description=mode: $mode | no modules mounted"
+if [ -f $LOG_FOLDER/modules ]; then
+	module_list=$( for module in $(cat "$LOG_FOLDER/modules" ) ; do printf "$module " ; done )
+	string="description=mode: $mode | modules: $module_list "
+fi
+sed -i "s/^description=.*/$string/g" "$MODDIR/module.prop"
+
 
 # log after
 cat /proc/mounts > "$LOG_FOLDER/after"
