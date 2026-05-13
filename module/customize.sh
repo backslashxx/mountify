@@ -1,189 +1,76 @@
-#!/bin/sh
-# customize.sh
-# this script is part of mountify
-# No warranty.
-# No rights reserved.
-# This is free software; you can redistribute it and/or modify it under the terms of The Unlicense.
-PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:$PATH
+#MAGISK
 
-# warn adventurous people
-WARNING_STRING="WARNING: this file is part of mountify's autoconfiguration! DO NOT DELETE."
+PROPS="ro.debuggable
+ro.secure
+ro.boot.serialno
+ro.bootloader
+ro.bootmode
+ro.com.google.clientidbase
+ro.board.platform
+ro.hardware
+ro.product.board"
 
-# some bullshit just to use clear
-if [ "$MMRL" = "true" ] || { [ "$KSU" = "true" ] && [ "$KSU_VER_CODE" -ge 11998 ]; } || 
-	{ [ "$KSU_NEXT" = "true" ] && [ "$KSU_VER_CODE" -ge 12144 ]; } ||
-	{ [ "$APATCH" = "true" ] && [ "$APATCH_VER_CODE" -ge 11022 ]; }; then
-	clear
-        loops=20
-        while [ $loops -gt 1 ];  do 
-		for i in '[-]' '[/]' '[|]' '[\]'; do 
-		        echo "$i"
-		        sleep 0.1
-		        clear
-		        loops=$((loops - 1)) 
-		done
-        done
-else
-	# sleep a bit to make it look like something is happening!!
-	sleep 2
+DIR="$(cd "$(dirname "$0")" && pwd)"
+MODDIR="${0%/*}"
+
+set_perm_recursive "$MODDIR" 0 0 0755 0644
+set_perm "$MODDIR/post-fs-data.sh" 0 0 0755
+set_perm "$MODDIR/service.sh" 0 0 0755
+set_perm "$MODDIR/uninstall.sh" 0 0 0755
+
+# Create necessary directories
+mkdir -p "$MODDIR/system/etc"
+mkdir -p "$MODDIR/system/lib"
+
+# exit if disabled
+if [ ! -d "/data/adb/mountify" ]; then
+    mkdir -p "/data/adb/mountify"
+    echo "mountify_mounts=2" > "/data/adb/mountify/config.sh"
+    echo "mountify_stop_start=0" >> "/data/adb/mountify/config.sh"
+    echo "FAKE_MOUNT_NAME=Mountify" >> "/data/adb/mountify/config.sh"
+    echo "FS_TYPE_ALIAS=overlay" >> "/data/adb/mountify/config.sh"
+    echo "MOUNT_DEVICE_NAME=magisk" >> "/data/adb/mountify/config.sh"
+    echo "use_ext4_sparse=0" >> "/data/adb/mountify/config.sh"
+    echo "spoof_sparse=0" >> "/data/adb/mountify/config.sh"
+    echo "FAKE_APEX_NAME=com.android.apex" >> "/data/adb/mountify/config.sh"
+    echo "sparse_size=500" >> "/data/adb/mountify/config.sh"
+    echo "mountify_custom_umount=0" >> "/data/adb/mountify/config.sh"
+    echo "test_decoy_mount=0" >> "/data/adb/mountify/config.sh"
+    echo "mountify_expert_mode=0" >> "/data/adb/mountify/config.sh"
+    echo "enable_lkm_nuke=0" >> "/data/adb/mountify/config.sh"
+    echo "lkm_filename=gki" >> "/data/adb/mountify/config.sh"
 fi
 
-# routine start
-[ -w "/mnt" ] && MNT_FOLDER="/mnt"
-# keep the (/mnt/vendor is mounted) check here! we dont want to write shit on it if its mounted!
-[ -w "/mnt/vendor" ] && ! busybox grep -q " /mnt/vendor " "/proc/mounts" && MNT_FOLDER="/mnt/vendor"
-
-test_ext4_image() {
-	# actually for 4.x kernels and up we don't even have to check this
-	kver_major=$(busybox uname -r | cut -d . -f1)
-	if [ "$kver_major" -ge 4 ] && grep -q "ext4" /proc/filesystems > /dev/null 2>&1; then
-		return 0
-	fi
-
-	mkdir -p "$MNT_FOLDER/mountify-mount-test"
-	busybox dd if=/dev/zero of="$MNT_FOLDER/mountify-ext4-test" bs=1M count=0 seek=8 >/dev/null 2>&1 || ext4_fail=1
-	/system/bin/mkfs.ext4 -O ^has_journal "$MNT_FOLDER/mountify-ext4-test" >/dev/null 2>&1 || ext4_fail=1
-	
-	# https://github.com/tiann/KernelSU/pull/3019
-	[ "$KSU" = "true" ] && busybox chcon "u:object_r:ksu_file:s0" "$MNT_FOLDER/mountify-ext4-test"
-
-
-	# cleanup
-	rm -rf "$MNT_FOLDER/mountify-ext4-test" "$MNT_FOLDER/mountify-mount-test"
-	
-	if [ "$ext4_fail" = "1" ]; then
-		abort "[!] ext4 fallback mode test fail!"
-	fi
-}
-
-echo "[+] mountify"
-echo "[+] SysReq test"
-
-# test for overlayfs
-if grep -q "overlay" /proc/filesystems > /dev/null 2>&1; then \
-	echo "[+] CONFIG_OVERLAY_FS"
-	echo "[+] overlay found in /proc/filesystems"
-else
-	abort "[!] CONFIG_OVERLAY_FS is required for this module!"
-fi
-
-# drop magisk sepolicy rule
-if [ ! "$KSU" = true ] && [ ! "$APATCH" = true ]; then
-	echo "allow kernel fs_type file { read write }" > "$MODPATH/sepolicy.rule"
-	echo "allow kernel dev_type file { read write }" >> "$MODPATH/sepolicy.rule"
-	echo "allow kernel file_type file { read write }" >> "$MODPATH/sepolicy.rule"
-
-	magiskpolicy --apply "$MODPATH/sepolicy.rule" > /dev/null 2>&1
-fi
-
-# test for tmpfs xattr
-testfile="$MNT_FOLDER/tmpfs_xattr_testfile"
-rm "$testfile" > /dev/null 2>&1 
-busybox mknod "$testfile" c 0 0 > /dev/null 2>&1 
-if busybox setfattr -n trusted.overlay.whiteout -v y "$testfile" > /dev/null 2>&1 ; then 
-	echo "[+] CONFIG_TMPFS_XATTR"
-	echo "[+] tmpfs extended attribute test passed"
-	rm "$testfile" > /dev/null 2>&1 
-else
-	rm "$testfile" > /dev/null 2>&1 
-	echo "[!] CONFIG_TMPFS_XATTR fail!"
-	echo "[+] testing for ext4 sparse image fallback mode"
-	# check for tools
-	if [ -f "/system/bin/mkfs.ext4" ] && [ -f "/system/bin/resize2fs" ]; then		
-		test_ext4_image
-		echo "$WARNING_STRING" > "$MODPATH/no_tmpfs_xattr"
-		echo "[+] ext4 sparse fallback mode enabled"
-	else
-		abort "[!] tools not found, bail out."
-	fi
-fi
-
-# grab version code
-module_prop="/data/adb/modules/mountify/module.prop"
-if [ -f $module_prop ]; then
-	mountify_versionCode=$(grep versionCode $module_prop | sed 's/versionCode=//g' )
-else
-	mountify_versionCode=0
-fi
+# Read config
+. /data/adb/mountify/config.sh
 
 PERSISTENT_DIR="/data/adb/mountify"
-[ ! -d $PERSISTENT_DIR ] && mkdir -p $PERSISTENT_DIR
 
+echo "Checking for conflicts..."
 
-# full migration if 166+
-if [ "$mountify_versionCode" -lt 166 ]; then
-	echo "[!] using fresh config.sh"
-	cat "$MODPATH/config.sh" > "$PERSISTENT_DIR/config.sh"
-fi
-
-configs="modules.txt whiteouts.txt config.sh"
-
-for file in $configs; do
-	if [ ! -f "$PERSISTENT_DIR/$file" ]; then
-		echo "[+] moving $file"
-		cat "$MODPATH/$file" > "$PERSISTENT_DIR/$file"
+if [ "$MAGISK" = true ]; then
+	echo "[✓] Magisk detected"
+elif [ "$KSU" = true ]; then
+	echo "[✓] KernelSU detected"
+	
+	# Check susfs version
+	SUSFS_BIN="/data/adb/ksu/bin/ksu_susfs"
+	if [ "$KSU" = true ] && [ -f ${SUSFS_BIN} ]; then
+		SUSFS_VERSION="$( ${SUSFS_BIN} show version | head -n1 | sed 's/v//; s/\.//g' 2> /dev/null )"
+		if { [ "$SUSFS_VERSION" -eq 1510 ] || [ "$SUSFS_VERSION" -eq 1511 ] || [ "$SUSFS_VERSION" -eq 210 ]; }; then
+			printf "\n\n"
+			echo "[!] ERROR: Mountify causes conflicts with this susfs version."
+			echo "[!] This setup can cause issues and is NOT recommended."
+			echo "[!] Please update KernelSU or downgrade susfs."
+			printf "\n\n"
+			abort
+		fi
 	fi
-done
-
-# give exec to whiteout_gen.sh
-chmod +x "$MODPATH/whiteout_gen.sh"
-
-# warn on OverlayFS managers
-# while this is supported (half-assed), this is not a recommended configuration
-if { [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ] &&  [ "$KSU_VER_CODE" -lt 22098 ]; } || 
-	{ [ "$APATCH" = true ] && [ ! "$APATCH_BIND_MOUNT" = true ] && [ "$APATCH_VER_CODE" -lt 11170 ]; }; then
-	printf "\n\n"
-	echo "[!] ERROR: Root manager is on sparse-backed overlayfs!"
-	echo "[!] This setup can cause issues and is NOT recommended."
-	echo "[!] modify customize.sh to force installation!"
-	abort "[!] Installation aborted!"
-	# ^ just change abort to echo or something
+elif [ "$APATCH" = true ]; then
+	echo "[✓] APatch detected"
+else
+	echo "[!] No compatible root detected"
+	abort
 fi
 
-SUSFS_BIN="/data/adb/ksu/bin/ksu_susfs"
-if [ "$KSU" = true ] && [ -f ${SUSFS_BIN} ]; then
-	SUSFS_VERSION="$( ${SUSFS_BIN} show version | head -n1 | sed 's/v//; s/\.//g' 2> /dev/null )"
-	if { [ "$SUSFS_VERSION" -eq 1510 ] || [ "$SUSFS_VERSION" -eq 1511 ]; }; then
-		printf "\n\n"
-		echo "[!] ERROR: Mountify causes conflicts with this susfs version."
-		echo "[!] This setup can cause issues and is NOT recommended."
-		echo "[!] modify customize.sh to force installation!"
-		abort "[!] Installation aborted!"
-		# ^ just change abort to echo or something
-	fi
-fi
-
-# this is for "symlink mode", meant for Legacy.
-# I do NOT offer support this anymore but you can likely use it on 4.14 and older
-# Ultra Legacy has no issues especially on ext4 /data
-# if you can read shell, you know how to ;)
-if [ -f "$PERSISTENT_DIR/explicit_I_want_symlink" ]; then
-	echo "[!] forcing symlink script as post-fs-data!"
-	cat "$MODPATH/symlink/mountify-symlink.sh" > "$MODPATH/post-fs-data.sh"
-fi
-
-# you can remove 'metamodule=true' or 'metamodule=1' on module.prop and mountify will NOT be on metamodule mode.
-if ( grep -q "metamodule=true" "$MODPATH/module.prop" >/dev/null 2>&1 || grep -q "metamodule=1" "$MODPATH/module.prop" >/dev/null 2>&1 ); then
-
-	# we install as metamodule on supported managers
-	# ksu 22098+
-	# ap 11170+
-	if { [ "$KSU" = true ] && [ ! "$KSU_MAGIC_MOUNT" = true ] && [ "$KSU_VER_CODE" -ge 22098 ]; } || 
-		{ [ "$APATCH" = true ] && [ "$APATCH_VER_CODE" -ge 11170 ]; }; then
-		echo "[+] mountify will be installed in metamodule mode!"
-		mv "$MODPATH/post-fs-data.sh" "$MODPATH/metamount.sh"
-	fi
-
-fi
-
-# since even mm ksud can have this feature, we check this and add a flag that we can check
-if [ "$KSU" = true ] && /data/adb/ksud kernel 2>&1 | grep -q "nuke-ext4-sysfs" >/dev/null 2>&1; then
-	echo "$WARNING_STRING" > "$MODPATH/ksud_has_nuke_ext4"
-fi
-
-rm -rf "$MODPATH/symlink"
-rm "$MODPATH/modules.txt"
-rm "$MODPATH/whiteouts.txt"
-rm "$MODPATH/config.sh"
-
-# EOF
+echo "[✓] All checks passed"
