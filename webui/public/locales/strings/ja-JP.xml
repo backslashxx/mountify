@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tab_general">一般</string>
+    <string name="tab_ext4">Ext4</string>
+    <string name="tab_advanced">詳細設定</string>
+    <string name="show_advanced_option">詳細オプションを表示</string>
+    <string name="enable_mountify_update">mountifyの更新を有効にする</string>
+    <string name="reboot_title">再起動</string>
+    <string name="reboot_message">今すぐ再起動しますか？</string>
+    <string name="reboot">再起動</string>
+    <string name="select_modules">モジュールを選択</string>
+    <string name="system_default">システムのデフォルト</string>
+    <string name="select_language">言語を選択</string>
+
+    <!-- Functional button -->
+    <string name="cancel">キャンセル</string>
+    <string name="close">閉じる</string>
+    <string name="save">保存</string>
+
+    <!-- Config Descriptions -->
+    <string name="desc_mountify_mounts">モジュールのマウント設定。\n0 - 無効\n1 - マニュアルモード (modules.txtで見つかったモジュールをマウント)\n2 - オートモード (システムフォルダ内のすべてのモジュールをマウント)</string>
+    <string name="desc_FAKE_MOUNT_NAME">マウントフォルダ名。</string>
+    <string name="desc_test_decoy_mount">偽装マウントのテスト。\ntmpfsモード向けです。\n0 - 無効\n1 - 有効</string>
+    <string name="desc_mountify_stop_start">サービス開始時にAndroidを再起動します。特定のモジュールで必要になる場合があります。\nこれはbootanimationやGPUドライバーなどの「競争(racey)」状態が発生するモジュール向けの回避策です。\n⚠️ 問題が発生していない場合は、これを有効にする必要はありません。\n\n0 - 無効\n1 - 有効</string>
+    <string name="desc_FS_TYPE_ALIAS">別のエイリアスで登録されたカスタマイズ済みのoverlayfsドライバーを使用している場合は、これを変更してください。</string>
+    <string name="desc_MOUNT_DEVICE_NAME">zygiskプロバイダーがアンマウントできるように、ここに 'APatch'、'KSU'、'magisk' などを入力できます。\n\n例: NeoZygisk, NoHello, ReZygisk, Zygisk Assistant, ZygiskNext-UM/DE</string>
+    <string name="desc_mountify_custom_umount">カーネル内のアンマウント方法を有効にします。\n0 - 無効\n1 - susfs4ksu\n2 - ksud カーネルアンマウント (22106+)\n\n⚠️ zygiskプロバイダーを使用している場合は、これを有効にする必要はありません。</string>
+    <string name="desc_mountify_expert_mode">🚨 警告！\n ⚠️ これにより安全チェックが無効になります。\n主に開発およびデバッグ目的です。\n0 - 無効\n1 - 有効</string>
+    <string name="desc_use_ext4_sparse">ext4 sparseモードの上書き設定。\next4 sparseイメージを使用してマウントすることを���む、tmpfs xattr対応のセットアップ用です。\n0 - 無効\n1 - 有効</string>
+    <string name="desc_spoof_sparse">sparseをapexマウントとして偽装します。\nカスタムMOUNT_DEVICE_NAMEとうまく組み合わせられます。\n注意: これが有効な場合、nuking（無効化）は無効になります。</string>
+    <string name="desc_FAKE_APEX_NAME">偽装されたapexマウント名をカスタマイズします。\n気休めですが、本物のように見せようとします。</string>
+    <string name="desc_sparse_size">カスタムのsparseサイズを設定します。\n任意の正の整数に変更してください。\n- MB単位のsparseサイズ。</string>
+    <string name="desc_enable_lkm_nuke">🚨 警告！\n⚠️ 実験的な機能です。100%の成功は期待しないでください。\next4 sysfsノードの登録を解除するワンショットLKMをロードします。\n0 - 無効\n1 - 有効\n\n注意: KernelSU 22105以降では、これはksudで処理されます。</string>
+    <string name="desc_lkm_filename">GKI 5.10以降のみが正式にサポートされています。\nAndroidのKMIを選択してください。</string>
+</resources>

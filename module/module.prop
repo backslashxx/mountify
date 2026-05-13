@@ -1,8 +1,7 @@
 id=mountify
-name=Mountify_FP
-version=v1.9.9
-versionCode=199
-author=xx, KOWX712, 知秋
+name=mountify
+version=v2.0.1
+versionCode=201
+author=xx, KOWX712
 metamodule=true
 description=Globally mounted modules via OverlayFS.
-updateJson=https://raw.githubusercontent.com/947409161/Mountify_FP/master/update.json
