@@ -26,7 +26,7 @@
     <string name="desc_MOUNT_DEVICE_NAME">zygiskプロバイダーがアンマウントできるように、ここに 'APatch'、'KSU'、'magisk' などを入力できます。\n\n例: NeoZygisk, NoHello, ReZygisk, Zygisk Assistant, ZygiskNext-UM/DE</string>
     <string name="desc_mountify_custom_umount">カーネル内のアンマウント方法を有効にします。\n0 - 無効\n1 - susfs4ksu\n2 - ksud カーネルアンマウント (22106+)\n\n⚠️ zygiskプロバイダーを使用している場合は、これを有効にする必要はありません。</string>
     <string name="desc_mountify_expert_mode">🚨 警告！\n ⚠️ これにより安全チェックが無効になります。\n主に開発およびデバッグ目的です。\n0 - 無効\n1 - 有効</string>
-    <string name="desc_use_ext4_sparse">ext4 sparseモードの上書き設定。\next4 sparseイメージを使用してマウントすることを���む、tmpfs xattr対応のセットアップ用です。\n0 - 無効\n1 - 有効</string>
+    <string name="desc_use_ext4_sparse">ext4 sparseモードの上書き設定。\next4 sparseイメージを使用してマウントすることを好む、tmpfs xattr対応のセットアップ用です。\n0 - 無効\n1 - 有効</string>
     <string name="desc_spoof_sparse">sparseをapexマウントとして偽装します。\nカスタムMOUNT_DEVICE_NAMEとうまく組み合わせられます。\n注意: これが有効な場合、nuking（無効化）は無効になります。</string>
     <string name="desc_FAKE_APEX_NAME">偽装されたapexマウント名をカスタマイズします。\n気休めですが、本物のように見せようとします。</string>
     <string name="desc_sparse_size">カスタムのsparseサイズを設定します。\n任意の正の整数に変更してください。\n- MB単位のsparseサイズ。</string>

@@ -28,7 +28,7 @@ fi
 
 do_ksud_umount() {
 for mount in $(cat "$LOG_FOLDER/mountify_mount_list"); do
- 	/data/adb/ksud kernel umount add "$mount" --flags 2 > /dev/null 2>&1
+	/data/adb/ksud kernel umount add "$mount" --flags 2 > /dev/null 2>&1
 done
 
 # now inform ksud so that the kernel unlocks the feature
@@ -53,5 +53,24 @@ fi
 
 # prep logs for status
 busybox diff "$LOG_FOLDER/before" "$LOG_FOLDER/after" | grep " $FS_TYPE_ALIAS " > "$MODDIR/mount_diff"
+
+# EOF
+	do_susfs_umount
+fi
+
+if [ "$mountify_custom_umount" = 2 ]; then
+	do_ksud_umount
+fi
+
+# cleanup
+# prep logs for status
+busybox diff "$LOG_FOLDER/before" "$LOG_FOLDER/after" | grep " $FS_TYPE_ALIAS " > "$MODDIR/mount_diff"
+
+if [ ! "$APATCH" = true ] && [ ! "$KSU" = true ]; then
+	until [ "$(getprop sys.boot_completed)" = "1" ]; do
+		sleep 1
+	done
+	sh "$MODDIR/boot-completed.sh" &
+fi
 
 # EOF
