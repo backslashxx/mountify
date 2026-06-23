@@ -38,6 +38,7 @@ jobs:
           remove-android: "true"
           remove-haskell: "true"
           remove-codeql: "true"
+          remove-docker-images: "true"
 
       - name: Checkout repo
         uses: actions/checkout@v6
@@ -56,8 +57,10 @@ jobs:
           # git clone --depth=1 https://github.com/aosp-mirror/kernel_common/ -b ${TAG} common
           curl https://storage.googleapis.com/git-repo-downloads/repo > repo
           chmod +x repo
-          ./repo init --depth=1 https://android.googlesource.com/kernel/manifest -b "common-${TAG}"
+          ./repo init --manifest-depth=1 --depth=1 https://android.googlesource.com/kernel/manifest -b "common-${TAG}"
           ./repo sync -c -j $(nproc)
+          
+          rm -rf .repo
 
       - name: Prepare GKI
         working-directory: android-kernel
@@ -112,7 +115,7 @@ jobs:
           if [ -e build/build.sh ]; then
             LTO=thin BUILD_CONFIG=common/build.config.gki.aarch64 build/build.sh CC="clang"
           else
-            tools/bazel run --disk_cache=/home/runner/.cache/bazel --config=fast --config=stamp --lto=thin //common:kernel_aarch64_dist -- --dist_dir=dist
+            tools/bazel run --config=fast --config=stamp --lto=thin //common:kernel_aarch64_dist -- --dist_dir=dist
           fi
           
           if [ -f ./dist/nuke.ko ]; then

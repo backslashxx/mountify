@@ -26,3 +26,14 @@ jobs:
       version: ${{ matrix.version }}
       os_patch_level: ${{ matrix.os_patch_level }}
 
+  build-lkm-modern:
+      strategy:
+        matrix:
+          include:
+            - version: "android16-6.12"
+              os_patch_level: "lts"
+
+      uses: ./.github/workflows/gki-kernel-6.12.yaml
+      with:
+        version: ${{ matrix.version }}
+        os_patch_level: ${{ matrix.os_patch_level }}

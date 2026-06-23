@@ -1,0 +1,102 @@
+name: Build nuke_ext4 LKM 6.12
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: "GKI version (e.g. android14-6.12)"
+        required: true
+        type: string
+      os_patch_level:
+        description: "Patch level (e.g. 2026-10)"
+        required: true
+        type: string
+
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "GKI version (e.g. android14-6.12)"
+        required: true
+        type: string
+      os_patch_level:
+        description: "Patch level (e.g. 2026-10)"
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build LKM for ${{ inputs.version }}.${{ inputs.sub_level }}
+
+    steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 8192
+          temp-reserve-mb: 2048
+          remove-dotnet: "true"
+          remove-android: "true"
+          remove-haskell: "true"
+          remove-codeql: "true"
+          remove-docker-images: "true"
+
+      - name: Checkout repo
+        uses: actions/checkout@v6
+
+      - name: Install required packages
+        run: |
+          echo lol
+          sudo apt-get update
+          sudo apt-get install -y bc build-essential flex bison libssl-dev libelf-dev git python3 unzip wget cpio gcc-aarch64-linux-gnu llvm-15
+
+      - name: Clone AOSP GKI kernel
+        run: |
+          mkdir android-kernel && cd android-kernel
+          TAG="${{ inputs.version }}-${{ inputs.os_patch_level }}"
+          echo "Fetching GKI tag: ${TAG}"
+          # git clone --depth=1 https://github.com/aosp-mirror/kernel_common/ -b ${TAG} common
+          curl https://storage.googleapis.com/git-repo-downloads/repo > repo
+          chmod +x repo
+          ./repo init --manifest-depth=1 --depth=1 https://android.googlesource.com/kernel/manifest -b "common-${TAG}"
+          ./repo sync -c -j $(nproc)
+          
+          rm -rf .repo
+
+      - name: Prepare GKI
+        working-directory: android-kernel
+        run: |
+          mv ../nuke_ext4_lkm common/drivers/nuke_ext4_lkm
+          sed -i 's/endmenu//g' common/drivers/Kconfig
+          echo "source \"drivers/nuke_ext4_lkm/Kconfig\"" >> common/drivers/Kconfig
+          echo "endmenu" >> common/drivers/Kconfig
+          echo 'obj-y += nuke_ext4_lkm/' >> common/drivers/Makefile
+
+          
+          tail -n10 common/drivers/Kconfig
+          tail -n10 common/drivers/Makefile
+          
+          echo $PATH ; pwd
+          ls -la
+          
+          find build/kernel/kleaf -type f -exec sed -i 's/kbuild_mixed_tree_check_outputs=true/kbuild_mixed_tree_check_outputs=false/g' {} + || true
+
+          if [ -e build/build.sh ]; then
+            LTO=thin BUILD_CONFIG=common/build.config.gki.aarch64 build/build.sh
+          else
+            tools/bazel build --config=fast --lto=thin //common:kernel_aarch64 || true
+            
+            tools/bazel run --config=fast --lto=thin //common:kernel_aarch64_dist -- --dist_dir=dist || true
+          fi
+          
+          if [ -f ./dist/nuke.ko ]; then
+          	mv ./dist/nuke.ko ../nuke.ko
+          else
+          	find bazel-bin/common -name "nuke.ko" -exec cp {} ../nuke.ko \;
+          fi
+
+      - name: Upload nuke.ko
+        uses: actions/upload-artifact@v7
+        with:
+          name: nuke_ext4-${{ inputs.version }}.${{ inputs.sub_level }}
+          path: nuke.ko
+
