@@ -2,10 +2,13 @@
 Globally mounted modules and whiteouts via OverlayFS.
 
 ## Changelog
+# 202
+- scripts/post-fs-data: only update when description changes
+- scripts/service: dont notify module mounted repeatedly
+- webui/locales: Add Japanese(ja-JP) translation (#49)
+
 # 201
 - scripts/post-fs-data: apply module description earlier
-
-# 200
 - scripts: drop MKSU .nomount support
 - scripts/post-fs-data: skip sync and resize
 - scripts/post-fs-data: tweak copy and mount flags
