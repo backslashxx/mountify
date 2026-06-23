@@ -30,11 +30,14 @@ static char *mount_point = "/data/adb/modules";
 module_param(mount_point, charp, 0000);
 MODULE_PARM_DESC(mount_point, "nuke an ext4 sysfs node");
 
-static void __exit nuke_exit(void) {}
+#ifndef __nocfi
+#define __nocfi
+#endif
 
-static int ext4_unregister_sysfs_fn(struct super_block *sb) 
+static void (*ext4_unregister_sysfs_ptr)(struct super_block *) = NULL;
+
+static __nocfi int ext4_unregister_sysfs_fn(struct super_block *sb) 
 {
-	void (*ext4_unregister_sysfs_ptr)(struct super_block *);
 	const char *sym = "ext4_unregister_sysfs";
 	char buf[KSYM_SYMBOL_LEN] = {0};
 
@@ -52,7 +55,7 @@ static int ext4_unregister_sysfs_fn(struct super_block *sb)
 	// output is like "ext4_unregister_sysfs+0x0/0x70"
 	if (!!strncmp(buf, sym, strlen(sym))) {
 		pr_info("mountify/nuke_ext4: wrong symbol!? %s found!\n", buf);
-		return -EAGAIN;
+		return -EINVAL;
 	}
 
 	pr_info("mountify/nuke_ext4: sprint_symbol 0x%lx: %s\n", symaddr, buf);
@@ -82,7 +85,11 @@ static int __init nuke_entry(void)
 	}
 
 	pr_info("mountify/nuke_ext4: unregistering sysfs node for ext4 volume (%s)\n", sb->s_id);
-	ext4_unregister_sysfs_fn(sb);
+	int ret = ext4_unregister_sysfs_fn(sb);
+	if (ret) {
+		path_put(&path);
+		return -EAGAIN;	
+	}
 
 	// now recheck if the node still exists
 	// this is on /proc/fs/ext4
@@ -103,6 +110,8 @@ static int __init nuke_entry(void)
 	pr_info("mountify/nuke_ext4: unload\n");
 	return -EAGAIN;
 }
+
+static void __exit nuke_exit(void) { __builtin_unreachable(); }
 
 module_init(nuke_entry);
 module_exit(nuke_exit);
