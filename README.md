@@ -82,9 +82,9 @@ mountify_whiteouts
    - NOTE: zygisk provider umount is still better, this is here as a second choice.
 
 #### I need mountify to skip mounting my module!
-- this is easy, add `skip_mountify` to your module's folder.
-- mountify checks this on /data/adb/modules/module_name
-- `[ -f /data/adb/modules/module_name/skip_mountify ]`
+- `skip_mount` is respected on metamodule mode (KSU / APatch)
+- however on Magisk make sure to use `skip_mountify` instead
+- mountify checks these on /data/adb/modules/module_name
 
 ### Advanced / Debugging
 - remove `metamodule=true` from module.prop before installing to force non-metamodule mode
