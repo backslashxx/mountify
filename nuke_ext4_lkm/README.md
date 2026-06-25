@@ -15,7 +15,7 @@ echo $kptr_set > /proc/sys/kernel/kptr_restrict
 ```
 
 Compatibility:
-- Linux 4.4 ~ 6.17.
+- Linux 4.4+.
 - CONFIG_KALLSYMS=y
 
 [Older version](https://github.com/backslashxx/mountify/tree/f0108a151e3be123e4aaf7319890db160692c309/nuke_ext4_lkm) 
