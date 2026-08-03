@@ -122,24 +122,12 @@ if [ -f "$TARGET_DIR/skip_mount" ] && [ -f "$MODDIR/metamount.sh" ]; then
 fi
 
 echo "$DMESG_PREFIX: processing $1" >> /dev/kmsg
-	
-# skip_mount is not needed for litemode APatch - bmax121/APatch/commit/7760519
-if { [ "$APATCH_BIND_MOUNT" = "true" ] && [ -f /data/adb/.litemode_enable ]; } ||
-	[ -f "$MODDIR/metamount.sh" ]; then 
 
-	# ^ HACK: the metamodule check is here just so it wont create a skip_mount flag.
-	# we do NOT have 'goto' in shell so we to keep it this way.
-	# since we already check it above, it should NOT be here!
-
-	[ -f "$TARGET_DIR/skip_mount" ] && rm "$TARGET_DIR/skip_mount"
-	[ -f "$MODDIR/skipped_modules" ] && rm "$MODDIR/skipped_modules"
-else
-	if [ ! -f "$TARGET_DIR/skip_mount" ]; then
-		touch "$TARGET_DIR/skip_mount"
-		# log modules that got skip_mounted
-		# we can likely clean those at uninstall
-		echo "$1" >> $MODDIR/skipped_modules
-	fi
+if [ ! -f "$MODDIR/metamount.sh" ] && [ ! -f "$TARGET_DIR/skip_mount" ]; then
+	touch "$TARGET_DIR/skip_mount"
+	# log modules that got skip_mounted
+	# we can likely clean those at uninstall
+	echo "$1" >> $MODDIR/skipped_modules
 fi
 
 MODULE_BASEDIR="$TARGET_DIR/system"

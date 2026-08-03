@@ -203,24 +203,12 @@ mountify_copy() {
 
 	echo "$DMESG_PREFIX: processing $MODULE_ID" >> /dev/kmsg
 
-	# skip_mount is also not needed for litemode APatch - bmax121/APatch/commit/7760519
-	if { [ "$APATCH_BIND_MOUNT" = "true" ] && [ -f /data/adb/.litemode_enable ]; } || 
-		[ -f "$MODDIR/metamount.sh" ]; then 
-		
-		# ^ HACK: the metamodule check is here just so it wont create a skip_mount flag.
-		# we do NOT have 'goto' in shell so we to keep it this way.
-		# since we already check it above, it should NOT be here!
-
-		# we can delete skip_mount if litemode
-		[ -f "$TARGET_DIR/skip_mount" ] && rm "$TARGET_DIR/skip_mount"
-		[ -f "$PERSISTENT_DIR/skipped_modules" ] && rm "$PERSISTENT_DIR/skipped_modules"
-	else
-		if [ ! -f "$TARGET_DIR/skip_mount" ]; then
-			touch "$TARGET_DIR/skip_mount"
-			# log modules that got skip_mounted
-			# we can likely clean those at uninstall
-			echo "$MODULE_ID" >> $PERSISTENT_DIR/skipped_modules
-		fi
+	# if NOT on metamodule mode, we must make sure to skip_mount the module we plan to mount
+	if [ ! -f "$MODDIR/metamount.sh" ] && [ ! -f "$TARGET_DIR/skip_mount" ]; then
+		touch "$TARGET_DIR/skip_mount"
+		# log modules that got skip_mounted
+		# we can likely clean those at uninstall
+		echo "$MODULE_ID" >> $PERSISTENT_DIR/skipped_modules
 	fi
 
 	# we can copy over contents of system folder only
@@ -440,11 +428,6 @@ if [ "$use_ext4_sparse" = "1" ] || [ -f "$MODDIR/no_tmpfs_xattr" ]; then
 	mode="$mode | fstype: ext4 🛠️"
 else
 	mode="$mode | fstype: tmpfs 🦾"
-fi
-
-# display if on litemode
-if [ "$APATCH_BIND_MOUNT" = "true" ] && [ -f /data/adb/.litemode_enable ]; then 
-	mode="$mode | litemode: ✅"
 fi
 
 # generate description accordingly
