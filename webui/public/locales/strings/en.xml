@@ -23,7 +23,7 @@
     <string name="desc_test_decoy_mount">Test for decoy mounting.\nThis is meant for tmpfs mode.\n0 - disable\n1 - enable</string>
     <string name="desc_mountify_stop_start">Restarts android at service, certain modules might need this.\nThis is a workaround for 'racey' modules such as bootanimations and gpu drivers.\n⚠️ if you do NOT have a problem, you do NOT need this\n\n0 - disable\n1 - enable</string>
     <string name="desc_FS_TYPE_ALIAS">Change this if you have a customized overlayfs driver registered with another alias.</string>
-    <string name="desc_MOUNT_DEVICE_NAME">You can put 'APatch', 'KSU', 'magisk' here so a zygisk provider can umount.\n\nExamples: NeoZygisk, NoHello, ReZygisk, Zygisk Assistant, ZygiskNext-UM/DE</string>
+    <string name="desc_MOUNT_DEVICE_NAME">You can put 'APatch', 'KSU', 'magisk' here so a zygisk provider can umount.\n\nExamples: NeoZygisk, ReZygisk, Zygisk Assistant, ZygiskNext-UM/DE</string>
     <string name="desc_mountify_custom_umount">Enable in-kernel umount methods here.\n0 - disable\n1 - susfs4ksu\n2 - ksud kernel umount (22106+)\n\n⚠️ if you have a zygisk provider, you do NOT need this</string>
     <string name="desc_mountify_expert_mode">🚨 WARNING!\n ⚠️ This disables safety checks.\nMostly for development and debugging purposes.\n0 - disable\n1 - enable</string>
     <string name="desc_use_ext4_sparse">ext4 sparse mode override.\nFor tmpfs xattr capable setups that prefers using an ext4 sparse image to mount.\n0 - disable\n1 - enable</string>

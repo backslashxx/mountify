@@ -72,8 +72,8 @@ mountify_whiteouts
 - `lkm_filename="nuke.ko"` to define LKM's filename
 
 ### Need Unmount?
-- use either NeoZygisk, NoHello, ReZygisk, Zygisk Assistant
-- if you use Zygisk Next, then set Denylist Policy to "Enforced" or "Unmount Only"
+- use either NeoZygisk, ReZygisk, Zygisk Assistant, Zygisk Next
+- on Zygisk Next, set Denylist Policy to "Enforced" or "Unmount Only"
 - then edit config.sh
    - `MOUNT_DEVICE_NAME="APatch"` if you're on APatch
    - `MOUNT_DEVICE_NAME="KSU"` if you're on KernelSU forks

@@ -23,7 +23,7 @@
     <string name="desc_test_decoy_mount">诱饵挂载测试。\n这是为 tmpfs 模式设计的。\n0 - 禁用\n1 - 启用</string>
     <string name="desc_mountify_stop_start">在服务处重启 Android，某些模块可能需要此操作。\n这是针对开机动画和 GPU 驱动等“竞争性”模块的变通方法。\n⚠️ 如果你没有遇到问题，则不需要此选项\n\n0 - 禁用\n1 - 启用</string>
     <string name="desc_FS_TYPE_ALIAS">如果你有注册了其他别名的自定义 overlayfs 驱动，请更改此项。</string>
-    <string name="desc_MOUNT_DEVICE_NAME">你可以在这里填入 'APatch', 'KSU', 'magisk' 以便 zygisk 卸载。\n\n示例: NeoZygisk, NoHello, ReZygisk, Zygisk Assistant, ZygiskNext-UM/DE</string>
+    <string name="desc_MOUNT_DEVICE_NAME">你可以在这里填入 'APatch', 'KSU', 'magisk' 以便 zygisk 卸载。\n\n示例: NeoZygisk, ReZygisk, Zygisk Assistant, ZygiskNext-UM/DE</string>
     <string name="desc_mountify_custom_umount">在此处启用内核内卸载方法。\n0 - 禁用\n1 - susfs4ksu\n2 - ksud 内核卸载 (22106+)\n\n⚠️ 如果你有使用 zygisk，则不需要此选项</string>
     <string name="desc_mountify_expert_mode">🚨 警告！\n ⚠️ 这将禁用安全检查。\n主要用于开发和调试目的。\n0 - 禁用\n1 - 启用</string>
     <string name="desc_use_ext4_sparse">ext4 稀疏模式覆盖。\n适用于偏好使用 ext4 稀疏镜像进行挂载的 tmpfs xattr 兼容设置。\n0 - 禁用\n1 - 启用</string>
