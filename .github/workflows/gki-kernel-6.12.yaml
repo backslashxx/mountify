@@ -41,7 +41,7 @@ jobs:
           remove-docker-images: "true"
 
       - name: Checkout repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Install required packages
         run: |

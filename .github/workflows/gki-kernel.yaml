@@ -41,7 +41,7 @@ jobs:
           remove-docker-images: "true"
 
       - name: Checkout repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Install required packages
         run: |
@@ -125,7 +125,7 @@ jobs:
           fi
 
       - name: Upload nuke.ko
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nuke_ext4-${{ inputs.version }}.${{ inputs.sub_level }}
           path: android-kernel/nuke.ko
