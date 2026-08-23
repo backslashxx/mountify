@@ -44,9 +44,6 @@ do_ksud_umount() {
 for mount in $(cat "$LOG_FOLDER/mountify_mount_list"); do
 	/data/adb/ksud kernel umount add "$mount" --flags 2 > /dev/null 2>&1
 done
-
-# now inform ksud so that the kernel unlocks the feature
-/data/adb/ksud kernel notify-module-mounted >/dev/null 2>&1
 }
 
 if [ "$mountify_custom_umount" = 1 ]; then
@@ -55,6 +52,10 @@ fi
 
 if [ "$mountify_custom_umount" = 2 ]; then
 	do_ksud_umount
+fi
+
+if [ "$KSU" = true ]; then
+	/data/adb/ksud kernel notify-module-mounted >/dev/null 2>&1
 fi
 
 # cleanup
