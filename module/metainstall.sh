@@ -96,7 +96,7 @@ mountify_hot_install() {
 	echo "- No need to reboot!"
 }
 
-if [ "$MODULE_HOT_INSTALL_REQUEST" = true ]; then
+if [ "$KSU_HAS_HOT_INSTALL" != true ] && [ "$MODULE_HOT_INSTALL_REQUEST" = true ]; then
 	mountify_hot_install
 fi
 
