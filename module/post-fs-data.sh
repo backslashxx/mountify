@@ -132,7 +132,7 @@ fi
 
 # an overlay on a path hides every mount below it (xiaomi: /system/etc/permissions)
 mounts_below() {
-	busybox awk -v p="$1" 'index($5, p "/") == 1 { f=1 } END { exit !f }' /proc/self/mountinfo
+	busybox awk -v p="$1" 'index($2, p "/") == 1 { f=1 } END { exit !f }' /proc/mounts
 }
 
 mount_tree() {
