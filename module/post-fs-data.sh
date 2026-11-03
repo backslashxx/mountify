@@ -130,32 +130,52 @@ fi
 
 # functions
 
+# an overlay on a path hides every mount below it (xiaomi: /system/etc/permissions)
+mounts_below() {
+	busybox awk -v p="$1" 'index($5, p "/") == 1 { f=1 } END { exit !f }' /proc/self/mountinfo
+}
+
+mount_tree() {
+	MT_SRC="$1"
+	MT_DST="$2"
+
+	if ! mounts_below "$MT_DST"; then
+		if [ "$decoy_mount_enabled" = "1" ] && [ -w "$DECOY_MOUNT_FOLDER" ]; then
+			mkdir -p "$DECOY_MOUNT_FOLDER$MT_DST"
+			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$DECOY_MOUNT_FOLDER$MT_DST:$(pwd)/$MT_SRC:$MT_DST" "$MOUNT_DEVICE_NAME" "$MT_DST" && echo "$MT_DST" >> "$LOG_FOLDER/mountify_mount_list"
+		else
+			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$(pwd)/$MT_SRC:$MT_DST" "$MOUNT_DEVICE_NAME" "$MT_DST" && echo "$MT_DST" >> "$LOG_FOLDER/mountify_mount_list"
+		fi
+		return
+	fi
+
+	# mounts below: descend, cover nothing
+	for ENTRY in "$(pwd)/$MT_SRC"/*; do
+		[ -e "$ENTRY" ] || continue
+		NAME="${ENTRY##*/}"
+		if [ -d "$ENTRY" ]; then
+			mount_tree "$MT_SRC/$NAME" "$MT_DST/$NAME"
+		else
+			# bind, overlay here would hide child mounts
+			if ! busybox mount --bind "$ENTRY" "$MT_DST/$NAME" 2>/dev/null; then
+				echo "$DMESG_PREFIX: $MT_DST/$NAME missing in stock, skipped" >> /dev/kmsg
+			fi
+		fi
+	done
+}
+
 # controlled depth ($targets fuckery)
 controlled_depth() {
 	if [ -z "$1" ] || [ -z "$2" ]; then return ; fi
-	mount_success=0
 	for DIR in $(ls -d $1/*/ | sed 's/.$//' ); do
-		if [ "$decoy_mount_enabled" = "1" ] && [ -w "$DECOY_MOUNT_FOLDER" ]; then
-			mkdir -p "$DECOY_MOUNT_FOLDER/$2$DIR"
-			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$DECOY_MOUNT_FOLDER$2$DIR:$(pwd)/$DIR:$2$DIR" "$MOUNT_DEVICE_NAME" "$2$DIR" && mount_success=1
-		else
-			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$(pwd)/$DIR:$2$DIR" "$MOUNT_DEVICE_NAME" "$2$DIR" && mount_success=1
-		fi
-		[ "$mount_success" = 1 ] && echo "$2$DIR" >> "$LOG_FOLDER/mountify_mount_list"
+		mount_tree "$DIR" "$2$DIR"
 	done
 }
 
 # handle single depth (/system/bin, /system/etc, et. al)
 single_depth() {
-	mount_success=0
 	for DIR in $( ls -d */ | sed 's/.$//'  | grep -vE "^(odm|product|system_ext|vendor)$" 2>/dev/null ); do
-		if [ "$decoy_mount_enabled" = "1" ] && [ -w "$DECOY_MOUNT_FOLDER" ]; then
-			mkdir -p "$DECOY_MOUNT_FOLDER/system/$DIR"
-			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$DECOY_MOUNT_FOLDER/system/$DIR:$(pwd)/$DIR:/system/$DIR" "$MOUNT_DEVICE_NAME" "/system/$DIR" && mount_success=1
-		else
-			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$(pwd)/$DIR:/system/$DIR" "$MOUNT_DEVICE_NAME" "/system/$DIR" && mount_success=1
-		fi
-		[ "$mount_success" = 1 ] && echo "/system/$DIR" >> "$LOG_FOLDER/mountify_mount_list"
+		mount_tree "$DIR" "/system/$DIR"
 	done
 }
 
