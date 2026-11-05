@@ -39,7 +39,7 @@ static void (*ext4_unregister_sysfs_ptr)(struct super_block *) = NULL;
 static __nocfi int ext4_unregister_sysfs_fn(struct super_block *sb) 
 {
 	const char *sym = "ext4_unregister_sysfs";
-	char buf[KSYM_SYMBOL_LEN] = {0};
+	char buf[KSYM_SYMBOL_LEN];
 
 	if (!symaddr) {
 		pr_info("mountify/nuke_ext4: symaddr not provided!\n");
@@ -49,7 +49,7 @@ static __nocfi int ext4_unregister_sysfs_fn(struct super_block *sb)
 	// https://elixir.bootlin.com/linux/v6.17.1/source/kernel/kallsyms.c#L474
 	// turns out we can confirm the symbol!
 	sprint_symbol(buf, symaddr);
-	buf[KSYM_SYMBOL_LEN - 1] = '\0';
+	buf[KSYM_SYMBOL_LEN - 1] = 0;
 
 	// if strstarts symbol
 	// output is like "ext4_unregister_sysfs+0x0/0x70"
@@ -120,6 +120,8 @@ MODULE_LICENSE("GPL");
 MODULE_AUTHOR("xx");
 MODULE_DESCRIPTION("nuke ext4 sysfs");
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 13, 0)
+MODULE_IMPORT_NS("VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver");
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
 MODULE_IMPORT_NS(VFS_internal_I_am_really_a_filesystem_and_am_NOT_a_driver);
 #endif
