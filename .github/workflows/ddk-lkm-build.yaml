@@ -1,0 +1,51 @@
+name: nuke.ko via DDK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: 'Build module by using DDK'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        kmi: [
+          android12-5.10,
+          android13-5.10,
+          android13-5.15,
+          android14-5.15,
+          android14-6.1,
+          android15-6.6,
+          android16-6.12,
+          android17-6.18,
+        ]
+    container:
+      image: ghcr.io/ylarod/ddk:${{ matrix.kmi }}
+    if: ${{ !startsWith(github.event.head_commit.message, '[skip ci]') }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          submodules: 'recursive'
+          fetch-depth: 0
+
+      - name: Build for ${{ matrix.kmi }}
+        run: |
+            cd nuke_ext4_lkm/
+            export KDIR=$KERNEL_SRC
+            make -f Makefile modules
+            ls -la nuke.ko
+            llvm-strip -d nuke.ko
+            mv nuke.ko nuke-${{ matrix.kmi }}.ko
+            ls -la *.ko
+
+      - name: Upload ${{ matrix.kmi }}
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          name: "nuke-${{ matrix.kmi }}.ko"
+          path: nuke_ext4_lkm/nuke-${{ matrix.kmi }}.ko
+          if-no-files-found: error
+
