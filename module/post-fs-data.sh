@@ -142,6 +142,7 @@ mount_tree() {
 	if ! mounts_below "$MT_DST"; then
 		if [ "$decoy_mount_enabled" = "1" ] && [ -w "$DECOY_MOUNT_FOLDER" ]; then
 			mkdir -p "$DECOY_MOUNT_FOLDER$MT_DST"
+			busybox chcon --reference="$MT_DST" "$DECOY_MOUNT_FOLDER$MT_DST" 2>/dev/null # issue#56
 			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$DECOY_MOUNT_FOLDER$MT_DST:$(pwd)/$MT_SRC:$MT_DST" "$MOUNT_DEVICE_NAME" "$MT_DST" && echo "$MT_DST" >> "$LOG_FOLDER/mountify_mount_list"
 		else
 			busybox mount -t "$FS_TYPE_ALIAS" -o "lowerdir=$(pwd)/$MT_SRC:$MT_DST" "$MOUNT_DEVICE_NAME" "$MT_DST" && echo "$MT_DST" >> "$LOG_FOLDER/mountify_mount_list"
